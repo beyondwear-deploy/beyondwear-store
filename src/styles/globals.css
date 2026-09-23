@@ -1,0 +1,178 @@
+@import "tailwindcss";
+@import "./theme.css";
+
+@custom-variant touch (@media (hover: none));
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* Tailwind aliases -> design tokens. Change colors in theme.css, not here. */
+@theme inline {
+  --color-bg: var(--bg);
+  --color-elev: var(--bg-elev);
+  --color-soft: var(--bg-soft);
+  --color-inverse: var(--bg-inverse);
+  --color-fg: var(--fg);
+  --color-muted: var(--fg-muted);
+  --color-subtle: var(--fg-subtle);
+  --color-inverse-fg: var(--fg-inverse);
+  --color-line: var(--border);
+  --color-line-strong: var(--border-strong);
+  --color-primary: var(--primary);
+  --color-primary-fg: var(--primary-fg);
+  --color-secondary: var(--secondary);
+  --color-secondary-fg: var(--secondary-fg);
+  --color-accent: var(--accent);
+  --color-accent-fg: var(--accent-fg);
+  --color-accent-soft: var(--accent-soft);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Fraunces Variable", ui-serif, Georgia, serif;
+  --radius-sm: var(--r-sm);
+  --radius-md: var(--r-md);
+  --radius-lg: var(--r-lg);
+  --radius-xl: var(--r-xl);
+  --shadow-soft: var(--sh-sm);
+  --shadow-card: var(--sh-md);
+  --shadow-lift: var(--sh-lg);
+  --breakpoint-xs: 420px;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: 96px;
+  }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-sans);
+    font-feature-settings: "cv11", "ss01";
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    min-height: 100dvh;
+    overflow-x: clip;
+  }
+  ::selection { background: var(--accent); color: var(--accent-fg); }
+  h1, h2, h3, h4 { font-family: var(--font-display); letter-spacing: -0.02em; font-weight: 500; }
+  button { cursor: pointer; }
+  button:disabled { cursor: not-allowed; }
+  img, svg { max-width: 100%; }
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+  input, select, textarea { font: inherit; color: inherit; }
+}
+
+/* Smooth theme crossfade — class is added briefly by the toggle only */
+html.theme-transition,
+html.theme-transition *,
+html.theme-transition *::before,
+html.theme-transition *::after {
+  transition: background-color 0.55s var(--ease), color 0.55s var(--ease),
+    border-color 0.55s var(--ease), fill 0.55s var(--ease), stroke 0.55s var(--ease),
+    box-shadow 0.55s var(--ease) !important;
+}
+
+@layer utilities {
+  .eyebrow {
+    font-size: 0.72rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--fg-muted);
+  }
+  .glass {
+    background: var(--glass-bg);
+    -webkit-backdrop-filter: blur(18px) saturate(1.4);
+    backdrop-filter: blur(18px) saturate(1.4);
+    border: 1px solid var(--glass-border);
+  }
+  .container-x { width: 100%; max-width: 1440px; margin-inline: auto; padding-inline: 16px; }
+  @media (min-width: 640px) { .container-x { padding-inline: 28px; } }
+  @media (min-width: 1024px) { .container-x { padding-inline: 48px; } }
+  .no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .tap { min-height: 44px; min-width: 44px; }
+  .text-balance { text-wrap: balance; }
+  .link-underline {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 0% 1px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    transition: background-size 0.4s var(--ease);
+  }
+  .link-underline:hover, .link-underline:focus-visible { background-size: 100% 1px; }
+}
+
+/* Skeleton shimmer */
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: var(--bg-soft);
+  border-radius: var(--r-sm);
+}
+.skeleton::after {
+  content: "";
+  position: absolute; inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--fg) 7%, transparent), transparent);
+  animation: shimmer 1.4s infinite;
+}
+@keyframes shimmer { 100% { transform: translateX(100%); } }
+
+/* Marquee (announcement bar / brand strip) */
+@keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.marquee-track { display: flex; width: max-content; animation: marquee 38s linear infinite; }
+.marquee:hover .marquee-track { animation-play-state: paused; }
+
+/* Wishlist heart pop & cart bump */
+@keyframes heart-pop { 0% { transform: scale(1); } 35% { transform: scale(1.4); } 65% { transform: scale(0.9); } 100% { transform: scale(1); } }
+.heart-pop { animation: heart-pop 0.5s var(--ease); }
+@keyframes bump { 0%,100% { transform: scale(1); } 40% { transform: scale(1.28) rotate(-6deg); } 70% { transform: scale(0.94); } }
+.bump { animation: bump 0.55s var(--ease); }
+
+/* Film grain for editorial feel (very subtle, static — no animation cost) */
+.grain::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0.07; mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+:root[data-theme="dark"] .grain::before { mix-blend-mode: screen; opacity: 0.05; }
+
+/* Range slider */
+input[type="range"].dual {
+  -webkit-appearance: none; appearance: none; background: transparent; pointer-events: none;
+  position: absolute; inset: 0; width: 100%; height: 100%; margin: 0;
+}
+input[type="range"].dual::-webkit-slider-thumb {
+  -webkit-appearance: none; pointer-events: auto; width: 20px; height: 20px; border-radius: 999px;
+  background: var(--bg-elev); border: 2px solid var(--fg); box-shadow: var(--sh-sm); cursor: grab;
+}
+input[type="range"].dual::-moz-range-thumb {
+  pointer-events: auto; width: 16px; height: 16px; border-radius: 999px;
+  background: var(--bg-elev); border: 2px solid var(--fg); cursor: grab;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .marquee-track { animation: none; }
+}
+
+@keyframes route-progress { 0% { transform: scaleX(0); opacity: 1; } 70% { transform: scaleX(0.9); opacity: 1; } 100% { transform: scaleX(1); opacity: 0; } }
+@keyframes page-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+.page-enter { animation: page-in 0.6s var(--ease) both; }
+
+@keyframes drift { from { transform: translate3d(0, 0, 0) scale(1); } to { transform: translate3d(40px, 30px, 0) scale(1.12); } }
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-9px); } }

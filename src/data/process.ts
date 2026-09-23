@@ -1,0 +1,12 @@
+import { ClipboardCheck, Camera, ListChecks, PackageCheck, Search, Sparkles, type LucideIcon } from "lucide-react";
+
+export interface ProcessStep { n: string; title: string; icon: LucideIcon; short: string; long: string; points: string[] }
+
+export const PROCESS: ProcessStep[] = [
+  { n: "01", title: "Sourcing", icon: Search, short: "Carefully source wearable shoes.", long: "We look for pairs with character, quality construction and life left in them — from brands and styles people genuinely want to wear. Most of what we see, we say no to.", points: ["Hand-picked, never bulk-listed", "Brands, materials and builds that last", "Only pairs we'd wear ourselves"] },
+  { n: "02", title: "Inspection", icon: ClipboardCheck, short: "Quality, condition, authenticity, usability.", long: "Every pair is checked closely — soles, stitching, insoles, lining, laces and labels. We note every mark honestly and check branded pairs against label, stitching and production details.", points: ["Structural check: soles, stitching, insoles", "Cosmetic check: scuffs, creasing, marks", "Authenticity review for branded pairs"] },
+  { n: "03", title: "Cleaning & Preparation", icon: Sparkles, short: "Prepared for presentation and sale.", long: "Every pair is cleaned, deodorised and finished — uppers, midsoles and insoles — so it arrives ready to wear.", points: ["Material-appropriate cleaning", "Deodorised and dried properly", "Odour-free before it's listed"] },
+  { n: "04", title: "Photography", icon: Camera, short: "Detailed images from every angle.", long: "Side, back, soles, labels, size tags and — importantly — any wear or defects, photographed clearly so you can inspect the pair before you buy.", points: ["Side, back and top views", "Brand label and size label", "Close-ups of soles and any wear"] },
+  { n: "05", title: "Listing", icon: ListChecks, short: "Transparent, honest listings.", long: "Each listing carries a standard condition grade, written notes on wear, exact measurements in inches, materials and price — with the original reference price where known.", points: ["Five-grade condition system", "Measured, not guessed, sizing", "One-of-one stock tracking"] },
+  { n: "06", title: "Delivery", icon: PackageCheck, short: "Safely packaged and delivered.", long: "Orders are packed carefully and dispatched with a trusted courier. Cash on Delivery is available, and you can follow your order from packed to delivered.", points: ["Protective, tidy packaging", "Nationwide courier delivery", "Live order tracking"] },
+];

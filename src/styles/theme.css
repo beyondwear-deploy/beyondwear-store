@@ -1,0 +1,118 @@
+/* =====================================================================
+   THEME / DESIGN TOKENS — the single place to re-brand the store.
+   Change primary / secondary / accent / surfaces here; every component
+   reads these variables (via Tailwind aliases in globals.css).
+   ===================================================================== */
+
+:root {
+  color-scheme: light;
+
+  /* Surfaces */
+  --bg: #f4f1ea;            /* page background (bone) */
+  --bg-elev: #fbfaf6;       /* cards / raised surfaces */
+  --bg-soft: #ebe6db;       /* subtle sections, skeletons */
+  --bg-inverse: #12110e;    /* inverse sections */
+
+  /* Text */
+  --fg: #14130f;
+  --fg-muted: #5a554b;
+  --fg-subtle: #7b7568;
+  --fg-inverse: #f4f1ea;
+
+  /* Borders */
+  --border: #ddd6c8;
+  --border-strong: #b9b09d;
+
+  /* Brand */
+  --primary: #14130f;       /* main buttons */
+  --primary-fg: #f4f1ea;
+  --secondary: #26382f;     /* deep forest */
+  --secondary-fg: #f4f1ea;
+  --accent: #b1421d;        /* terracotta ember */
+  --accent-fg: #ffffff;
+  --accent-soft: #f0dccf;
+
+  /* Feedback */
+  --success: #2f6b46;
+  --success-soft: #dcebe1;
+  --warning: #8a5a12;
+  --warning-soft: #f3e5c8;
+  --danger: #a12a2a;
+  --danger-soft: #f3d9d6;
+
+  /* Product condition badges (bg / fg / dot) */
+  --cond-new-bg: #dcebe1;        --cond-new-fg: #1f5a37;        --cond-new-dot: #2f8a55;
+  --cond-likenew-bg: #d9ecec;    --cond-likenew-fg: #175a5c;    --cond-likenew-dot: #2a8f92;
+  --cond-excellent-bg: #e3e6f3;  --cond-excellent-fg: #2f3a7a;  --cond-excellent-dot: #4a5bc0;
+  --cond-good-bg: #f3e5c8;       --cond-good-fg: #7a4f0d;       --cond-good-dot: #c78a1c;
+  --cond-fair-bg: #f0dccf;       --cond-fair-fg: #8a3213;       --cond-fair-dot: #c4552c;
+
+  /* Effects */
+  --glass-bg: rgba(251, 250, 246, 0.72);
+  --glass-border: rgba(20, 19, 15, 0.08);
+  --sh-sm: 0 1px 2px rgba(20, 19, 15, 0.06), 0 1px 1px rgba(20, 19, 15, 0.04);
+  --sh-md: 0 8px 24px -8px rgba(20, 19, 15, 0.16), 0 2px 6px rgba(20, 19, 15, 0.05);
+  --sh-lg: 0 28px 60px -20px rgba(20, 19, 15, 0.28), 0 8px 20px -8px rgba(20, 19, 15, 0.1);
+  --overlay: rgba(20, 19, 15, 0.5);
+  --ring: #b1421d;
+
+  /* Shape & motion */
+  --r-sm: 10px;
+  --r-md: 16px;
+  --r-lg: 24px;
+  --r-xl: 32px;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Product art studio backdrops (used by generated imagery) */
+  --art-bg-a: #e9e3d6;
+  --art-bg-b: #f7f4ec;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --bg: #0e0d0b;
+  --bg-elev: #171613;
+  --bg-soft: #1f1d19;
+  --bg-inverse: #f4f1ea;
+
+  --fg: #f2eee6;
+  --fg-muted: #b3ac9e;
+  --fg-subtle: #8f897c;
+  --fg-inverse: #12110e;
+
+  --border: #2b2924;
+  --border-strong: #46433b;
+
+  --primary: #f2eee6;
+  --primary-fg: #12110e;
+  --secondary: #aecbb8;
+  --secondary-fg: #12110e;
+  --accent: #e2794f;
+  --accent-fg: #14130f;
+  --accent-soft: #35211a;
+
+  --success: #6fc493;
+  --success-soft: #16281e;
+  --warning: #e0b25b;
+  --warning-soft: #2c2312;
+  --danger: #ee8b84;
+  --danger-soft: #301a19;
+
+  --cond-new-bg: #16301f;        --cond-new-fg: #8fe0ad;        --cond-new-dot: #57c184;
+  --cond-likenew-bg: #14302f;    --cond-likenew-fg: #86dadd;    --cond-likenew-dot: #47b7bb;
+  --cond-excellent-bg: #1c2143;  --cond-excellent-fg: #aab5f2;  --cond-excellent-dot: #7b8cf0;
+  --cond-good-bg: #33270f;       --cond-good-fg: #efc47a;       --cond-good-dot: #e0a33a;
+  --cond-fair-bg: #38200f;       --cond-fair-fg: #f2a37e;       --cond-fair-dot: #e6774a;
+
+  --glass-bg: rgba(23, 22, 19, 0.7);
+  --glass-border: rgba(242, 238, 230, 0.1);
+  --sh-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --sh-md: 0 10px 28px -10px rgba(0, 0, 0, 0.7), 0 2px 6px rgba(0, 0, 0, 0.4);
+  --sh-lg: 0 30px 64px -20px rgba(0, 0, 0, 0.8), 0 8px 20px -8px rgba(0, 0, 0, 0.5);
+  --overlay: rgba(0, 0, 0, 0.66);
+  --ring: #e2794f;
+
+  --art-bg-a: #24221d;
+  --art-bg-b: #2f2c26;
+}

@@ -19,7 +19,7 @@ export function OrderDetails({ order }: { order: Order }) {
             const p = getProductBySlug(i.slug);
             return (
               <li key={i.productId} className="flex items-center gap-4 py-4">
-                <div className="aspect-[4/5] w-16 shrink-0 overflow-hidden rounded-xl bg-soft ring-1 ring-line/60">
+                <div className="aspect-[4/5] w-16 shrink-0 overflow-hidden rounded-xl ring-1 ring-line/60" style={{ background: "var(--art-bg-b)" }}>
                   {p ? <ProductImage product={p} /> : <div className="size-full" />}
                 </div>
                 <div className="min-w-0 flex-1">

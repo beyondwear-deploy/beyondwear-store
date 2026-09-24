@@ -15,7 +15,7 @@ export const siteConfig = {
   brand: {
     name: "BeyondWear",
     legalName: "BeyondWear",
-    tagline: "Preloved shoes. Beyond the ordinary.",
+    tagline: "Beyond the first Wear",
     /** What the name means — used on the About page and in the footer. */
     meaning: "BeyondWear means going beyond fast fashion — giving great shoes a life beyond their first owner, and helping you dress beyond the everyday.",
     /** One-line brand story. */

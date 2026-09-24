@@ -66,6 +66,10 @@
   /* Product art studio backdrops (used by generated imagery) */
   --art-bg-a: #e9e3d6;
   --art-bg-b: #f7f4ec;
+  /* Stable light neutral/accent tints for art backdrops (hero/collage compositions) —
+     fixed across themes so the studio look never darkens in dark mode. */
+  --art-tint-neutral: #e2dbc8;
+  --art-tint-accent: #f7dcc2;
 }
 
 :root[data-theme="dark"] {
@@ -113,6 +117,10 @@
   --overlay: rgba(0, 0, 0, 0.7);
   --ring: #f4600d;
 
-  --art-bg-a: #1a1a1a;
-  --art-bg-b: #202020;
+  /* Product art backdrop stays light even in dark mode — real product photography
+     reads best on a bright neutral surface, which is what makes the shoes pop. */
+  --art-bg-a: #e7e2d6;
+  --art-bg-b: #f6f3ec;
+  --art-tint-neutral: #e2dbc8;
+  --art-tint-accent: #f7dcc2;
 }

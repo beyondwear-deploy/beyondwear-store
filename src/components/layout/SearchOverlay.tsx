@@ -93,7 +93,7 @@ export function SearchOverlay() {
                   {trending.map((p) => (
                     <li key={p.id}>
                       <Link href={`/product/${p.slug}`} onClick={close} className="group block">
-                        <div className="aspect-[4/5] overflow-hidden rounded-xl bg-soft"><div className="h-full w-full transition-transform duration-700 group-hover:scale-105"><ProductImage product={p} /></div></div>
+                        <div className="aspect-[4/5] overflow-hidden rounded-xl" style={{ background: "var(--art-bg-b)" }}><div className="h-full w-full transition-transform duration-700 group-hover:scale-105"><ProductImage product={p} /></div></div>
                         <p className="mt-2 truncate text-xs font-semibold">{p.brand} {p.name}</p>
                         <p className="text-xs text-muted">{formatPrice(p.price)}</p>
                       </Link>
@@ -129,7 +129,7 @@ export function SearchOverlay() {
                   {hits.slice(0, 6).map(({ product: p }) => (
                     <li key={p.id}>
                       <Link href={`/product/${p.slug}`} onClick={() => { addSearch(debounced); close(); }} className="group flex items-center gap-4 rounded-2xl p-2 transition hover:bg-soft">
-                        <div className="size-16 shrink-0 overflow-hidden rounded-xl bg-soft"><ProductImage product={p} /></div>
+                        <div className="size-16 shrink-0 overflow-hidden rounded-xl" style={{ background: "var(--art-bg-b)" }}><ProductImage product={p} /></div>
                         <div className="min-w-0 flex-1">
                           <p className="eyebrow !text-[10px]">{p.brand}</p>
                           <p className="truncate text-sm font-medium">{p.name} <span className="text-muted">· {p.color} · {p.size}</span></p>

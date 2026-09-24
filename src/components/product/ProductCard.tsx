@@ -26,7 +26,7 @@ export function ProductCard({ product: p, priority = false, className }: { produ
       onMouseEnter={() => setHovered(true)}
       onFocus={() => setHovered(true)}
     >
-      <div className="relative aspect-square overflow-hidden bg-soft">
+      <div className="relative aspect-square overflow-hidden" style={{ background: "var(--art-bg-b)" }}>
         <Link href={`/product/${p.slug}`} aria-label={label} className="absolute inset-0 z-0 block">
           <div className={cn("absolute inset-0 transition-transform duration-[900ms] ease-[var(--ease)] group-hover:scale-[1.06]", sold && "opacity-60 saturate-50")}>
             <ProductImage product={p} index={0} eager={priority} />

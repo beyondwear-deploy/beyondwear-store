@@ -26,10 +26,10 @@ export function QuickView() {
       {p && (
         <div className="grid max-h-[92dvh] overflow-y-auto md:grid-cols-2">
           <div className="p-4 md:p-5">
-            <div className="relative aspect-[4/5] overflow-hidden rounded-2xl bg-soft"><ProductImage product={p} index={idx} eager /></div>
+            <div className="relative aspect-[4/5] overflow-hidden rounded-2xl" style={{ background: "var(--art-bg-b)" }}><ProductImage product={p} index={idx} eager /></div>
             <div className="mt-3 flex gap-2 overflow-x-auto no-scrollbar" role="group" aria-label="Product images">
               {p.images.map((img, i) => (
-                <button key={img.view} type="button" onClick={() => setIdx(i)} aria-label={`Show ${img.view} image`} aria-pressed={i === idx} className={cn("aspect-[4/5] w-14 shrink-0 overflow-hidden rounded-lg bg-soft ring-2 transition", i === idx ? "ring-fg" : "ring-transparent opacity-70 hover:opacity-100")}>
+                <button key={img.view} type="button" onClick={() => setIdx(i)} aria-label={`Show ${img.view} image`} aria-pressed={i === idx} style={{ background: "var(--art-bg-b)" }} className={cn("aspect-[4/5] w-14 shrink-0 overflow-hidden rounded-lg ring-2 transition", i === idx ? "ring-fg" : "ring-transparent opacity-70 hover:opacity-100")}>
                   <ProductImage product={p} index={i} />
                 </button>
               ))}

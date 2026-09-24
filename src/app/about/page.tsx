@@ -71,8 +71,10 @@ export default function AboutPage() {
 
       <section className="container-x py-20 sm:py-28">
         <div className="grid items-center gap-12 lg:grid-cols-2">
-          <Reveal className="mx-auto aspect-[4/5] w-full max-w-md overflow-hidden rounded-[2rem] bg-soft">
-            <ProductArt art={{ garment: "sneaker", color: "#e4d9c1", color2: "#3d3c39", variant: 1 }} view="side" alt="Illustration of a sneaker" decorative className="h-full w-full" meta={{ brand: "", size: "", material: "", wearNote: "" }} />
+          <Reveal className="mx-auto aspect-[4/5] w-full max-w-md overflow-hidden rounded-[2rem]">
+            <div className="h-full w-full" style={{ background: "var(--art-bg-b)" }}>
+              <ProductArt art={{ garment: "sneaker", color: "#e4d9c1", color2: "#3d3c39", variant: 1 }} view="side" alt="Illustration of a sneaker" decorative className="h-full w-full" meta={{ brand: "", size: "", material: "", wearNote: "" }} />
+            </div>
           </Reveal>
           <Reveal delay={0.1}>
             <p className="eyebrow mb-4">Honest by design</p>

@@ -20,7 +20,8 @@ function ZoomImage({ product, index, onOpen, eager }: { product: Product; index:
       aria-label={`Open ${VIEW_LABEL[product.images[index].view]} image in full screen viewer`}
       onMouseMove={(e) => { const r = e.currentTarget.getBoundingClientRect(); setPos({ x: ((e.clientX - r.left) / r.width) * 100, y: ((e.clientY - r.top) / r.height) * 100 }); }}
       onMouseLeave={() => setPos(null)}
-      className="relative block aspect-[4/5] w-full cursor-zoom-in overflow-hidden rounded-3xl bg-soft ring-1 ring-line/60"
+      className="relative block aspect-[4/5] w-full cursor-zoom-in overflow-hidden rounded-3xl ring-1 ring-line/60"
+      style={{ background: "var(--art-bg-b)" }}
     >
       <div className="h-full w-full transition-transform duration-300 ease-out" style={{ transform: pos ? "scale(2.2)" : "scale(1)", transformOrigin: pos ? `${pos.x}% ${pos.y}%` : "50% 50%" }}>
         <ProductImage product={product} index={index} eager={eager} />
@@ -55,7 +56,8 @@ export function ProductGallery({ product: p, sold, openAt, onOpenAtHandled }: { 
         <div className="order-2 hidden gap-3 lg:order-1 lg:flex lg:flex-col" role="tablist" aria-label="Product images">
           {p.images.map((img, i) => (
             <button key={img.view} type="button" role="tab" aria-selected={i === index} aria-label={`${VIEW_LABEL[img.view]}`} onClick={() => setIndex(i)} onMouseEnter={() => setIndex(i)}
-              className={cn("relative aspect-[4/5] overflow-hidden rounded-xl bg-soft ring-2 transition", i === index ? "ring-fg" : "ring-transparent opacity-65 hover:opacity-100")}>
+              style={{ background: "var(--art-bg-b)" }}
+              className={cn("relative aspect-[4/5] overflow-hidden rounded-xl ring-2 transition", i === index ? "ring-fg" : "ring-transparent opacity-65 hover:opacity-100")}>
               <ProductImage product={p} index={i} />
             </button>
           ))}
@@ -67,7 +69,7 @@ export function ProductGallery({ product: p, sold, openAt, onOpenAtHandled }: { 
           {/* mobile swipe carousel */}
           <div ref={track} onScroll={onScroll} className="no-scrollbar flex snap-x snap-mandatory overflow-x-auto rounded-3xl lg:hidden" role="group" aria-label="Product images, swipe to browse">
             {p.images.map((img, i) => (
-              <button key={img.view} type="button" onClick={() => setViewer(true)} aria-label={`${VIEW_LABEL[img.view]} — tap for full screen`} className="relative aspect-[4/5] w-full shrink-0 snap-center overflow-hidden bg-soft">
+              <button key={img.view} type="button" onClick={() => setViewer(true)} aria-label={`${VIEW_LABEL[img.view]} — tap for full screen`} style={{ background: "var(--art-bg-b)" }} className="relative aspect-[4/5] w-full shrink-0 snap-center overflow-hidden">
                 <ProductImage product={p} index={i} eager={i === 0} />
               </button>
             ))}
@@ -124,7 +126,8 @@ function Viewer({ product: p, index, setIndex, open, onClose }: { product: Produ
         <div className="relative flex min-h-0 flex-1 items-center justify-center px-4 sm:px-16">
           <button type="button" onClick={prev} aria-label="Previous image" className="absolute left-2 top-1/2 z-10 grid size-12 -translate-y-1/2 place-items-center rounded-full bg-white/10 backdrop-blur transition hover:bg-white/20 sm:left-5"><ChevronLeft className="size-6" /></button>
           <div
-            className={cn("relative aspect-[4/5] h-full max-h-full max-w-full overflow-hidden rounded-2xl bg-soft", zoom ? "cursor-zoom-out" : "cursor-zoom-in")}
+            className={cn("relative aspect-[4/5] h-full max-h-full max-w-full overflow-hidden rounded-2xl", zoom ? "cursor-zoom-out" : "cursor-zoom-in")}
+            style={{ background: "var(--art-bg-b)" }}
             onClick={(e) => (zoom ? setZoom(null) : setFromEvent(e.clientX, e.clientY, e.currentTarget))}
             onMouseMove={(e) => zoom && setFromEvent(e.clientX, e.clientY, e.currentTarget)}
             onTouchMove={(e) => zoom && setFromEvent(e.touches[0].clientX, e.touches[0].clientY, e.currentTarget)}

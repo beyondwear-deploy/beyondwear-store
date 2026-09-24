@@ -27,7 +27,7 @@ export function MiniLines({ s }: { s: Summary }) {
     <ul className="space-y-4">
       {s.items.map(({ product: p, qty }) => (
         <li key={p.id} className="flex items-center gap-3">
-          <div className="relative aspect-[4/5] w-14 shrink-0 overflow-hidden rounded-lg bg-soft ring-1 ring-line/60"><ProductImage product={p} />{qty > 1 && <span className="absolute right-0.5 top-0.5 grid size-5 place-items-center rounded-full bg-fg text-[10px] font-bold text-bg">{qty}</span>}</div>
+          <div className="relative aspect-[4/5] w-14 shrink-0 overflow-hidden rounded-lg ring-1 ring-line/60" style={{ background: "var(--art-bg-b)" }}><ProductImage product={p} />{qty > 1 && <span className="absolute right-0.5 top-0.5 grid size-5 place-items-center rounded-full bg-fg text-[10px] font-bold text-bg">{qty}</span>}</div>
           <div className="min-w-0 flex-1"><p className="truncate text-sm font-medium">{p.brand} {p.name}</p><p className="text-xs text-muted">Size {p.size} · {p.color}</p></div>
           <p className="text-sm font-semibold tabular-nums">{formatPrice(p.price * qty)}</p>
         </li>

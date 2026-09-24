@@ -27,7 +27,7 @@ export default function HomePage() {
       <NewArrivalsSection products={newest(inStock(all)).slice(0, 10)} />
       <TrendingSection products={popular(inStock(all)).slice(0, 8)} />
       <DepartmentSplit eyebrow="The men's edit" title="Men" blurb="Sneakers, boots and everyday pairs." href="/men" hero={find("Nike Dunk")} products={dept("men")} tint="var(--bg-soft)" />
-      <DepartmentSplit eyebrow="The women's edit" title="Women" blurb="Clean, wearable pairs with a second act." href="/women" hero={find("Timberland Premium")} products={dept("women")} tint="var(--accent-soft)" reverse />
+      <DepartmentSplit eyebrow="The women's edit" title="Women" blurb="Clean, wearable pairs with a second act." href="/women" hero={find("Timberland Premium")} products={dept("women")} tint="var(--art-tint-accent)" reverse />
       <DepartmentSplit eyebrow="The kids' edit" title="Kids" blurb="Quality that's barely been outgrown." href="/kids" hero={find("Puma Kids Runner")} products={dept("kids")} tint="var(--bg-soft)" />
       <WhyPreloved />
       <ProcessStrip />

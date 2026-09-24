@@ -59,16 +59,16 @@ export function Hero({ main, topRight, midRight, badge, featured }: { main: Prod
         {/* editorial collage */}
         <div className="relative mx-auto aspect-[5/6] w-full max-w-[560px] lg:max-w-none">
           <motion.div style={{ y: yA }} initial={{ opacity: 0, scale: 0.94 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1.2, delay: 0.25, ease }} className="absolute left-0 top-[6%] h-[80%] w-[58%] overflow-hidden rounded-t-[999px] rounded-b-[2rem] shadow-lift ring-1 ring-line/60">
-            <ProductImage product={main} tint="var(--accent-soft)" eager />
+            <ProductImage product={main} tint="var(--art-tint-accent)" eager />
           </motion.div>
           <motion.div style={{ y: yB }} initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 1.1, delay: 0.45, ease }} className="absolute right-0 top-0 h-[38%] w-[40%] overflow-hidden rounded-3xl shadow-card ring-1 ring-line/60">
-            <ProductImage product={topRight} tint="var(--bg-soft)" eager />
+            <ProductImage product={topRight} tint="var(--art-tint-neutral)" eager />
           </motion.div>
           <motion.div style={{ y: yC }} initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 1.1, delay: 0.6, ease }} className="absolute right-[3%] top-[42%] h-[36%] w-[38%] overflow-hidden rounded-3xl shadow-card ring-1 ring-line/60">
-            <ProductImage product={midRight} tint="var(--accent-soft)" eager />
+            <ProductImage product={midRight} tint="var(--art-tint-accent)" eager />
           </motion.div>
           <motion.div style={{ y: yA }} initial={{ opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1, delay: 0.9, ease }} className="absolute bottom-[4%] right-[6%] size-[24%] overflow-hidden rounded-full shadow-card ring-4 ring-bg">
-            <ProductImage product={badge} tint="var(--bg-soft)" eager />
+            <ProductImage product={badge} tint="var(--art-tint-neutral)" eager />
           </motion.div>
 
           {/* rotating seal */}

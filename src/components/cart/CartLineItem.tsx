@@ -15,7 +15,7 @@ export function CartLineItem({ line, onNavigate }: { line: ResolvedLine; onNavig
   const oneOfOne = p.stock === 1;
   return (
     <li className="flex gap-4">
-      <Link href={`/product/${p.slug}`} onClick={onNavigate} className={`relative block aspect-[4/5] w-24 shrink-0 overflow-hidden rounded-xl bg-soft ring-1 ring-line/60 ${issue ? "opacity-50" : ""}`} aria-label={`View ${p.brand} ${p.name}`}>
+      <Link href={`/product/${p.slug}`} onClick={onNavigate} style={{ background: "var(--art-bg-b)" }} className={`relative block aspect-[4/5] w-24 shrink-0 overflow-hidden rounded-xl ring-1 ring-line/60 ${issue ? "opacity-50" : ""}`} aria-label={`View ${p.brand} ${p.name}`}>
         <ProductImage product={p} />
       </Link>
       <div className="flex min-w-0 flex-1 flex-col">

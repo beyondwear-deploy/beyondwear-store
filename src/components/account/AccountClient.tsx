@@ -138,7 +138,7 @@ function OrderRow({ order: o }: { order: Order }) {
   return (
     <li>
       <Link href={`/account?tab=orders&order=${o.id}`} className="group flex items-center gap-4 rounded-2xl border border-line bg-elev p-4 transition hover:-translate-y-0.5 hover:border-line-strong hover:shadow-card sm:p-5">
-        <div className="hidden size-16 shrink-0 overflow-hidden rounded-xl bg-soft sm:block">
+        <div className="hidden size-16 shrink-0 overflow-hidden rounded-xl sm:block" style={{ background: "var(--art-bg-b)" }}>
           {first && <ProductImage product={first} />}
         </div>
         <div className="min-w-0 flex-1">

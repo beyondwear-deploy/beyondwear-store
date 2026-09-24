@@ -45,7 +45,7 @@ export function DepartmentPage({ dept }: { dept: Dept }) {
           <div className="grid grid-cols-3 gap-3 sm:gap-4" aria-hidden>
             {hero.map((p, i) => (
               <div key={p.id} className={`aspect-[4/5] overflow-hidden rounded-[1.6rem] shadow-card ring-1 ring-line/60 ${i === 1 ? "translate-y-8" : ""}`}>
-                <ProductImage product={p} tint={i === 1 ? "var(--accent-soft)" : "var(--bg-soft)"} eager />
+                <ProductImage product={p} tint={i === 1 ? "var(--art-tint-accent)" : "var(--art-tint-neutral)"} eager />
               </div>
             ))}
           </div>

@@ -14,7 +14,7 @@ import { getProductById } from "@/lib/catalog";
 
 const storage = createJSONStorage(() => localStorage);
 const opts = <T,>(name: string, partialize?: (s: T) => Partial<T>) => ({
-  name: `sequelcloset.${name}`,
+  name: `beyondwear.${name}`,
   storage,
   skipHydration: true,
   ...(partialize ? { partialize } : {}),
@@ -240,7 +240,7 @@ const emptyCheckout = {
 export const useCheckout = create<CheckoutState>()(
   persist(
     (set) => ({ ...emptyCheckout, patch: (p) => set(p), reset: () => set({ ...emptyCheckout }) }),
-    { name: "sequelcloset.checkout", storage: createJSONStorage(() => sessionStorage), skipHydration: true },
+    { name: "beyondwear.checkout", storage: createJSONStorage(() => sessionStorage), skipHydration: true },
   ),
 );
 

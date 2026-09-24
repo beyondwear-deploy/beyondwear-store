@@ -18,9 +18,9 @@ function push(key: string, value: unknown): void {
 export async function subscribeNewsletter(email: string): Promise<SubmitResult> {
   await wait(700);
   try {
-    const list: { email: string }[] = JSON.parse(localStorage.getItem("sequelcloset.newsletter") || "[]");
+    const list: { email: string }[] = JSON.parse(localStorage.getItem("beyondwear.newsletter") || "[]");
     if (list.some((x) => x.email === email.toLowerCase())) return { ok: true, duplicate: true };
-    push("sequelcloset.newsletter", { email: email.toLowerCase(), at: new Date().toISOString() });
+    push("beyondwear.newsletter", { email: email.toLowerCase(), at: new Date().toISOString() });
     return { ok: true };
   } catch {
     return { ok: false, error: "We couldn't save your email. Please try again." };
@@ -30,7 +30,7 @@ export async function subscribeNewsletter(email: string): Promise<SubmitResult> 
 export async function sendContactMessage(msg: { name: string; email: string; phone?: string; subject: string; message: string; productRef?: string }): Promise<SubmitResult> {
   await wait(900);
   try {
-    push("sequelcloset.messages", { ...msg, at: new Date().toISOString() });
+    push("beyondwear.messages", { ...msg, at: new Date().toISOString() });
     return { ok: true };
   } catch {
     return { ok: false, error: "Something went wrong sending your message. Please try again or reach us on WhatsApp." };

@@ -13,22 +13,22 @@ export const siteConfig = {
   catalogReferenceDate: "2026-09-20T00:00:00.000Z",
 
   brand: {
-    name: "Sequel Closet",
-    legalName: "Sequel Closet",
-    tagline: "Preloved shoes. Second chapter.",
+    name: "BeyondWear",
+    legalName: "BeyondWear",
+    tagline: "Preloved shoes. Beyond the ordinary.",
     /** What the name means — used on the About page and in the footer. */
-    meaning: "A sequel is the next chapter of a story you already love. For us, it's the next chapter of a great pair of shoes.",
+    meaning: "BeyondWear means going beyond fast fashion — giving great shoes a life beyond their first owner, and helping you dress beyond the everyday.",
     /** One-line brand story. */
-    story: "Every great pair of shoes deserves a second chapter, so we inspect, grade and honestly describe each one before it reaches your closet.",
+    story: "Every great pair of shoes deserves to go beyond its first life, so we inspect, grade and honestly describe each one before it reaches your closet.",
     description:
       "Carefully selected preloved shoes in Pakistan — inspected, honestly graded, photographed in detail and delivered nationwide with Cash on Delivery.",
-    domain: process.env.NEXT_PUBLIC_SITE_URL || "https://www.sequelcloset.pk",
+    domain: process.env.NEXT_PUBLIC_SITE_URL || "https://beyondwear.store",
   },
 
   contact: {
     whatsappNumber: "923000000000", // international format, digits only
     whatsappDisplay: "+92 300 0000000",
-    email: "hello@sequelcloset.pk",
+    email: "hello@beyondwear.store",
     phone: "+92 300 0000000",
     address: ["Studio address line", "Your City, Pakistan"],
     hours: [
@@ -41,9 +41,9 @@ export const siteConfig = {
 
   socials: {
     // Handles are planned, not yet claimed — confirm each one is yours before launch.
-    instagram: { label: "Instagram", url: "https://instagram.com/sequelcloset", handle: "@sequelcloset" },
-    facebook: { label: "Facebook", url: "https://facebook.com/sequelcloset", handle: "/sequelcloset" },
-    tiktok: { label: "TikTok", url: "https://tiktok.com/@sequelcloset", handle: "@sequelcloset" },
+    instagram: { label: "Instagram", url: "https://instagram.com/beyondwear.store", handle: "@beyondwear.store" },
+    facebook: { label: "Facebook", url: "https://facebook.com/beyondwear.store", handle: "/beyondwear.store" },
+    tiktok: { label: "TikTok", url: "https://tiktok.com/@beyondwear.store", handle: "@beyondwear.store" },
     whatsapp: { label: "WhatsApp", url: "https://wa.me/923000000000", handle: "+92 300 0000000" },
   },
 
@@ -74,7 +74,7 @@ export const siteConfig = {
     onlineMode: (process.env.NEXT_PUBLIC_ONLINE_PAYMENTS as "off" | "demo" | undefined) ?? "demo",
     bankTransfer: {
       bankName: "Your Bank Name",
-      accountTitle: "Sequel Closet",
+      accountTitle: "BeyondWear",
       accountNumber: "0000-0000000-0", // placeholder — replace before launch
       iban: "PK00 XXXX 0000 0000 0000 0000",
       note: "Send the exact order total and share the receipt on WhatsApp. Your order is confirmed once payment is verified.",
@@ -96,8 +96,8 @@ export const siteConfig = {
   newsletter: { title: "Be first to every new pair." },
 
   seo: {
-    titleTemplate: "%s | Sequel Closet",
-    defaultTitle: "Sequel Closet — Preloved Shoes in Pakistan",
+    titleTemplate: "%s | BeyondWear",
+    defaultTitle: "BeyondWear — Preloved Shoes in Pakistan",
     ogImage: "/og.png",
   },
 } as const;

@@ -8,7 +8,7 @@
  */
 import type { User } from "@/lib/types";
 
-const KEY = "sequelcloset.users";
+const KEY = "beyondwear.users";
 interface StoredUser extends User { salt: string; hash: string }
 
 export type AuthResult<T = User> = { ok: true; data: T } | { ok: false; error: string; field?: string };

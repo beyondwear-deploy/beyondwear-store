@@ -10,7 +10,7 @@ import type { Category, Gender, Product } from "./types";
 
 /**
  * LAUNCH SWITCH — categories that are live in the shop right now.
- * Sequel Closet starts with shoes only. Products in other categories stay in
+ * BeyondWear starts with shoes only. Products in other categories stay in
  * data/products.ts but are hidden everywhere (shop, search, sitemap, product
  * URLs) and shown as "Coming soon". To launch a category, add its id here.
  */

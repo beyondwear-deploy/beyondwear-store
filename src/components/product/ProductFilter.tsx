@@ -29,7 +29,7 @@ function Check({ label, checked, onChange, count, extra }: { label: ReactNode; c
   return (
     <label className={cn("group flex cursor-pointer items-center gap-3 rounded-lg py-1.5 text-sm transition", count === 0 && !checked && "opacity-40")}>
       <input type="checkbox" checked={checked} onChange={onChange} className="peer sr-only" />
-      <span aria-hidden className="grid size-[18px] shrink-0 place-items-center rounded-[5px] border border-line-strong bg-elev transition peer-checked:border-fg peer-checked:bg-fg peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-[var(--ring)] group-hover:border-fg [&>svg]:opacity-0 peer-checked:[&>svg]:opacity-100">
+      <span aria-hidden className="grid size-[18px] shrink-0 place-items-center rounded-[5px] border border-line-strong bg-elev transition peer-checked:border-accent peer-checked:bg-accent peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-[var(--ring)] group-hover:border-accent [&>svg]:opacity-0 peer-checked:[&>svg]:opacity-100">
         <svg viewBox="0 0 14 14" className="size-2.5 text-bg"><path d="M2.5 7.5l3 3 6-7" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" /></svg>
       </span>
       <span className="flex-1">{label}</span>
@@ -43,7 +43,7 @@ function Radio({ label, checked, onChange, name, count }: { label: string; check
   return (
     <label className="group flex cursor-pointer items-center gap-3 py-1.5 text-sm">
       <input type="radio" name={name} checked={checked} onChange={onChange} className="peer sr-only" />
-      <span aria-hidden className="grid size-[18px] place-items-center rounded-full border border-line-strong bg-elev transition peer-checked:border-fg peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-[var(--ring)] group-hover:border-fg [&>i]:scale-0 peer-checked:[&>i]:scale-100"><i className="block size-2 rounded-full bg-fg transition" /></span>
+      <span aria-hidden className="grid size-[18px] place-items-center rounded-full border border-line-strong bg-elev transition peer-checked:border-accent peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-[var(--ring)] group-hover:border-accent [&>i]:scale-0 peer-checked:[&>i]:scale-100"><i className="block size-2 rounded-full bg-accent transition" /></span>
       <span className="flex-1">{label}</span>
       {count !== undefined && <span className="text-xs tabular-nums text-subtle">{count}</span>}
     </label>
@@ -71,7 +71,7 @@ export function ProductFilter({ filters, facets, counts, onChange, onClear, idPr
           {CATEGORIES.filter((c) => LIVE_CATEGORIES.includes(c.id)).map((c) => {
             const on = filters.category.includes(c.id);
             return (
-              <button key={c.id} type="button" aria-pressed={on} onClick={() => toggle("category", c.id)} className={cn("rounded-full border px-3.5 py-1.5 text-xs font-semibold transition active:scale-95", on ? "border-fg bg-fg text-bg" : "border-line-strong hover:border-fg", !on && (counts.category[c.id] ?? 0) === 0 && "opacity-40")}>
+              <button key={c.id} type="button" aria-pressed={on} onClick={() => toggle("category", c.id)} className={cn("rounded-full border px-3.5 py-1.5 text-xs font-semibold transition active:scale-95", on ? "border-accent bg-accent text-accent-fg" : "border-line-strong hover:border-fg", !on && (counts.category[c.id] ?? 0) === 0 && "opacity-40")}>
                 {c.label} <span className="opacity-60">{counts.category[c.id] ?? 0}</span>
               </button>
             );
@@ -85,7 +85,7 @@ export function ProductFilter({ filters, facets, counts, onChange, onClear, idPr
         <div className="flex flex-wrap gap-2">
           {facets.sizes.map((s) => {
             const on = filters.size.includes(s);
-            return <button key={s} type="button" aria-pressed={on} onClick={() => toggle("size", s)} className={cn("min-w-11 rounded-lg border px-2.5 py-2 text-xs font-semibold transition active:scale-95", on ? "border-fg bg-fg text-bg" : "border-line-strong hover:border-fg", !on && (counts.size[s] ?? 0) === 0 && "opacity-35")}>{s}</button>;
+            return <button key={s} type="button" aria-pressed={on} onClick={() => toggle("size", s)} className={cn("min-w-11 rounded-lg border px-2.5 py-2 text-xs font-semibold transition active:scale-95", on ? "border-accent bg-accent text-accent-fg" : "border-line-strong bg-soft hover:border-fg", !on && (counts.size[s] ?? 0) === 0 && "opacity-35")}>{s}</button>;
           })}
         </div>
       </Group>

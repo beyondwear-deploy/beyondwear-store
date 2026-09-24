@@ -128,7 +128,7 @@ export function ShopClient({ title, eyebrow, blurb, crumbs, defaults = EMPTY, is
     <div className="container-x pb-8 pt-6 sm:pt-8">
       <Breadcrumbs items={crumbs} />
       <header className="mb-8 mt-6 flex flex-col gap-3 sm:mb-10">
-        {eyebrow && <p className="eyebrow">{eyebrow}</p>}
+        {eyebrow && <p className="eyebrow flex items-center gap-3"><span className="h-px w-8 bg-accent" aria-hidden />{eyebrow}</p>}
         <h1 className="text-5xl leading-none sm:text-7xl">{isSearch && filters.q ? <>Results for <em className="text-accent">“{filters.q}”</em></> : title}</h1>
         {blurb && !filters.q && <p className="max-w-xl text-muted sm:text-lg">{blurb}</p>}
       </header>
@@ -151,7 +151,7 @@ export function ShopClient({ title, eyebrow, blurb, crumbs, defaults = EMPTY, is
           </button>
           <label className="relative min-w-0">
             <span className="sr-only">Sort by</span>
-            <select value={filters.sort === "relevance" && !filters.q ? "featured" : filters.sort} onChange={(e) => update({ sort: e.target.value as Filters["sort"] })} className="h-11 w-full max-w-[9.5rem] appearance-none truncate rounded-full border border-line-strong bg-transparent pl-4 pr-10 sm:max-w-none text-xs font-bold uppercase tracking-[0.08em] outline-none transition hover:border-fg focus:border-fg">
+            <select value={filters.sort === "relevance" && !filters.q ? "featured" : filters.sort} onChange={(e) => update({ sort: e.target.value as Filters["sort"] })} className="h-11 w-full max-w-[9.5rem] appearance-none truncate rounded-full border border-line-strong bg-soft pl-4 pr-10 sm:max-w-none text-xs font-bold uppercase tracking-[0.08em] outline-none transition hover:border-fg focus:border-fg">
               {filters.q && <option value="relevance">Relevance</option>}
               {SORTS.map((s) => <option key={s.id} value={s.id}>{s.label}</option>)}
             </select>
@@ -164,7 +164,7 @@ export function ShopClient({ title, eyebrow, blurb, crumbs, defaults = EMPTY, is
         <ul className="mt-4 flex flex-wrap items-center gap-2" aria-label="Active filters">
           {chips.map((c) => (
             <li key={c.key + (c.value ?? "")}>
-              <button type="button" onClick={() => removeChip(c)} className="group inline-flex items-center gap-1.5 rounded-full bg-soft px-3 py-1.5 text-xs font-semibold transition hover:bg-line" aria-label={`Remove filter: ${c.label}`}>{c.label}<X className="size-3 opacity-60 group-hover:opacity-100" aria-hidden /></button>
+              <button type="button" onClick={() => removeChip(c)} className="group inline-flex items-center gap-1.5 rounded-full bg-accent px-3 py-1.5 text-xs font-semibold text-accent-fg transition hover:brightness-110" aria-label={`Remove filter: ${c.label}`}>{c.label}<X className="size-3 opacity-80 group-hover:opacity-100" aria-hidden /></button>
             </li>
           ))}
           <li><button type="button" onClick={clear} className="link-underline px-2 text-xs font-bold uppercase tracking-wider text-muted hover:text-fg">Clear all</button></li>

@@ -1,23 +1,28 @@
 import Link from "next/link";
+import { Feather } from "lucide-react";
 import { siteConfig } from "@/lib/config";
 import { cn } from "@/lib/format";
-import { LOGO } from "./logo-paths";
 
-/** Sequel Closet logo: echo "S" mark + SEQUEL / CLOSET wordmark (outlined paths, themes with the site). */
+/** BeyondWear logo: feather mark + bold condensed "BEYOND WEAR" wordmark. */
 export function Logo({ className, onClick, invert }: { className?: string; onClick?: () => void; invert?: boolean }) {
   return (
-    <Link href="/" onClick={onClick} aria-label={`${siteConfig.brand.name} — home`} className={cn("group inline-flex items-center", invert && "text-inverse-fg", className)}>
-      <svg viewBox={`0 0 ${LOGO.W} ${LOGO.H}`} className="h-11 w-auto sm:h-12" aria-hidden focusable="false">
-        <g transform={`scale(${LOGO.ISZ / 100})`}>
-          <path d={LOGO.markBack} fill="var(--accent)" className="transition-transform duration-500 ease-[var(--ease)] group-hover:translate-x-[3px] group-hover:translate-y-[3px]" />
-          <path d={LOGO.markFront} fill="currentColor" />
-        </g>
-        <g transform={`translate(${LOGO.TX} 0)`}>
-          <path d={LOGO.word} fill="currentColor" />
-          <rect x={LOGO.RULE_X} y={LOGO.RULE_Y} width={LOGO.RULE_W} height="1.2" fill="var(--accent)" />
-          <path d={LOGO.closet} fill="currentColor" opacity=".8" />
-        </g>
-      </svg>
+    <Link
+      href="/"
+      onClick={onClick}
+      aria-label={`${siteConfig.brand.name} — home`}
+      className={cn("group inline-flex items-center gap-2 sm:gap-2.5", invert && "text-inverse-fg", className)}
+    >
+      <Feather
+        className="size-6 -scale-x-100 shrink-0 text-accent transition-transform duration-500 ease-[var(--ease)] group-hover:rotate-[8deg] sm:size-7"
+        strokeWidth={2}
+        aria-hidden
+      />
+      <span
+        className="text-xl font-semibold uppercase leading-none tracking-tight sm:text-2xl"
+        style={{ fontFamily: "var(--font-display)" }}
+      >
+        Beyond&nbsp;Wear
+      </span>
     </Link>
   );
 }

@@ -48,7 +48,7 @@ export default function AboutPage() {
       <section className="container-x pb-20 sm:pb-28" aria-labelledby="name-h">
         <Reveal className="rounded-[2rem] border border-line bg-elev p-8 sm:p-14">
           <p className="eyebrow mb-4">The name</p>
-          <h2 id="name-h" className="text-balance text-4xl leading-[1.05] sm:text-6xl">What &ldquo;Sequel&rdquo; means.</h2>
+          <h2 id="name-h" className="text-balance text-4xl leading-[1.05] sm:text-6xl">What &ldquo;BeyondWear&rdquo; means.</h2>
           <p className="mt-6 max-w-2xl text-xl leading-relaxed text-muted sm:text-2xl">{siteConfig.brand.meaning}</p>
           <p className="mt-4 max-w-2xl text-base text-muted">{siteConfig.brand.story}</p>
         </Reveal>

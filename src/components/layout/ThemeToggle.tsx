@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { IconButton } from "@/components/ui/Button";
 
 type Theme = "light" | "dark";
-const KEY = "sequelcloset.theme";
+const KEY = "beyondwear.theme";
 
 export function ThemeToggle({ className }: { className?: string }) {
   const [theme, setTheme] = useState<Theme | null>(null);

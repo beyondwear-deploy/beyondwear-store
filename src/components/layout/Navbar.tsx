@@ -36,7 +36,7 @@ export function Navbar() {
   useEffect(() => { if (!bump) return; setBumping(true); const t = setTimeout(() => setBumping(false), 600); return () => clearTimeout(t); }, [bump]);
 
   return (
-    <header className={cn("sticky top-0 z-50 w-full transition-all duration-500 ease-[var(--ease)]", scrolled ? "glass shadow-soft" : "border-b border-transparent bg-bg/0")}>
+    <header className={cn("sticky top-0 z-50 w-full border-b border-line/60 bg-bg transition-shadow duration-500 ease-[var(--ease)]", scrolled && "shadow-soft")}>
       <div className={cn("container-x flex items-center justify-between gap-4 transition-all duration-500 ease-[var(--ease)]", scrolled ? "h-16" : "h-[72px] sm:h-20")}>
         <div className="flex items-center gap-2">
           <IconButton label="Open menu" onClick={() => setMenuOpen(true)} className="-ml-2 xl:hidden" aria-haspopup="dialog"><Menu className="size-6" /></IconButton>
@@ -49,7 +49,7 @@ export function Navbar() {
               const active = isActive(pathname, l.href);
               return (
                 <li key={l.href} className="relative">
-                  <Link href={l.href} aria-current={active ? "page" : undefined} className={cn("group relative block px-3.5 py-2 text-[11px] font-bold uppercase tracking-[0.16em] transition-colors", active ? "text-fg" : "text-muted hover:text-fg")}>
+                  <Link href={l.href} aria-current={active ? "page" : undefined} className={cn("group relative block px-3.5 py-2 text-[11px] font-bold uppercase tracking-[0.16em] transition-colors", active ? "text-accent" : "text-muted hover:text-fg")}>
                     {l.label}
                     <span aria-hidden className="absolute inset-x-3.5 bottom-0.5 h-px origin-left scale-x-0 bg-fg transition-transform duration-500 ease-[var(--ease)] group-hover:scale-x-100" />
                   </Link>

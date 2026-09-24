@@ -1,6 +1,7 @@
 import "@fontsource-variable/inter";
 import "@fontsource-variable/fraunces";
 import "@fontsource-variable/fraunces/wght-italic.css";
+import "@fontsource-variable/oswald";
 import "@/styles/globals.css";
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
@@ -27,11 +28,12 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   width: "device-width", initialScale: 1,
-  themeColor: [{ media: "(prefers-color-scheme: light)", color: "#f4f1ea" }, { media: "(prefers-color-scheme: dark)", color: "#0e0d0b" }],
+  themeColor: [{ media: "(prefers-color-scheme: light)", color: "#f4f1ea" }, { media: "(prefers-color-scheme: dark)", color: "#0a0a0a" }],
 };
 
 // Runs before first paint so there is never a light→dark flash.
-const themeScript = `(function(){try{var t=localStorage.getItem('sequelcloset.theme');if(t!=='light'&&t!=='dark'){t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)}catch(e){document.documentElement.setAttribute('data-theme','light')}})();`;
+// BeyondWear defaults to dark (its primary brand look) unless the visitor already chose light.
+const themeScript = `(function(){try{var t=localStorage.getItem('beyondwear.theme');if(t!=='light'&&t!=='dark'){t='dark'}document.documentElement.setAttribute('data-theme',t)}catch(e){document.documentElement.setAttribute('data-theme','dark')}})();`;
 
 const orgLd = {
   "@context": "https://schema.org",

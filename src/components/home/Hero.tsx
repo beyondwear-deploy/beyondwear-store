@@ -38,11 +38,11 @@ export function Hero({ main, topRight, midRight, badge, featured }: { main: Prod
         <div>
           <motion.p {...fade(-2)} className="eyebrow mb-6 flex items-center gap-3"><span className="h-px w-10 bg-accent" aria-hidden />Preloved shoes · New pairs every week</motion.p>
           <h1 className="text-[clamp(3.4rem,11.5vw,8.6rem)] font-medium uppercase leading-[0.9] tracking-[-0.035em]">
-            {line("Second", 0)}
-            {line("chapter.", 1, "italic text-accent")}
+            {line("Beyond", 0)}
+            {line("the first wear.", 1, "italic text-accent")}
           </h1>
           <motion.p {...fade(0)} className="mt-7 max-w-md text-base leading-relaxed text-muted sm:text-lg">
-            Carefully selected preloved shoes, inspected and honestly graded. Every great pair deserves a sequel.
+            Carefully selected preloved shoes, inspected and honestly graded. Every great pair deserves to go beyond its first life.
           </motion.p>
           <motion.div {...fade(1)} className="mt-9 flex flex-wrap gap-3">
             <Button href="/shop" size="lg" arrow>Shop now</Button>

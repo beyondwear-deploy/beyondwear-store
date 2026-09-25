@@ -66,7 +66,21 @@ export function placeOrder(input: CheckoutInput): Order {
   };
   useOrders.getState().addOrder(order);
   useCart.getState().clear();
+  notifyOrderPlaced(order);
   return order;
+}
+
+/**
+ * Emails the order to you (fire-and-forget) since there's no database yet —
+ * this is currently the only durable record of the order besides the
+ * customer's own browser. Never blocks or fails checkout if it errors.
+ */
+function notifyOrderPlaced(order: Order): void {
+  try {
+    fetch("/api/order-notify", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(order) }).catch(() => {});
+  } catch {
+    // never let a notification failure affect checkout
+  }
 }
 
 /* ------------------------------ tracking ------------------------------ */

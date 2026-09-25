@@ -4,6 +4,7 @@ import "@fontsource-variable/fraunces/wght-italic.css";
 import "@fontsource-variable/oswald";
 import "@/styles/globals.css";
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import type { ReactNode } from "react";
 import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
 import { Footer } from "@/components/layout/Footer";
@@ -46,12 +47,23 @@ const orgLd = {
   sameAs: Object.values(siteConfig.socials).map((s) => s.url),
 };
 
+const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
+
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" data-theme="light" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgLd) }} />
+        {/* Google Analytics — only loads if NEXT_PUBLIC_GA_ID is set (see .env.example). No-op otherwise. */}
+        {GA_ID && (
+          <>
+            <Script src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} strategy="afterInteractive" />
+            <Script id="ga4-init" strategy="afterInteractive">
+              {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GA_ID}');`}
+            </Script>
+          </>
+        )}
       </head>
       <body>
         <a href="#main" className="fixed left-4 top-4 z-[400] -translate-y-24 rounded-full bg-fg px-5 py-3 text-sm font-semibold text-bg transition-transform focus:translate-y-0">Skip to content</a>

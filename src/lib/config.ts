@@ -70,8 +70,15 @@ export const siteConfig = {
   ] as const,
 
   payments: {
-    /** off | demo — controls the Online Payment option (see lib/adapters/payments.ts). */
-    onlineMode: (process.env.NEXT_PUBLIC_ONLINE_PAYMENTS as "off" | "demo" | undefined) ?? "demo",
+    /**
+     * off | demo — controls the Online Payment option (see lib/adapters/payments.ts).
+     * Defaults to "off" so real customers are never shown a fake payment gateway.
+     * Only set NEXT_PUBLIC_ONLINE_PAYMENTS=demo while you're testing the checkout
+     * flow yourself — switch it back to "off" (or remove it) before real launch,
+     * and only turn it "on" once a real gateway (Easypaisa/JazzCash/PayFast/etc.)
+     * is actually wired up in lib/adapters/payments.ts.
+     */
+    onlineMode: (process.env.NEXT_PUBLIC_ONLINE_PAYMENTS as "off" | "demo" | undefined) ?? "off",
     bankTransfer: {
       bankName: "Your Bank Name",
       accountTitle: "BeyondWear",

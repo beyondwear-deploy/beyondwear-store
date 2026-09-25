@@ -4,7 +4,6 @@ import { CategoryCard } from "@/components/product/CategoryCard";
 import { ProductCard } from "@/components/product/ProductCard";
 import { ProductGrid, ProductRail } from "@/components/product/ProductGrid";
 import { ProductImage } from "@/components/product/ProductImage";
-import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Counter } from "@/components/ui/Counter";
 import { ComingSoonStrip } from "@/components/shop/ComingSoon";
@@ -183,10 +182,20 @@ export function SustainabilitySection({ listedCount }: { listedCount: number }) 
 }
 
 export function TestimonialsSection() {
+  if (TESTIMONIALS.length === 0) {
+    return (
+      <section className="container-x py-20 sm:py-28" aria-labelledby="rev-h">
+        <SectionHeading eyebrow="Reviews" title="What customers say." />
+        <div className="rounded-3xl border border-dashed border-line-strong bg-elev/50 p-10 text-center sm:p-14">
+          <Quote className="mx-auto mb-4 size-8 text-accent/60" aria-hidden />
+          <p className="mx-auto max-w-md text-sm text-muted">We're just getting started — real reviews from real customers will show up here as they come in.</p>
+        </div>
+      </section>
+    );
+  }
   return (
     <section className="container-x py-20 sm:py-28" aria-labelledby="rev-h">
       <SectionHeading eyebrow="Reviews" title="What customers say." />
-      {siteConfig.demoMode && <div className="-mt-6 mb-8"><Badge tone="danger">Demo content — replace with real customer reviews before launch</Badge></div>}
       <ul className="grid gap-5 md:grid-cols-3">
         {TESTIMONIALS.map((t, i) => (
           <Reveal as="li" key={i} delay={i * 0.1} className="flex flex-col rounded-3xl border border-line bg-elev p-7 sm:p-8">

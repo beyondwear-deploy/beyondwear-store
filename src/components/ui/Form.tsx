@@ -71,10 +71,15 @@ export function CheckboxField({ label, checked, onChange, className, name }: { l
   );
 }
 
-/** Honeypot + submit-time guard that every public form can share. */
+/**
+ * Honeypot + submit-time guard that every public form can share.
+ * suppressHydrationWarning: some browsers/extensions inject an inline style
+ * onto hidden inputs like this before React hydrates (harmless, but noisy in
+ * the console) — this silences that specific known-benign mismatch only.
+ */
 export const Honeypot = () => (
   <div aria-hidden className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
-    <label>Leave this field empty<input type="text" name="company_website" tabIndex={-1} autoComplete="off" /></label>
+    <label>Leave this field empty<input type="text" name="company_website" tabIndex={-1} autoComplete="off" suppressHydrationWarning /></label>
   </div>
 );
 

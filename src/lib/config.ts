@@ -41,10 +41,9 @@ export const siteConfig = {
   },
 
   socials: {
-    // Handles are planned, not yet claimed — confirm each one is yours before launch.
-    instagram: { label: "Instagram", url: "https://instagram.com/beyondwear.store", handle: "@beyondwear.store" },
-    facebook: { label: "Facebook", url: "https://facebook.com/beyondwear.store", handle: "/beyondwear.store" },
-    tiktok: { label: "TikTok", url: "https://tiktok.com/@beyondwear.store", handle: "@beyondwear.store" },
+    instagram: { label: "Instagram", url: "https://www.instagram.com/beyondwear.pk", handle: "@beyondwear.pk" },
+    facebook: { label: "Facebook", url: "https://www.facebook.com/profile.php?id=61594654800668", handle: "BeyondWear.pk" },
+    tiktok: { label: "TikTok", url: "https://www.tiktok.com/@beyondwear.pk", handle: "@beyondwear.pk" },
     whatsapp: { label: "WhatsApp", url: "https://wa.me/923422375002", handle: "+92 342 2375002" },
   },
 

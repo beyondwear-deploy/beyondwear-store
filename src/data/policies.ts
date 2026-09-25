@@ -10,7 +10,7 @@ export const POLICIES: Policy[] = [
   {
     slug: "shipping", title: "Shipping Policy", summary: "How and when your order is packed, shipped and delivered.", updated: "1 September 2026",
     sections: [
-      { heading: "Processing time", body: ["Orders are inspected, re-checked and packed within 1–2 working days of confirmation. Bank Transfer orders are processed once payment is verified."] },
+      { heading: "Processing time", body: ["Orders are inspected, re-checked and packed within 1–2 working days of confirmation. Mobile Wallet Transfer orders are processed once payment is verified."] },
       { heading: "Delivery methods & timing", body: ["Standard delivery: 3–5 working days. Express delivery: 1–2 working days to major cities. Studio pickup is available by appointment.", "Delivery charges are shown at checkout. Standard delivery is free on orders over Rs 5,000."] },
       { heading: "Tracking", body: ["You can follow your order at any time on the Track Order page using your order number and the email or phone used at checkout."] },
       { heading: "Packaging", body: ["Items are cleaned, folded or wrapped and packed in protective packaging so they arrive in the condition described."] },
@@ -41,7 +41,7 @@ export const POLICIES: Policy[] = [
     sections: [
       { heading: "What we collect", body: ["Information you give us when ordering or contacting us: name, phone, email, delivery address and order details. We also collect basic, anonymous usage data to improve the site."] },
       { heading: "How we use it", body: ["To process and deliver orders, provide support, send order updates and — only if you opt in — send newsletters. We never sell your personal data."] },
-      { heading: "Payments", body: ["We do not store card details. Online payments are handled by the payment provider; Bank Transfer details are only ever used to verify your payment."] },
+      { heading: "Payments", body: ["We do not store card details. Online payments are handled by the payment provider; Mobile Wallet Transfer details are only ever used to verify your payment."] },
       { heading: "Security", body: ["We use industry-standard safeguards and only keep the data we need. Access to customer data is restricted."] },
       { heading: "Your choices", body: ["You can request access to, correction of, or deletion of your data at any time by contacting us. You can unsubscribe from marketing emails using the link in any email."] },
     ],

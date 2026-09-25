@@ -16,7 +16,7 @@ export const FAQ: FaqGroup[] = [
   {
     title: "Ordering & delivery",
     items: [
-      { q: "What payment methods are available?", a: "Cash on Delivery, Bank Transfer and Online Payment (where enabled). At checkout you choose the method that suits you." },
+      { q: "What payment methods are available?", a: "Cash on Delivery, Mobile Wallet Transfer (RAAST, SadaPay, JazzCash or EasyPaisa) and Online Payment (where enabled). At checkout you choose the method that suits you." },
       { q: "Do you offer Cash on Delivery?", a: "Yes — Cash on Delivery is available for delivery addresses across the country. Please keep the exact amount ready for the courier." },
       { q: "How long does delivery take?", a: "Standard delivery takes 3–5 working days and Express takes 1–2 working days to major cities. You'll receive a tracking update as your order moves from packed to delivered." },
     ],

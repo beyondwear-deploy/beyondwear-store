@@ -1,6 +1,6 @@
 "use client";
 import { AnimatePresence, motion } from "framer-motion";
-import { AlertTriangle, Banknote, Check, ChevronDown, CreditCard, Landmark, Lock, ShoppingBag, WifiOff } from "lucide-react";
+import { AlertTriangle, Banknote, Check, ChevronDown, CreditCard, Lock, ShoppingBag, Smartphone, WifiOff } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -26,7 +26,7 @@ const STEPS = ["Customer", "Shipping", "Delivery", "Payment"] as const;
 type Errors = Record<string, string>;
 type Failure = { type: "payment" | "stock" | "network"; message: string; items?: string[] } | null;
 
-const payIcon: Record<PaymentMethodId, typeof Banknote> = { cod: Banknote, "bank-transfer": Landmark, online: CreditCard };
+const payIcon: Record<PaymentMethodId, typeof Banknote> = { cod: Banknote, "bank-transfer": Smartphone, online: CreditCard };
 
 export function CheckoutClient() {
   const router = useRouter();
@@ -247,7 +247,7 @@ export function CheckoutClient() {
                   {c.payment === "bank-transfer" && (
                     <div className="rounded-2xl bg-soft p-5 text-sm">
                       <p className="mb-3 font-semibold">Transfer details</p>
-                      <dl className="grid gap-x-6 gap-y-1.5 sm:grid-cols-[auto_1fr]"><dt className="text-muted">Bank</dt><dd>{siteConfig.payments.bankTransfer.bankName}</dd><dt className="text-muted">Account title</dt><dd>{siteConfig.payments.bankTransfer.accountTitle}</dd><dt className="text-muted">Account no.</dt><dd className="tabular-nums">{siteConfig.payments.bankTransfer.accountNumber}</dd><dt className="text-muted">IBAN</dt><dd className="tabular-nums">{siteConfig.payments.bankTransfer.iban}</dd></dl>
+                      <dl className="grid gap-x-6 gap-y-1.5 sm:grid-cols-[auto_1fr]"><dt className="text-muted">Send via</dt><dd>{siteConfig.payments.bankTransfer.services.join(" / ")}</dd><dt className="text-muted">Number</dt><dd className="tabular-nums">{siteConfig.payments.bankTransfer.number}</dd></dl>
                       <p className="mt-3 text-xs text-muted">{siteConfig.payments.bankTransfer.note}</p>
                     </div>
                   )}

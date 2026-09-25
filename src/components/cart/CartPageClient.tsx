@@ -49,7 +49,7 @@ export function CartPageClient() {
             </div>
             <TotalsRows s={s} />
             {s.hasIssues ? <Button size="lg" full disabled>Checkout</Button> : <Button href="/checkout" size="lg" full arrow>Checkout</Button>}
-            <p className="text-center text-xs text-subtle">Cash on Delivery · Bank Transfer · Online Payment</p>
+            <p className="text-center text-xs text-subtle">Cash on Delivery · Mobile Wallet Transfer · Online Payment</p>
           </aside>
         </div>
       )}

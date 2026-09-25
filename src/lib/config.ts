@@ -26,11 +26,12 @@ export const siteConfig = {
   },
 
   contact: {
-    whatsappNumber: "923000000000", // international format, digits only
-    whatsappDisplay: "+92 300 0000000",
+    whatsappNumber: "923422375002", // international format, digits only
+    whatsappDisplay: "+92 342 2375002",
     email: "hello@beyondwear.store",
-    phone: "+92 300 0000000",
-    address: ["Studio address line", "Your City, Pakistan"],
+    phone: "+92 342 2375002",
+    // Only a city was given (no street address) — shown as a general location, not a walk-in studio.
+    address: ["Karachi, Pakistan"],
     hours: [
       { days: "Monday – Saturday", time: "11:00 – 19:00" },
       { days: "Sunday", time: "By appointment" },
@@ -44,7 +45,7 @@ export const siteConfig = {
     instagram: { label: "Instagram", url: "https://instagram.com/beyondwear.store", handle: "@beyondwear.store" },
     facebook: { label: "Facebook", url: "https://facebook.com/beyondwear.store", handle: "/beyondwear.store" },
     tiktok: { label: "TikTok", url: "https://tiktok.com/@beyondwear.store", handle: "@beyondwear.store" },
-    whatsapp: { label: "WhatsApp", url: "https://wa.me/923000000000", handle: "+92 300 0000000" },
+    whatsapp: { label: "WhatsApp", url: "https://wa.me/923422375002", handle: "+92 342 2375002" },
   },
 
   currency: { code: "PKR", symbol: "Rs", locale: "en-PK" },
@@ -79,12 +80,15 @@ export const siteConfig = {
      * is actually wired up in lib/adapters/payments.ts.
      */
     onlineMode: (process.env.NEXT_PUBLIC_ONLINE_PAYMENTS as "off" | "demo" | undefined) ?? "off",
+    /**
+     * Manual transfer via mobile wallet / RAAST, since that's what's actually set up —
+     * no traditional bank account yet. All four route to the same number.
+     */
     bankTransfer: {
-      bankName: "Your Bank Name",
-      accountTitle: "BeyondWear",
-      accountNumber: "0000-0000000-0", // placeholder — replace before launch
-      iban: "PK00 XXXX 0000 0000 0000 0000",
-      note: "Send the exact order total and share the receipt on WhatsApp. Your order is confirmed once payment is verified.",
+      label: "Mobile wallet transfer (RAAST / SadaPay / JazzCash / EasyPaisa)",
+      number: "0342-2375002",
+      services: ["RAAST", "SadaPay", "JazzCash", "EasyPaisa"],
+      note: "Send the exact order total to the number above via RAAST, SadaPay, JazzCash or EasyPaisa, then share the payment screenshot on WhatsApp. Your order is confirmed once payment is verified.",
     },
     codFee: 0,
   },

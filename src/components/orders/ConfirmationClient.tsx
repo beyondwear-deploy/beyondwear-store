@@ -45,13 +45,11 @@ export function ConfirmationClient() {
 
       {bank && (
         <div className="mx-auto mt-10 max-w-3xl rounded-3xl border border-line bg-soft p-6 sm:p-8">
-          <h2 className="text-2xl">Complete your bank transfer</h2>
+          <h2 className="text-2xl">Complete your transfer</h2>
           <p className="mt-2 text-sm text-muted">{siteConfig.payments.bankTransfer.note}</p>
           <dl className="mt-5 grid gap-x-8 gap-y-2 text-sm sm:grid-cols-[auto_1fr]">
-            <dt className="text-muted">Bank</dt><dd className="font-medium">{siteConfig.payments.bankTransfer.bankName}</dd>
-            <dt className="text-muted">Account title</dt><dd className="font-medium">{siteConfig.payments.bankTransfer.accountTitle}</dd>
-            <dt className="text-muted">Account no.</dt><dd className="font-medium tabular-nums">{siteConfig.payments.bankTransfer.accountNumber}</dd>
-            <dt className="text-muted">IBAN</dt><dd className="font-medium tabular-nums">{siteConfig.payments.bankTransfer.iban}</dd>
+            <dt className="text-muted">Send via</dt><dd className="font-medium">{siteConfig.payments.bankTransfer.services.join(" / ")}</dd>
+            <dt className="text-muted">Number</dt><dd className="font-medium tabular-nums">{siteConfig.payments.bankTransfer.number}</dd>
             <dt className="text-muted">Amount</dt><dd className="font-bold tabular-nums">{formatPrice(order.total)}</dd>
             <dt className="text-muted">Reference</dt><dd className="font-bold">{order.id}</dd>
           </dl>

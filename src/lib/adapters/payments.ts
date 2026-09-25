@@ -34,15 +34,15 @@ const cod: PaymentProvider = {
 
 const bank: PaymentProvider = {
   id: "bank-transfer",
-  label: "Bank Transfer",
-  description: "Transfer to our account and share the receipt. We confirm once payment is verified.",
+  label: "Mobile Wallet Transfer",
+  description: "Send via RAAST, SadaPay, JazzCash or EasyPaisa and share the receipt. We confirm once payment is verified.",
   available: true,
   async initiate() {
     const b = siteConfig.payments.bankTransfer;
     return {
       ok: true,
       status: "awaiting-verification",
-      instructions: `${b.bankName} · ${b.accountTitle} · A/C ${b.accountNumber} · IBAN ${b.iban}`,
+      instructions: `${b.services.join(" / ")} · ${b.number}`,
     };
   },
 };

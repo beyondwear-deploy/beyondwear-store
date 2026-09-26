@@ -7,9 +7,15 @@
  */
 
 export const siteConfig = {
-  /** While true, demo content (reviews, Instagram tiles, art) is labelled as demo. */
-  demoMode: true,
-  /** Reference "today" for the demo catalogue so JUST IN badges stay stable. Remove in production. */
+  /**
+   * LIVE STORE — false. While true, demo-only notices ("Demo: order status
+   * advances automatically...", "Demo grid — connect your Instagram feed...",
+   * the BW-DEMO01 sample-order shortcut, etc.) show up in front of real
+   * customers, and "Just In" badges are pinned to catalogReferenceDate below
+   * instead of the real clock. Only flip this back to true for local demoing.
+   */
+  demoMode: false,
+  /** Reference "today" used only while demoMode is true, so JUST IN badges stay stable for a demo. Unused once live. */
   catalogReferenceDate: "2026-09-20T00:00:00.000Z",
 
   brand: {

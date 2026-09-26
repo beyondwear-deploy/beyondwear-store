@@ -150,7 +150,9 @@ export const DEMO_ORDERS: Order[] = [
 export function findOrder(id: string, contact: string, all: Order[]): Order | undefined {
   const c = contact.trim().toLowerCase();
   const digits = c.replace(/\D/g, "");
-  return [...all, ...DEMO_ORDERS].find(
+  // DEMO_ORDERS (the BW-DEMO01 sample) only needs to be findable while
+  // demoMode is on — a live store shouldn't keep a fake order trackable.
+  return [...all, ...(siteConfig.demoMode ? DEMO_ORDERS : [])].find(
     (o) =>
       o.id.toLowerCase() === id.trim().toLowerCase() &&
       (o.customer.email.toLowerCase() === c || (digits.length >= 6 && o.customer.phone.replace(/\D/g, "").endsWith(digits.slice(-7)))),

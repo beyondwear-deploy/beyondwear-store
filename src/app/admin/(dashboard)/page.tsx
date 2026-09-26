@@ -1,4 +1,4 @@
-import { BadgeCheck, Eye, Package, ShoppingBag, TrendingUp, Users } from "lucide-react";
+import { BadgeCheck, Clock, Eye, Package, ShoppingBag, TrendingUp, Users } from "lucide-react";
 import Link from "next/link";
 import { BreakdownBars } from "@/components/admin/BreakdownBars";
 import { KpiCard } from "@/components/admin/KpiCard";
@@ -25,17 +25,19 @@ export default async function AdminOverviewPage() {
 
       {configured && (
         <>
-          <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-            <KpiCard label="Total revenue" value={formatPrice(orders.totalRevenue)} icon={TrendingUp} hint={`${orders.totalOrders} orders all-time`} />
+          <div className="grid grid-cols-2 gap-4 lg:grid-cols-5">
+            <KpiCard label="Revenue (booked)" value={formatPrice(orders.totalRevenue)} icon={TrendingUp} hint={`${orders.deliveredOrders} delivered orders`} />
+            <KpiCard label="Pending revenue" value={formatPrice(orders.pendingRevenue)} icon={Clock} hint="Placed, not yet delivered" />
             <KpiCard label="Revenue (7 days)" value={formatPrice(orders.revenue7d)} icon={BadgeCheck} hint={`${formatPrice(orders.revenue30d)} in 30 days`} />
             <KpiCard label="Avg. order value" value={formatPrice(orders.avgOrderValue)} icon={ShoppingBag} hint={`${orders.ordersToday} orders today`} />
             <KpiCard label="Unique visitors" value={traffic.uniqueVisitors.toLocaleString()} icon={Users} hint={`${traffic.totalViews.toLocaleString()} pageviews · 14 days`} />
           </div>
+          <p className="-mt-4 text-xs text-subtle">Revenue is booked when an order is marked <strong className="font-semibold text-fg">Delivered</strong> — not when it's placed. Update statuses from <Link href="/admin/orders" className="underline">Orders</Link>.</p>
 
           <div className="grid gap-6 lg:grid-cols-2">
             <div className="rounded-2xl border border-line bg-elev p-5">
               <h2 className="mb-1 text-sm font-bold">Revenue — last 14 days</h2>
-              <p className="mb-2 text-xs text-subtle">Rs per day</p>
+              <p className="mb-2 text-xs text-subtle">Rs booked per day, by delivery date</p>
               <TrendChart data={orders.revenueByDay} valuePrefix="Rs " />
             </div>
             <div className="rounded-2xl border border-line bg-elev p-5">

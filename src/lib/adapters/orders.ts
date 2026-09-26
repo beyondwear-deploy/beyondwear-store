@@ -12,7 +12,7 @@ import { getProductById } from "@/lib/catalog";
 import { siteConfig } from "@/lib/config";
 import { computeTotals } from "@/lib/pricing";
 import type { DeliveryId } from "@/lib/config";
-import type { Order, OrderStatus, PaymentMethodId } from "@/lib/types";
+import type { FullOrderStatus, Order, OrderStatus, PaymentMethodId } from "@/lib/types";
 import { availableOf, useCart, useOrders } from "@/store";
 
 export class OutOfStockError extends Error {
@@ -109,12 +109,24 @@ const ORDER: OrderStatus[] = ["placed", "confirmed", "packed", "shipped", "out-f
 /** DEMO: minutes after placement at which each stage is reached. A real backend stores actual statuses. */
 const DEMO_THRESHOLDS = [0, 0.5, 2, 4, 6, 9];
 
-export function statusOf(o: Order, now = Date.now()): { status: OrderStatus; index: number } {
+/**
+ * Real orders carry `dbStatus` (set from the admin panel, PATCH /api/admin/orders/[id])
+ * — that always wins. `index: -1` means cancelled (a terminal state outside the
+ * normal 6-step progress bar). Only orders with no real status yet (old local/demo
+ * data) fall back to the time-based simulation.
+ */
+export function statusOf(o: Order, now = Date.now()): { status: FullOrderStatus; index: number } {
+  if (o.dbStatus) return { status: o.dbStatus, index: o.dbStatus === "cancelled" ? -1 : ORDER.indexOf(o.dbStatus) };
   if (o.statusOverride) return { status: o.statusOverride, index: ORDER.indexOf(o.statusOverride) };
   const mins = (now - new Date(o.placedAt).getTime()) / 60000 + (o.ageOffsetMin ?? 0);
   let idx = 0;
   DEMO_THRESHOLDS.forEach((t, i) => { if (mins >= t) idx = i; });
   return { status: ORDER[idx], index: idx };
+}
+
+/** Timestamp for a given step from the real status history, if we have one. */
+export function timeOfStep(o: Order, status: OrderStatus): string | undefined {
+  return o.statusHistory?.find((e) => e.status === status)?.at;
 }
 
 /** Seeded so the tracking page can be tried without placing an order. */

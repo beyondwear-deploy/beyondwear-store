@@ -23,11 +23,13 @@ export interface ProductPatch {
   stock?: number;
   status?: Product["status"];
   images?: ProductImage[];
+  /** null clears the per-product override, so it falls back to the store's default cost price. */
+  costPrice?: number | null;
 }
 
 export const EDITABLE_FIELDS = [
   "name", "brand", "price", "originalPrice", "description", "condition",
-  "conditionNotes", "wearNote", "material", "measurements", "stock", "status", "images",
+  "conditionNotes", "wearNote", "material", "measurements", "stock", "status", "images", "costPrice",
 ] as const;
 
 /** Merges a saved patch on top of a built-in product. Returns the base unchanged if there's no patch. */
@@ -35,6 +37,7 @@ export function applyProductPatch(base: Product, patch?: ProductPatch | null): P
   if (!patch || Object.keys(patch).length === 0) return base;
   const merged: Product = { ...base, ...patch } as Product;
   if (patch.originalPrice === null) merged.originalPrice = undefined;
+  if (patch.costPrice === null) merged.costPrice = undefined;
   if (!patch.images || patch.images.length === 0) merged.images = base.images;
   return merged;
 }
@@ -53,6 +56,7 @@ export interface ProductPatchSnapshot {
   stock: number;
   status: Product["status"];
   images: ProductImage[];
+  costPrice: number | null;
 }
 
 /** The current, editable-field snapshot a product edit form starts from (already-applied overrides + built-in defaults). */
@@ -71,5 +75,6 @@ export function toPatch(p: Product): ProductPatchSnapshot {
     stock: p.stock,
     status: p.status,
     images: p.images,
+    costPrice: p.costPrice ?? null,
   };
 }

@@ -13,7 +13,7 @@ const STATUSES: { id: "active" | "draft" | "archived"; label: string }[] = [
   { id: "draft", label: "Draft — hidden for now" },
 ];
 
-export function NewProductForm() {
+export function NewProductForm({ defaultCostPrice }: { defaultCostPrice: number }) {
   const router = useRouter();
   const [name, setName] = useState("");
   const [brand, setBrand] = useState("");
@@ -32,6 +32,7 @@ export function NewProductForm() {
   const [material, setMaterial] = useState("");
   const [stock, setStock] = useState<number>(1);
   const [status, setStatus] = useState<"active" | "draft" | "archived">("active");
+  const [costPrice, setCostPrice] = useState<string>("");
   const [images, setImages] = useState<UploadedImage[]>([]);
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -71,6 +72,7 @@ export function NewProductForm() {
         condition, price, originalPrice: originalPrice === "" ? null : Number(originalPrice),
         description, conditionNotes: conditionNotesText.split("\n").map((s) => s.trim()).filter(Boolean),
         wearNote, material, stock, status, images,
+        costPrice: costPrice === "" ? null : Number(costPrice),
       };
       const res = await fetch("/api/admin/products", {
         method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload),
@@ -171,6 +173,10 @@ export function NewProductForm() {
             </select>
           </Field>
         </div>
+        <Field label={`Cost price (PKR) — what you paid for this pair`}>
+          <input type="number" min={0} value={costPrice} onChange={(e) => setCostPrice(e.target.value)} className={inputCls} placeholder={`Default: ${defaultCostPrice}`} />
+        </Field>
+        <p className="text-xs text-subtle">Leave blank to use the store default ({defaultCostPrice} PKR, set in Financials → Settings). Used to calculate profit and inventory value.</p>
       </Section>
 
       {error && <p className="text-sm font-medium text-danger">{error}</p>}

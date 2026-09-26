@@ -30,6 +30,8 @@ export interface NewProductInput {
   stock: number;
   status: Product["status"];
   images: { url: string; alt?: string }[];
+  /** What you paid to acquire this pair (PKR). Leave unset to use the store's default cost price. */
+  costPrice?: number | null;
 }
 
 function genId(): string {
@@ -70,6 +72,7 @@ export function buildCustomProduct(input: NewProductInput): Product {
     authenticity: { checked: true, note: "Reviewed against brand labelling, stitching, hardware and production codes before listing." },
     stock: input.stock,
     status: input.status,
+    costPrice: input.costPrice ?? undefined,
     addedAt: new Date().toISOString(),
     popularity: 50,
     keywords: [input.type, input.color, input.material].filter(Boolean).map((s) => s.toLowerCase()),

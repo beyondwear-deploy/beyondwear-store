@@ -29,6 +29,7 @@ function validate(input: Partial<NewProductInput>): string | null {
   if (!Array.isArray(input.images) || input.images.length === 0) return "Add at least one photo.";
   if (input.images.length > 6) return "Up to 6 photos.";
   for (const img of input.images) if (typeof img?.url !== "string" || !img.url) return "One of the photos didn't upload correctly — try again.";
+  if (input.costPrice != null && (!Number.isFinite(input.costPrice) || input.costPrice < 0)) return "Cost price looks wrong.";
   return null;
 }
 

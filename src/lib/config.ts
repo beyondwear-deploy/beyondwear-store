@@ -71,15 +71,6 @@ export const siteConfig = {
 
   payments: {
     /**
-     * off | demo — controls the Online Payment option (see lib/adapters/payments.ts).
-     * Defaults to "off" so real customers are never shown a fake payment gateway.
-     * Only set NEXT_PUBLIC_ONLINE_PAYMENTS=demo while you're testing the checkout
-     * flow yourself — switch it back to "off" (or remove it) before real launch,
-     * and only turn it "on" once a real gateway (Easypaisa/JazzCash/PayFast/etc.)
-     * is actually wired up in lib/adapters/payments.ts.
-     */
-    onlineMode: (process.env.NEXT_PUBLIC_ONLINE_PAYMENTS as "off" | "demo" | undefined) ?? "off",
-    /**
      * Manual transfer via mobile wallet / RAAST, since that's what's actually set up —
      * no traditional bank account yet. All four route to the same number.
      */
@@ -88,6 +79,18 @@ export const siteConfig = {
       number: "0342-2375002",
       services: ["RAAST", "SadaPay", "JazzCash", "EasyPaisa"],
       note: "Send the exact order total to the number above via RAAST, SadaPay, JazzCash or EasyPaisa, then share the payment screenshot on WhatsApp. Your order is confirmed once payment is verified.",
+    },
+    /**
+     * "Online Payment" isn't a real card/wallet gateway — accepting those requires a
+     * merchant account with a provider (JazzCash, Easypaisa, Safepay, PayFast, etc.),
+     * which only the business owner can register for. Until that's set up, this option
+     * simply opens a prefilled WhatsApp Business chat so the customer can arrange
+     * payment (card link, bank transfer, wallet) directly with you. Swap this out for
+     * a real gateway integration in lib/adapters/payments.ts once you have one.
+     */
+    whatsappPay: {
+      label: "Pay via WhatsApp",
+      description: "Message our WhatsApp Business and we'll send you a secure way to pay (card link, bank or wallet).",
     },
     codFee: 0,
   },

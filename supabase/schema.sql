@@ -32,6 +32,12 @@ create table if not exists orders (
 create index if not exists orders_created_at_idx on orders (created_at desc);
 create index if not exists orders_status_idx on orders (status);
 
+-- Added later: real, timestamped status history (pending confirmation → … →
+-- delivered/cancelled), so both the admin panel and the customer tracking
+-- page can show exactly when each step happened. `alter ... add column if
+-- not exists` so this is safe to re-run against the already-live table.
+alter table orders add column if not exists status_history jsonb not null default '[]'::jsonb;
+
 -- ─────────────────────────────────────────────────────────────────────────
 -- Page views — powers the traffic-analytics dashboard.
 -- ─────────────────────────────────────────────────────────────────────────
@@ -143,3 +149,42 @@ drop policy if exists "no public update" on content_overrides;
 create policy "no public update" on content_overrides for update using (false);
 drop policy if exists "no public delete" on content_overrides;
 create policy "no public delete" on content_overrides for delete using (false);
+
+-- ─────────────────────────────────────────────────────────────────────────
+-- Expenses — the store's manual expense log (rent, packaging, ads, shipping
+-- paid out of pocket, etc.). Every line is editable/deletable from the admin
+-- Financials → Expenses page and feeds directly into the P&L / cash flow.
+-- ─────────────────────────────────────────────────────────────────────────
+create table if not exists expenses (
+  id          bigserial primary key,
+  date        date not null default current_date,
+  category    text not null,
+  amount      numeric not null default 0,
+  note        text,
+  created_at  timestamptz not null default now(),
+  updated_at  timestamptz not null default now()
+);
+create index if not exists expenses_date_idx on expenses (date desc);
+
+alter table expenses enable row level security;
+drop policy if exists "no public access" on expenses;
+create policy "no public access" on expenses for all using (false);
+
+-- ─────────────────────────────────────────────────────────────────────────
+-- Store settings — single-row table of store-wide financial inputs: the
+-- one-time starting capital figure and the default per-pair cost price used
+-- whenever a product doesn't have its own cost price set. Both editable from
+-- admin Financials → Settings; every report is computed live from these,
+-- never hand-typed.
+-- ─────────────────────────────────────────────────────────────────────────
+create table if not exists store_settings (
+  id                  smallint primary key default 1 check (id = 1),
+  starting_capital    numeric not null default 0,
+  default_cost_price  numeric not null default 1260,
+  updated_at          timestamptz not null default now()
+);
+insert into store_settings (id) values (1) on conflict (id) do nothing;
+
+alter table store_settings enable row level security;
+drop policy if exists "no public access" on store_settings;
+create policy "no public access" on store_settings for all using (false);

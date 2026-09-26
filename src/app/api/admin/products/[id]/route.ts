@@ -29,6 +29,7 @@ function validate(patch: ProductPatch): string | null {
     if (!Array.isArray(patch.images) || patch.images.length > 12) return "Photos look wrong.";
     for (const img of patch.images) if (typeof img?.view !== "string" || typeof img?.alt !== "string") return "Photos look wrong.";
   }
+  if (patch.costPrice !== undefined && patch.costPrice !== null && (!Number.isFinite(patch.costPrice) || patch.costPrice < 0 || patch.costPrice > 100000000)) return "Cost price looks wrong.";
   return null;
 }
 

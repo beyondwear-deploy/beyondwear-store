@@ -16,7 +16,7 @@ const STATUSES: { id: Product["status"]; label: string; hint: string }[] = [
 const VIEW_CYCLE: ImageView[] = ["front", "back", "side", "detail", "label", "wear"];
 const nextView = (used: ImageView[]): ImageView => VIEW_CYCLE.find((v) => !used.includes(v)) ?? "front";
 
-export function ProductEditForm({ product, configured, hasOverride, isCustom }: { product: Product; configured: boolean; hasOverride: boolean; isCustom: boolean }) {
+export function ProductEditForm({ product, configured, hasOverride, isCustom, defaultCostPrice }: { product: Product; configured: boolean; hasOverride: boolean; isCustom: boolean; defaultCostPrice: number }) {
   const router = useRouter();
   const [form, setForm] = useState<ProductPatchSnapshot>(() => toPatch(product));
   const [conditionNotesText, setConditionNotesText] = useState(product.conditionNotes.join("\n"));
@@ -184,6 +184,14 @@ export function ProductEditForm({ product, configured, hasOverride, isCustom }: 
           </Field>
         </div>
         <p className="text-xs text-subtle">{STATUSES.find((s) => s.id === form.status)?.hint}</p>
+        <Field label={`Cost price (PKR) — what you paid for this pair`}>
+          <input
+            type="number" min={0} value={form.costPrice ?? ""} placeholder={`Default: ${defaultCostPrice}`}
+            onChange={(e) => set("costPrice", e.target.value === "" ? null : Number(e.target.value))}
+            className={inputCls}
+          />
+        </Field>
+        <p className="text-xs text-subtle">Leave blank to use the store default ({defaultCostPrice} PKR, set in Financials → Settings). Used to calculate profit and inventory value.</p>
       </Section>
 
       {error && <p className="text-sm font-medium text-danger">{error}</p>}

@@ -85,6 +85,8 @@ export interface Product {
   keywords: string[];
   images: ProductImage[];
   art: ArtSpec;
+  /** What you paid to acquire this pair (PKR). Falls back to the store's default cost price when unset. */
+  costPrice?: number;
 }
 
 export interface CartLine {
@@ -112,6 +114,13 @@ export type OrderStatus =
   | "shipped"
   | "out-for-delivery"
   | "delivered";
+
+export type FullOrderStatus = OrderStatus | "cancelled";
+
+export interface OrderStatusEvent {
+  status: FullOrderStatus;
+  at: string;
+}
 
 export interface OrderItem {
   productId: string;
@@ -144,6 +153,10 @@ export interface Order {
   statusOverride?: OrderStatus;
   /** Demo seed offset in minutes so seeded orders show mid-journey. */
   ageOffsetMin?: number;
+  /** Real, server-tracked status (set by the admin panel) — takes priority over the demo simulation when present. */
+  dbStatus?: FullOrderStatus;
+  /** Timestamped log of every status change, oldest first — shown on the tracking page and in admin. */
+  statusHistory?: OrderStatusEvent[];
 }
 
 export interface User {

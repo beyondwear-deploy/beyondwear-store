@@ -26,7 +26,9 @@ export function ConfirmationClient() {
     );
 
   const bank = order.paymentMethod === "bank-transfer";
+  const waPay = order.paymentMethod === "online";
   const wa = `https://wa.me/${siteConfig.contact.whatsappNumber}?text=${encodeURIComponent(`Hi! I've placed order ${order.id} (${formatPrice(order.total)}) by bank transfer. Sharing my payment receipt.`)}`;
+  const waPayLink = `https://wa.me/${siteConfig.contact.whatsappNumber}?text=${encodeURIComponent(`Hi! I've placed order ${order.id} (${formatPrice(order.total)}) and would like to pay online. Please share a way to pay.`)}`;
   const trackHref = `/track-order?id=${encodeURIComponent(order.id)}&contact=${encodeURIComponent(order.customer.email)}`;
 
   return (
@@ -54,6 +56,18 @@ export function ConfirmationClient() {
             <dt className="text-muted">Reference</dt><dd className="font-bold">{order.id}</dd>
           </dl>
           <Button href={wa} target="_blank" rel="noopener noreferrer" variant="accent" className="mt-6" icon={<MessageCircle className="size-4" />}>Send receipt on WhatsApp</Button>
+        </div>
+      )}
+
+      {waPay && (
+        <div className="mx-auto mt-10 max-w-3xl rounded-3xl border border-line bg-soft p-6 sm:p-8">
+          <h2 className="text-2xl">Complete your payment</h2>
+          <p className="mt-2 text-sm text-muted">Message us on WhatsApp Business with your order number — we&apos;ll send you a secure way to pay (card link, bank or wallet) and confirm your order.</p>
+          <dl className="mt-5 grid gap-x-8 gap-y-2 text-sm sm:grid-cols-[auto_1fr]">
+            <dt className="text-muted">Amount</dt><dd className="font-bold tabular-nums">{formatPrice(order.total)}</dd>
+            <dt className="text-muted">Reference</dt><dd className="font-bold">{order.id}</dd>
+          </dl>
+          <Button href={waPayLink} target="_blank" rel="noopener noreferrer" variant="accent" className="mt-6" icon={<MessageCircle className="size-4" />}>Chat on WhatsApp to pay</Button>
         </div>
       )}
 

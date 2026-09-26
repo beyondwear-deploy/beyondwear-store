@@ -25,7 +25,7 @@ export function TrackOrderClient() {
   const [busy, setBusy] = useState(false);
   const auto = useRef(false);
 
-  const lookup = (idv: string, cv: string) => {
+  const lookup = async (idv: string, cv: string) => {
     const e: typeof errors = {};
     if (!clean(idv)) e.id = "Enter your order number, e.g. SEQ-ABC123.";
     if (!clean(cv)) e.contact = "Enter the email or phone number used at checkout.";
@@ -33,10 +33,25 @@ export function TrackOrderClient() {
     if (Object.keys(e).length) return;
     setBusy(true);
     setResult(null);
-    window.setTimeout(() => {
-      setResult(findOrder(clean(idv, 40), clean(cv, 80), orders) ?? "none");
-      setBusy(false);
-    }, 550);
+    const idv2 = clean(idv, 40);
+    const cv2 = clean(cv, 80);
+
+    // Real orders live in the database, not in this browser — look them up on
+    // the server first so tracking works from any device. Falls back to the
+    // local/demo lookup if the database isn't connected or doesn't have it.
+    try {
+      const res = await fetch("/api/track", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: idv2, contact: cv2 }) });
+      const data = await res.json();
+      if (data.ok && data.found && data.order) {
+        setResult(data.order as Order);
+        setBusy(false);
+        return;
+      }
+    } catch {
+      // network hiccup — fall through to the local lookup below
+    }
+    setResult(findOrder(idv2, cv2, orders) ?? "none");
+    setBusy(false);
   };
 
   // arriving from the confirmation email / page: look up immediately
@@ -53,7 +68,9 @@ export function TrackOrderClient() {
   };
 
   const order = result && result !== "none" ? result : null;
-  const step = order ? ORDER_STEPS[statusOf(order).index] : null;
+  const liveIndex = order ? statusOf(order).index : 0;
+  const cancelled = liveIndex === -1;
+  const step = order && !cancelled ? ORDER_STEPS[liveIndex] : null;
 
   return (
     <div className="container-x pb-10 pt-6 sm:pt-8">
@@ -89,14 +106,14 @@ export function TrackOrderClient() {
               </div>
             </motion.div>
           )}
-          {order && step && (
+          {order && (step || cancelled) && (
             <motion.div key={order.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }} className="mx-auto mt-10 max-w-5xl space-y-8">
               <section className="rounded-3xl border border-line bg-elev p-6 sm:p-10">
                 <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
                   <div>
                     <p className="eyebrow">Order {order.id}</p>
-                    <h2 className="mt-2 text-3xl sm:text-4xl">{step.label}</h2>
-                    <p className="mt-1 text-sm text-muted">{step.hint}</p>
+                    <h2 className="mt-2 text-3xl sm:text-4xl">{cancelled ? "Cancelled" : step!.label}</h2>
+                    <p className="mt-1 text-sm text-muted">{cancelled ? "This order was cancelled. Contact us on WhatsApp if that's unexpected." : step!.hint}</p>
                   </div>
                   <p className="text-right text-sm text-muted">Placed {formatDate(order.placedAt)}<br /><span className="font-semibold text-fg">{formatPrice(order.total)}</span></p>
                 </div>

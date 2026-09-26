@@ -1,64 +1,59 @@
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
-import crypto from "crypto";
 import { getSupabaseAdmin } from "@/lib/supabase";
 
 export const runtime = "nodejs";
 
-const VISITOR_COOKIE = "bw_vid";
-const SESSION_COOKIE = "bw_sid";
-const VISITOR_MAX_AGE = 60 * 60 * 24 * 365; // 1 year, anonymous id only — no PII
-const SESSION_MAX_AGE = 60 * 30; // 30 min sliding window
-
-function parseDevice(ua: string): { device: string; browser: string } {
-  const isTablet = /iPad|Tablet/i.test(ua);
-  const isMobile = !isTablet && /Mobi|Android|iPhone/i.test(ua);
-  const device = isTablet ? "tablet" : isMobile ? "mobile" : "desktop";
-  let browser = "Other";
-  if (/Edg\//.test(ua)) browser = "Edge";
-  else if (/OPR\/|Opera/.test(ua)) browser = "Opera";
-  else if (/Chrome\//.test(ua) && !/Chromium/.test(ua)) browser = "Chrome";
-  else if (/Firefox\//.test(ua)) browser = "Firefox";
-  else if (/Safari\//.test(ua) && !/Chrome/.test(ua)) browser = "Safari";
-  return { device, browser };
-}
-
+/**
+ * Server-side order lookup for the public "Track order" page. Needed because
+ * orders live in the database, not in the browser that's asking — a real
+ * store's tracking has to work from any device, not just the one that
+ * checked out. Requires the exact order id AND the email/phone from
+ * checkout, same as the client-side demo lookup this backs up.
+ */
 export async function POST(req: Request) {
   const db = getSupabaseAdmin();
-  const store = await cookies();
+  if (!db) return NextResponse.json({ ok: false, found: false, configured: false }, { status: 200 });
 
-  // Assign (or read) an anonymous visitor id — no PII, just a random UUID.
-  let visitorId = store.get(VISITOR_COOKIE)?.value;
-  if (!visitorId) visitorId = crypto.randomUUID();
-
-  let sessionId = store.get(SESSION_COOKIE)?.value;
-  if (!sessionId) sessionId = crypto.randomUUID();
-
-  const res = NextResponse.json({ ok: true });
-  res.cookies.set(VISITOR_COOKIE, visitorId, { httpOnly: true, sameSite: "lax", path: "/", maxAge: VISITOR_MAX_AGE });
-  res.cookies.set(SESSION_COOKIE, sessionId, { httpOnly: true, sameSite: "lax", path: "/", maxAge: SESSION_MAX_AGE });
-
-  if (!db) return res; // analytics silently disabled until the database is connected
-
-  let body: { path?: string; referrer?: string };
+  let body: { id?: string; contact?: string };
   try {
     body = await req.json();
   } catch {
-    body = {};
+    return NextResponse.json({ ok: false, error: "Invalid request." }, { status: 400 });
   }
-  const path = typeof body.path === "string" ? body.path.slice(0, 300) : "/";
-  const referrer = typeof body.referrer === "string" ? body.referrer.slice(0, 500) : null;
-  const ua = req.headers.get("user-agent") ?? "";
-  const { device, browser } = parseDevice(ua);
+  const id = (body.id ?? "").trim();
+  const contact = (body.contact ?? "").trim().toLowerCase();
+  if (!id || !contact) return NextResponse.json({ ok: false, error: "Missing order number or contact." }, { status: 400 });
 
-  await db.from("page_views").insert({
-    path,
-    referrer: referrer || null,
-    device,
-    browser,
-    visitor_id: visitorId,
-    session_id: sessionId,
+  const { data, error } = await db.from("orders").select("*").ilike("id", id).maybeSingle();
+  if (error || !data) return NextResponse.json({ ok: true, found: false, configured: true });
+
+  const customer = data.customer as { email?: string; phone?: string } | null;
+  const email = (customer?.email ?? "").toLowerCase();
+  const digits = contact.replace(/\D/g, "");
+  const phoneDigits = (customer?.phone ?? "").replace(/\D/g, "");
+  const matches = email === contact || (digits.length >= 6 && phoneDigits.endsWith(digits.slice(-7)));
+  if (!matches) return NextResponse.json({ ok: true, found: false, configured: true });
+
+  return NextResponse.json({
+    ok: true,
+    found: true,
+    configured: true,
+    order: {
+      id: data.id,
+      placedAt: data.placed_at,
+      customer: data.customer,
+      shipping: data.shipping,
+      deliveryMethod: data.delivery_method,
+      paymentMethod: data.payment_method,
+      paymentStatus: data.payment_status,
+      items: data.items,
+      subtotal: Number(data.subtotal) || 0,
+      discount: Number(data.discount) || 0,
+      deliveryFee: Number(data.delivery_fee) || 0,
+      total: Number(data.total) || 0,
+      promoCode: data.promo_code ?? undefined,
+      dbStatus: data.status,
+      statusHistory: Array.isArray(data.status_history) ? data.status_history : [],
+    },
   });
-
-  return res;
 }

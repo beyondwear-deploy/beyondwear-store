@@ -55,6 +55,7 @@ export async function POST(req: Request) {
       total: order.total ?? 0,
       promo_code: order.promoCode ?? null,
       status: "placed",
+      status_history: [{ status: "placed", at: order.placedAt ?? new Date().toISOString() }],
     },
     { onConflict: "id" },
   );

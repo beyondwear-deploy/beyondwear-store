@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { NotConfigured } from "@/components/admin/NotConfigured";
 import { getRecentOrders } from "@/lib/adminData";
 import { formatDate, formatPrice } from "@/lib/format";
@@ -22,7 +23,7 @@ export default async function AdminOrdersPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold">Orders</h1>
-        <p className="text-sm text-muted">Real orders placed on the site, most recent first.</p>
+        <p className="text-sm text-muted">Real orders placed on the site, most recent first. Click one to update its status.</p>
       </div>
 
       {!configured && <NotConfigured what="Order tracking" />}
@@ -46,16 +47,18 @@ export default async function AdminOrdersPage() {
               </thead>
               <tbody>
                 {orders.map((o) => (
-                  <tr key={o.id} className="border-b border-line last:border-0">
-                    <td className="px-4 py-3 font-mono text-xs font-semibold">{o.id}</td>
-                    <td className="px-4 py-3">{o.customerName}</td>
-                    <td className="px-4 py-3 text-muted">{formatDate(o.placedAt, true)}</td>
-                    <td className="px-4 py-3 text-muted">{o.itemCount}</td>
-                    <td className="px-4 py-3 text-muted capitalize">{o.paymentMethod}</td>
-                    <td className="px-4 py-3">
-                      <span className={`rounded-full px-2.5 py-1 text-xs font-semibold capitalize ${STATUS_STYLE[o.status] ?? "bg-soft text-muted"}`}>{o.status}</span>
+                  <tr key={o.id} className="cursor-pointer border-b border-line last:border-0 hover:bg-soft">
+                    <td className="p-0"><Link href={`/admin/orders/${o.id}`} className="block px-4 py-3 font-mono text-xs font-semibold">{o.id}</Link></td>
+                    <td className="p-0"><Link href={`/admin/orders/${o.id}`} className="block px-4 py-3">{o.customerName}</Link></td>
+                    <td className="p-0"><Link href={`/admin/orders/${o.id}`} className="block px-4 py-3 text-muted">{formatDate(o.placedAt, true)}</Link></td>
+                    <td className="p-0"><Link href={`/admin/orders/${o.id}`} className="block px-4 py-3 text-muted">{o.itemCount}</Link></td>
+                    <td className="p-0"><Link href={`/admin/orders/${o.id}`} className="block px-4 py-3 text-muted capitalize">{o.paymentMethod}</Link></td>
+                    <td className="p-0">
+                      <Link href={`/admin/orders/${o.id}`} className="block px-4 py-3">
+                        <span className={`rounded-full px-2.5 py-1 text-xs font-semibold capitalize ${STATUS_STYLE[o.status] ?? "bg-soft text-muted"}`}>{o.status}</span>
+                      </Link>
                     </td>
-                    <td className="px-4 py-3 text-right font-semibold tabular-nums">{formatPrice(o.total)}</td>
+                    <td className="p-0"><Link href={`/admin/orders/${o.id}`} className="block px-4 py-3 text-right font-semibold tabular-nums">{formatPrice(o.total)}</Link></td>
                   </tr>
                 ))}
               </tbody>

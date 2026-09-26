@@ -7,26 +7,68 @@
  * crashing.
  */
 import { getSupabaseAdmin } from "@/lib/supabase";
+import type { Order } from "@/lib/types";
 
 export interface DayPoint { date: string; value: number; secondary?: number }
+
+/** Maps a raw `orders` row (snake_case DB columns) to the app's `Order` shape. */
+function rowToOrder(o: Record<string, unknown>): Order {
+  return {
+    id: o.id as string,
+    placedAt: o.placed_at as string,
+    customer: o.customer as Order["customer"],
+    shipping: o.shipping as Order["shipping"],
+    deliveryMethod: o.delivery_method as string,
+    paymentMethod: o.payment_method as Order["paymentMethod"],
+    paymentStatus: o.payment_status as Order["paymentStatus"],
+    items: o.items as Order["items"],
+    subtotal: Number(o.subtotal) || 0,
+    discount: Number(o.discount) || 0,
+    deliveryFee: Number(o.delivery_fee) || 0,
+    total: Number(o.total) || 0,
+    promoCode: (o.promo_code as string) ?? undefined,
+    dbStatus: o.status as Order["dbStatus"],
+    statusHistory: Array.isArray(o.status_history) ? (o.status_history as Order["statusHistory"]) : [],
+  };
+}
+
+/** One full order, for the admin order detail page and the customer tracking lookup. */
+export async function getOrder(id: string): Promise<{ configured: boolean; order: Order | null }> {
+  const db = getSupabaseAdmin();
+  if (!db) return { configured: false, order: null };
+  const { data, error } = await db.from("orders").select("*").eq("id", id).maybeSingle();
+  if (error || !data) return { configured: true, order: null };
+  return { configured: true, order: rowToOrder(data) };
+}
 
 export interface OrderStats {
   configured: boolean;
   totalOrders: number;
+  /** Booked revenue — only orders marked Delivered count, per the store's accounting. */
   totalRevenue: number;
+  /** Value of orders placed but not yet delivered (or cancelled) — not booked yet. */
+  pendingRevenue: number;
+  deliveredOrders: number;
   ordersToday: number;
   revenue7d: number;
   revenue30d: number;
   avgOrderValue: number;
   statusBreakdown: { status: string; count: number }[];
-  revenueByDay: DayPoint[]; // last 14 days — value = revenue, secondary = order count
+  revenueByDay: DayPoint[]; // last 14 days — value = revenue booked (by delivery date), secondary = orders delivered
   topProducts: { name: string; qty: number; revenue: number }[];
 }
 
 const EMPTY_ORDER_STATS: OrderStats = {
-  configured: false, totalOrders: 0, totalRevenue: 0, ordersToday: 0, revenue7d: 0, revenue30d: 0,
+  configured: false, totalOrders: 0, totalRevenue: 0, pendingRevenue: 0, deliveredOrders: 0, ordersToday: 0, revenue7d: 0, revenue30d: 0,
   avgOrderValue: 0, statusBreakdown: [], revenueByDay: [], topProducts: [],
 };
+
+/** The date revenue for this order should be booked on — when it was marked Delivered, falling back to when it was placed if there's no history (legacy rows from before status tracking). */
+function deliveredAt(o: { placed_at: string; status: string; status_history: unknown }): string | null {
+  if (o.status !== "delivered") return null;
+  const history = Array.isArray(o.status_history) ? (o.status_history as { status: string; at: string }[]) : [];
+  return history.find((e) => e.status === "delivered")?.at ?? o.placed_at;
+}
 
 function last14Days(): string[] {
   const days: string[] = [];
@@ -44,7 +86,7 @@ export async function getOrderStats(): Promise<OrderStats> {
 
   const { data, error } = await db
     .from("orders")
-    .select("id, placed_at, total, status, items")
+    .select("id, placed_at, total, status, status_history, items")
     .order("placed_at", { ascending: false })
     .limit(2000);
   if (error || !data) return { ...EMPTY_ORDER_STATS, configured: true };
@@ -52,34 +94,41 @@ export async function getOrderStats(): Promise<OrderStats> {
   const now = Date.now();
   const DAY = 86400000;
   const todayStr = new Date().toISOString().slice(0, 10);
-  let totalRevenue = 0, revenue7d = 0, revenue30d = 0, ordersToday = 0;
+  let totalRevenue = 0, pendingRevenue = 0, revenue7d = 0, revenue30d = 0, ordersToday = 0, deliveredOrders = 0;
   const statusCounts = new Map<string, number>();
   const byDay = new Map<string, { revenue: number; count: number }>();
   const productTotals = new Map<string, { qty: number; revenue: number }>();
 
   for (const o of data) {
     const total = Number(o.total) || 0;
-    const placed = new Date(o.placed_at).getTime();
-    const ageMs = now - placed;
-    totalRevenue += total;
-    if (ageMs <= 7 * DAY) revenue7d += total;
-    if (ageMs <= 30 * DAY) revenue30d += total;
     if (new Date(o.placed_at).toISOString().slice(0, 10) === todayStr) ordersToday++;
     statusCounts.set(o.status, (statusCounts.get(o.status) ?? 0) + 1);
 
-    const dayKey = new Date(o.placed_at).toISOString().slice(0, 10);
-    const existing = byDay.get(dayKey) ?? { revenue: 0, count: 0 };
-    existing.revenue += total;
-    existing.count += 1;
-    byDay.set(dayKey, existing);
+    // Revenue books only once an order is Delivered — never at placement — per
+    // the store's accounting. It's attributed to the day it was delivered.
+    const at = deliveredAt(o);
+    if (at) {
+      deliveredOrders++;
+      totalRevenue += total;
+      const ageMs = now - new Date(at).getTime();
+      if (ageMs <= 7 * DAY) revenue7d += total;
+      if (ageMs <= 30 * DAY) revenue30d += total;
+      const dayKey = new Date(at).toISOString().slice(0, 10);
+      const existing = byDay.get(dayKey) ?? { revenue: 0, count: 0 };
+      existing.revenue += total;
+      existing.count += 1;
+      byDay.set(dayKey, existing);
 
-    const items = Array.isArray(o.items) ? (o.items as { name?: string; brand?: string; qty?: number; price?: number }[]) : [];
-    for (const it of items) {
-      const key = `${it.brand ?? ""} ${it.name ?? "Item"}`.trim();
-      const p = productTotals.get(key) ?? { qty: 0, revenue: 0 };
-      p.qty += it.qty ?? 0;
-      p.revenue += (it.price ?? 0) * (it.qty ?? 0);
-      productTotals.set(key, p);
+      const items = Array.isArray(o.items) ? (o.items as { name?: string; brand?: string; qty?: number; price?: number }[]) : [];
+      for (const it of items) {
+        const key = `${it.brand ?? ""} ${it.name ?? "Item"}`.trim();
+        const p = productTotals.get(key) ?? { qty: 0, revenue: 0 };
+        p.qty += it.qty ?? 0;
+        p.revenue += (it.price ?? 0) * (it.qty ?? 0);
+        productTotals.set(key, p);
+      }
+    } else if (o.status !== "cancelled") {
+      pendingRevenue += total;
     }
   }
 
@@ -94,10 +143,12 @@ export async function getOrderStats(): Promise<OrderStats> {
     configured: true,
     totalOrders: data.length,
     totalRevenue,
+    pendingRevenue,
+    deliveredOrders,
     ordersToday,
     revenue7d,
     revenue30d,
-    avgOrderValue: data.length ? Math.round(totalRevenue / data.length) : 0,
+    avgOrderValue: deliveredOrders ? Math.round(totalRevenue / deliveredOrders) : 0,
     statusBreakdown,
     revenueByDay,
     topProducts,

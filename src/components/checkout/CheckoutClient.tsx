@@ -1,6 +1,6 @@
 "use client";
 import { AnimatePresence, motion } from "framer-motion";
-import { AlertTriangle, Banknote, Check, ChevronDown, CreditCard, Lock, ShoppingBag, Smartphone, WifiOff } from "lucide-react";
+import { AlertTriangle, Banknote, Check, ChevronDown, Lock, MessageCircle, ShoppingBag, Smartphone, WifiOff } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -11,7 +11,6 @@ import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { CheckboxField, SelectField, TextField, clean } from "@/components/ui/Form";
-import { Modal } from "@/components/ui/Modal";
 import { CartSkeleton } from "@/components/ui/LoadingState";
 import { isEmail, isPhone } from "@/lib/adapters/auth";
 import { OutOfStockError, placeOrder } from "@/lib/adapters/orders";
@@ -20,13 +19,13 @@ import { PROVINCES, siteConfig } from "@/lib/config";
 import { cn, formatPrice } from "@/lib/format";
 import { useCartSummary } from "@/lib/hooks/useCartSummary";
 import type { PaymentMethodId } from "@/lib/types";
-import { useAuth, useCheckout, useReady, useUI } from "@/store";
+import { useAuth, useCheckout, useReady } from "@/store";
 
 const STEPS = ["Customer", "Shipping", "Delivery", "Payment"] as const;
 type Errors = Record<string, string>;
 type Failure = { type: "payment" | "stock" | "network"; message: string; items?: string[] } | null;
 
-const payIcon: Record<PaymentMethodId, typeof Banknote> = { cod: Banknote, "bank-transfer": Smartphone, online: CreditCard };
+const payIcon: Record<PaymentMethodId, typeof Banknote> = { cod: Banknote, "bank-transfer": Smartphone, online: MessageCircle };
 
 export function CheckoutClient() {
   const router = useRouter();
@@ -34,11 +33,9 @@ export function CheckoutClient() {
   const user = useAuth((s) => s.user);
   const c = useCheckout();
   const s = useCartSummary(c.delivery);
-  const toast = useUI((st) => st.toast);
   const [errors, setErrors] = useState<Errors>({});
   const [agree, setAgree] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [gateway, setGateway] = useState(false);
   const [failure, setFailure] = useState<Failure>(null);
   const [summaryOpen, setSummaryOpen] = useState(false);
   const step = c.step;
@@ -107,7 +104,7 @@ export function CheckoutClient() {
     try {
       const res = await getProvider(c.payment)!.initiate({ orderId: "pending", amount: s.total, email: c.customer.email });
       if (!res.ok) { setFailure({ type: "payment", message: res.error }); setSubmitting(false); return; }
-      if (res.status === "requires-action") { setGateway(true); setSubmitting(false); return; }
+      if (res.status === "requires-action") { setSubmitting(false); return; }
       finalize(res.status);
     } catch {
       setFailure({ type: "network", message: "We couldn't reach the payment service. Please check your connection and try again." });
@@ -251,6 +248,12 @@ export function CheckoutClient() {
                       <p className="mt-3 text-xs text-muted">{siteConfig.payments.bankTransfer.note}</p>
                     </div>
                   )}
+                  {c.payment === "online" && (
+                    <div className="rounded-2xl bg-soft p-5 text-sm">
+                      <p className="mb-1 font-semibold">How this works</p>
+                      <p className="text-muted">After you place your order, we&apos;ll open a WhatsApp chat with your order details so you can arrange payment (card link, bank or wallet) directly with us.</p>
+                    </div>
+                  )}
                   <div className="space-y-2 rounded-2xl border border-line p-5 text-sm">
                     <p className="font-semibold">Review</p>
                     <p className="text-muted">{c.customer.fullName} · {c.customer.phone} · {c.customer.email}</p>
@@ -277,17 +280,6 @@ export function CheckoutClient() {
         </aside>
       </div>
 
-      {/* Demo payment gateway — stands in for a real hosted payment page */}
-      <Modal open={gateway} onClose={() => { setGateway(false); }} title="Secure payment (demo gateway)">
-        <div className="space-y-5 p-6">
-          <p className="rounded-xl bg-warning-soft px-4 py-3 text-xs text-warning">This is a simulator standing in for a real payment gateway. No money moves and no card details are collected. Wire your provider in <code>lib/adapters/payments.ts</code>.</p>
-          <p className="text-sm">Pay <b>{formatPrice(s.total)}</b> to {siteConfig.brand.name}</p>
-          <div className="flex flex-col gap-3">
-            <Button size="lg" variant="primary" onClick={() => { setGateway(false); setSubmitting(true); setTimeout(() => finalize("paid"), 500); }}>Simulate successful payment</Button>
-            <Button size="lg" variant="outline" onClick={() => { setGateway(false); setFailure({ type: "payment", message: "Your payment was declined by the gateway (demo). No order was placed and you haven't been charged." }); toast({ kind: "error", title: "Payment declined" }); }}>Simulate failed payment</Button>
-          </div>
-        </div>
-      </Modal>
     </div>
   );
 }

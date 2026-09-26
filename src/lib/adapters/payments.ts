@@ -3,7 +3,10 @@
  * Each provider implements `PaymentProvider`. To add a real gateway (Easypaisa,
  * JazzCash, Stripe, PayFast…), add a provider here that calls YOUR server route
  * (which holds the secret key) and returns `requires-action` with a redirect URL
- * — never call a gateway with secret keys from the browser.
+ * — never call a gateway with secret keys from the browser. Accepting real card/
+ * wallet payments needs a merchant account with one of those providers first
+ * (only the business owner can register for one) — until then, "online" below
+ * routes the customer to WhatsApp Business instead of a fake gateway.
  */
 import { siteConfig } from "@/lib/config";
 import type { PaymentMethodId } from "@/lib/types";
@@ -49,13 +52,15 @@ const bank: PaymentProvider = {
 
 const online: PaymentProvider = {
   id: "online",
-  label: "Online Payment",
-  description: "Card / wallet via a secure payment gateway.",
-  badge: siteConfig.payments.onlineMode === "demo" ? "Demo gateway" : undefined,
-  available: siteConfig.payments.onlineMode !== "off",
+  label: siteConfig.payments.whatsappPay.label,
+  description: siteConfig.payments.whatsappPay.description,
+  available: true,
   async initiate() {
-    if (siteConfig.payments.onlineMode === "demo") return { ok: true, status: "requires-action", gateway: "demo" };
-    return { ok: false, error: "Online payment isn't configured yet.", retryable: false };
+    return {
+      ok: true,
+      status: "awaiting-verification",
+      instructions: `Message us on WhatsApp — ${siteConfig.contact.whatsappDisplay}`,
+    };
   },
 };
 

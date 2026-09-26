@@ -52,13 +52,43 @@ function rowToOrder(o: Record<string, unknown>): Order {
   };
 }
 
-/** One full order, for the admin order detail page and the customer tracking lookup. */
+const ORDER_COLUMNS = "id, placed_at, customer, shipping, delivery_method, payment_method, payment_status, items, subtotal, discount, delivery_fee, total, promo_code, status, status_history";
+// Exactly what the Orders list (getRecentOrders) already selects successfully for every
+// row — used as a fallback below, since it's proven to never be the column that trips a bad row.
+const SAFE_ORDER_COLUMNS = "id, placed_at, customer, delivery_method, payment_method, payment_status, items, total, status, status_history";
+
+/**
+ * One full order, for the admin order detail page and the customer tracking
+ * lookup. Selects the exact columns the app reads (matching the other
+ * queries in this file) rather than `select("*")` — pulling every column,
+ * including ones no code here touches, gave a handful of older rows a
+ * chance to fail this specific query even though the same row reads fine
+ * everywhere else.
+ *
+ * If that still fails — e.g. one of shipping/subtotal/discount/delivery_fee/
+ * promo_code has a bad value on a very early row — falls back to the safer,
+ * narrower column set the Orders list already reads without issue, so the
+ * admin still sees the order (with those specific fields defaulted) instead
+ * of a dead end or a crashed page.
+ */
 export async function getOrder(id: string): Promise<{ configured: boolean; order: Order | null }> {
   const db = getSupabaseAdmin();
   if (!db) return { configured: false, order: null };
-  const { data, error } = await db.from("orders").select("*").eq("id", id).maybeSingle();
-  if (error || !data) return { configured: true, order: null };
-  return { configured: true, order: rowToOrder(data) };
+
+  try {
+    const { data, error } = await db.from("orders").select(ORDER_COLUMNS).eq("id", id).maybeSingle();
+    if (!error && data) return { configured: true, order: rowToOrder(data) };
+  } catch {
+    // fall through to the safer query below
+  }
+
+  try {
+    const { data, error } = await db.from("orders").select(SAFE_ORDER_COLUMNS).eq("id", id).maybeSingle();
+    if (error || !data) return { configured: true, order: null };
+    return { configured: true, order: rowToOrder({ ...data, shipping: null, subtotal: 0, discount: 0, delivery_fee: 0, promo_code: null }) };
+  } catch {
+    return { configured: true, order: null };
+  }
 }
 
 export interface OrderStats {

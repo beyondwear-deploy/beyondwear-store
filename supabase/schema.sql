@@ -72,6 +72,35 @@ insert into storage.buckets (id, name, public)
 values ('site-content', 'site-content', true)
 on conflict (id) do nothing;
 
+-- ─────────────────────────────────────────────────────────────────────────
+-- Product overrides — backs full product editing (price, photos, name,
+-- specs/measurements, condition, description, stock, etc.) from /admin/products.
+-- The product catalogue itself stays in code (src/data/products.ts); one row
+-- here stores only the fields an admin changed for that product id (e.g.
+-- "p012"), as a JSON patch merged on top of the built-in values. No row for
+-- a product = it still shows its original built-in details.
+-- ─────────────────────────────────────────────────────────────────────────
+create table if not exists product_overrides (
+  product_id  text primary key,          -- e.g. "p012" (matches Product.id)
+  patch       jsonb not null default '{}'::jsonb,
+  updated_at  timestamptz not null default now()
+);
+
+-- Storage bucket for photos uploaded through the product editor.
+insert into storage.buckets (id, name, public)
+values ('product-images', 'product-images', true)
+on conflict (id) do nothing;
+
+alter table product_overrides enable row level security;
+drop policy if exists "public read" on product_overrides;
+create policy "public read" on product_overrides for select using (true);
+drop policy if exists "no public insert" on product_overrides;
+create policy "no public insert" on product_overrides for insert with check (false);
+drop policy if exists "no public update" on product_overrides;
+create policy "no public update" on product_overrides for update using (false);
+drop policy if exists "no public delete" on product_overrides;
+create policy "no public delete" on product_overrides for delete using (false);
+
 -- Row Level Security: lock every table down from the public/anon key.
 -- The app only ever talks to these tables using the SERVICE ROLE key on the
 -- server (in API routes), which bypasses RLS entirely — so these policies

@@ -1,11 +1,15 @@
 /**
  * CATALOG ACCESS LAYER
- * All reads go through these functions. To connect Supabase, re-implement them
- * as async queries (the shapes already match supabase/schema.sql) — no
- * component needs to change beyond awaiting the calls in server components.
+ * All reads go through these functions. The catalogue itself is still the
+ * static list in data/products.ts, but every read here is merged with any
+ * saved admin edits (price, photos, name, specs, condition, stock, etc. —
+ * see lib/productOverrideCache.ts + /admin/products) before it reaches a
+ * component, so nothing below needs to change to support that editor.
  */
 import { PRODUCTS } from "@/data/products";
 import { siteConfig } from "./config";
+import { getProductOverrideCache } from "./productOverrideCache";
+import { applyProductPatch } from "./productPatch";
 import type { Category, Gender, Product } from "./types";
 
 /**
@@ -18,9 +22,16 @@ export const LIVE_CATEGORIES: Category[] = ["shoes"];
 export const isLive = (c: string) => (LIVE_CATEGORIES as string[]).includes(c);
 const isSellable = (p: Product) => p.status === "active" && isLive(p.category);
 
-export const getAllProducts = (): Product[] => PRODUCTS.filter(isSellable);
-export const getProductBySlug = (slug: string) => PRODUCTS.find((p) => p.slug === slug && isSellable(p));
-export const getProductById = (id: string) => PRODUCTS.find((p) => p.id === id && isSellable(p));
+/** Applies any saved admin edits on top of the built-in catalogue rows. */
+function withOverrides(list: Product[]): Product[] {
+  const overrides = getProductOverrideCache();
+  if (Object.keys(overrides).length === 0) return list;
+  return list.map((p) => (overrides[p.id] ? applyProductPatch(p, overrides[p.id]) : p));
+}
+
+export const getAllProducts = (): Product[] => withOverrides(PRODUCTS).filter(isSellable);
+export const getProductBySlug = (slug: string) => withOverrides(PRODUCTS).find((p) => p.slug === slug && isSellable(p));
+export const getProductById = (id: string) => withOverrides(PRODUCTS).find((p) => p.id === id && isSellable(p));
 
 export const CATEGORIES: { id: Category; label: string; plural: string; blurb: string }[] = [
   { id: "shoes", label: "Shoes", plural: "Shoes", blurb: "Sneakers, boots & everyday pairs" },

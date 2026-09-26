@@ -4,6 +4,7 @@ Your site now has a private admin area at **`/admin`** with:
 
 - **Overview** — revenue, orders, average order value, visitor and pageview totals, with trend charts.
 - **Orders** — every real order placed on the site (a proper database record — no longer just an email).
+- **Products** — edit every detail of any listing: price, "was" price, photos, name, brand, description, condition, condition notes, measurements, material, stock and status (active/draft/archived). Changes go live immediately, no redeploy needed.
 - **Traffic** — pageviews, unique visitors, top pages, referrers and devices, similar to a lightweight Google Analytics / YouTube Studio.
 - **Edit content** — click **"Edit page"** on any page of the live site to change text and photos directly, with a Save button. No code, no redeploy needed.
 
@@ -28,7 +29,9 @@ Copy three values:
 
 ## 3. Create the database tables
 
-In Supabase: **SQL Editor → New query**. Open `supabase/schema.sql` from this project, paste its entire contents in, and click **Run**. This creates the `orders`, `page_views` and `content_overrides` tables, plus a `site-content` storage bucket for uploaded photos.
+In Supabase: **SQL Editor → New query**. Open `supabase/schema.sql` from this project, paste its entire contents in, and click **Run**. This creates the `orders`, `page_views`, `content_overrides` and `product_overrides` tables, plus the `site-content` and `product-images` storage buckets for uploaded photos.
+
+If you already ran an earlier version of this file, just paste the whole file in and run it again — every statement is safe to re-run and will only add what's missing.
 
 ## 4. Set your admin login
 
@@ -56,8 +59,9 @@ Visit **beyondwear.store/admin/login** and sign in with the email/password from 
 ## Using it day to day
 
 - **Orders & Traffic** just work — every checkout and every page visit is now recorded automatically.
+- **Editing products**: go to the **Products** tab, click **Edit** on any listing, change whatever you need (price, photos, name, description, condition, measurements, stock, status), and click **Save changes**. **Reset to original** on an edited product discards your changes and goes back to the built-in details.
 - **Editing content**: while signed in, open any page on the real site (Home, About, Contact for now) and click the orange **"Edit page"** button bottom-right. Text and photos with a dashed orange outline can be edited — hover and click the pencil, change it, click Save. Click it again on a photo to upload a replacement. The **Edit content** tab in the dashboard lists everything you've changed and lets you reset any single item back to the original.
-- Want more of the site made editable this way (product descriptions, other pages, etc.)? Just ask — the underlying `<EditableText>` / `<EditableImage>` components can be added to any text or photo on the site.
+- Want more of the site made editable this way (other pages, etc.)? Just ask — the underlying `<EditableText>` / `<EditableImage>` components can be added to any text or photo on the site.
 
 ## Notes
 

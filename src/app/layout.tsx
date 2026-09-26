@@ -11,6 +11,8 @@ import { SiteChrome } from "@/components/layout/SiteChrome";
 import { isAdmin } from "@/lib/adminAuth";
 import { siteConfig } from "@/lib/config";
 import { getOverrides } from "@/lib/content";
+import { setProductOverrideCache } from "@/lib/productOverrideCache";
+import { fetchAllProductOverrides } from "@/lib/productOverrides";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.brand.domain),
@@ -50,7 +52,8 @@ const orgLd = {
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
 
 export default async function RootLayout({ children }: { children: ReactNode }) {
-  const [admin, overrides] = await Promise.all([isAdmin(), getOverrides()]);
+  const [admin, overrides, productOverrides] = await Promise.all([isAdmin(), getOverrides(), fetchAllProductOverrides()]);
+  setProductOverrideCache(productOverrides);
   return (
     <html lang="en" data-theme="light" suppressHydrationWarning>
       <head>

@@ -1,4 +1,4 @@
-import { BarChart3, LayoutDashboard, PenSquare, Receipt } from "lucide-react";
+import { BarChart3, LayoutDashboard, PenSquare, Receipt, ShoppingBag } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
@@ -9,6 +9,7 @@ import { LogoutButton } from "./LogoutButton";
 const NAV = [
   { href: "/admin", label: "Overview", icon: LayoutDashboard },
   { href: "/admin/orders", label: "Orders", icon: Receipt },
+  { href: "/admin/products", label: "Products", icon: ShoppingBag },
   { href: "/admin/analytics", label: "Traffic", icon: BarChart3 },
   { href: "/admin/content", label: "Edit content", icon: PenSquare },
 ] as const;

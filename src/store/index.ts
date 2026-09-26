@@ -11,6 +11,7 @@ import { createJSONStorage, persist } from "zustand/middleware";
 import type { Address, CartLine, Order, PaymentMethodId, Product, User } from "@/lib/types";
 import type { DeliveryId } from "@/lib/config";
 import { getProductById } from "@/lib/catalog";
+import { setProductOverrideCache } from "@/lib/productOverrideCache";
 
 const storage = createJSONStorage(() => localStorage);
 const opts = <T,>(name: string, partialize?: (s: T) => Partial<T>) => ({
@@ -244,6 +245,18 @@ export const useCheckout = create<CheckoutState>()(
   ),
 );
 
+/** Picks up any admin-edited product details (price, photos, stock, etc.) for the client's own reads. */
+async function fetchClientProductOverrides() {
+  try {
+    const res = await fetch("/api/products/overrides", { cache: "no-store" });
+    if (!res.ok) return;
+    const data = await res.json();
+    setProductOverrideCache(data.overrides ?? {});
+  } catch {
+    // keep whatever the server already rendered with; not worth surfacing to the visitor
+  }
+}
+
 /** Rehydrate every persisted store once on the client. */
 export async function hydrateStores() {
   await Promise.all([
@@ -253,6 +266,7 @@ export async function hydrateStores() {
     useRecent.persist.rehydrate(),
     useAuth.persist.rehydrate(),
     useCheckout.persist.rehydrate(),
+    fetchClientProductOverrides(),
   ]);
   useReadyStore.getState().setReady();
 }

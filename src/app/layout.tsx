@@ -46,8 +46,15 @@ const orgLd = {
   name: siteConfig.brand.name,
   description: siteConfig.brand.description,
   url: siteConfig.brand.domain,
+  logo: `${siteConfig.brand.domain}/favicon.png`,
+  image: `${siteConfig.brand.domain}${siteConfig.seo.ogImage}`,
   email: siteConfig.contact.email,
   telephone: siteConfig.contact.phone,
+  priceRange: "Rs",
+  address: { "@type": "PostalAddress", addressLocality: "Karachi", addressCountry: "PK" },
+  openingHoursSpecification: [
+    { "@type": "OpeningHoursSpecification", dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], opens: "11:00", closes: "19:00" },
+  ],
   sameAs: Object.values(siteConfig.socials).map((s) => s.url),
 };
 

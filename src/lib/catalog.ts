@@ -8,9 +8,11 @@
  */
 import { PRODUCTS } from "@/data/products";
 import { siteConfig } from "./config";
+import { fetchCustomProducts } from "./customProducts";
 import { getCustomProductsCache } from "./customProductsCache";
 import { getProductOverrideCache } from "./productOverrideCache";
 import { applyProductPatch } from "./productPatch";
+import { fetchAllProductOverrides } from "./productOverrides";
 import type { Category, Gender, Product } from "./types";
 
 /**
@@ -38,6 +40,21 @@ function allRows(): Product[] {
 export const getAllProducts = (): Product[] => allRows().filter(isSellable);
 export const getProductBySlug = (slug: string) => allRows().find((p) => p.slug === slug && isSellable(p));
 export const getProductById = (id: string) => allRows().find((p) => p.id === id && isSellable(p));
+
+/**
+ * Same product list as getAllProducts(), but fetched fresh from the database
+ * instead of read from the request-scoped cache. Every normal page gets a
+ * warm cache because src/app/layout.tsx populates it once per request before
+ * rendering — but special route files (sitemap.ts, robots.ts) run as their
+ * own handler and never execute the root layout, so getAllProducts() would
+ * silently see zero admin-added products there. Use this in any server
+ * context that reads the catalogue *outside* of a normal page render.
+ */
+export async function getSellableProductsFresh(): Promise<Product[]> {
+  const [overrides, custom] = await Promise.all([fetchAllProductOverrides(), fetchCustomProducts()]);
+  const builtIn = PRODUCTS.map((p) => (overrides[p.id] ? applyProductPatch(p, overrides[p.id]) : p));
+  return [...builtIn, ...custom].filter(isSellable);
+}
 
 export const CATEGORIES: { id: Category; label: string; plural: string; blurb: string }[] = [
   { id: "shoes", label: "Shoes", plural: "Shoes", blurb: "Sneakers, boots & everyday pairs" },

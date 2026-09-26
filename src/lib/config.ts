@@ -42,8 +42,8 @@ export const siteConfig = {
 
   socials: {
     instagram: { label: "Instagram", url: "https://www.instagram.com/beyondwear.pk", handle: "@beyondwear.pk" },
-    facebook: { label: "Facebook", url: "https://www.facebook.com/profile.php?id=61594654800668", handle: "BeyondWear.pk" },
-    tiktok: { label: "TikTok", url: "https://www.tiktok.com/@beyondwear.pk", handle: "@beyondwear.pk" },
+    facebook: { label: "Facebook", url: "https://www.facebook.com/beyondwear.store", handle: "BeyondWear.store" },
+    tiktok: { label: "TikTok", url: "https://www.tiktok.com/@beyondwear.store", handle: "@beyondwear.store" },
     whatsapp: { label: "WhatsApp", url: "https://wa.me/923422375002", handle: "+92 342 2375002" },
   },
 

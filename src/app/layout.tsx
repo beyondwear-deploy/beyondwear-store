@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   description: siteConfig.brand.description,
   applicationName: siteConfig.brand.name,
   alternates: { canonical: "/" },
-  icons: { icon: "/favicon.svg" },
+  icons: { icon: "/favicon.png" },
   openGraph: {
     type: "website", siteName: siteConfig.brand.name, locale: "en_PK", title: siteConfig.seo.defaultTitle,
     description: siteConfig.brand.description, images: [{ url: siteConfig.seo.ogImage, width: 1200, height: 630, alt: `${siteConfig.brand.name} — ${siteConfig.brand.tagline}` }],

@@ -195,12 +195,14 @@ export async function getOrderStats(period: Period = "all"): Promise<OrderStats>
 
 export interface RecentOrder {
   id: string; placedAt: string; customerName: string; total: number; status: string; paymentMethod: string; itemCount: number;
+  /** Full status history, for the admin Orders page's stage counts and activity feed. */
+  statusHistory: { status: string; at: string }[];
 }
 
 export async function getRecentOrders(limit = 50): Promise<{ configured: boolean; orders: RecentOrder[] }> {
   const db = getSupabaseAdmin();
   if (!db) return { configured: false, orders: [] };
-  const { data, error } = await db.from("orders").select("id, placed_at, customer, total, status, payment_method, items").order("placed_at", { ascending: false }).limit(limit);
+  const { data, error } = await db.from("orders").select("id, placed_at, customer, total, status, payment_method, items, status_history").order("placed_at", { ascending: false }).limit(limit);
   if (error || !data) return { configured: true, orders: [] };
   return {
     configured: true,
@@ -212,6 +214,7 @@ export async function getRecentOrders(limit = 50): Promise<{ configured: boolean
       status: o.status,
       paymentMethod: o.payment_method,
       itemCount: Array.isArray(o.items) ? o.items.length : 0,
+      statusHistory: Array.isArray(o.status_history) ? (o.status_history as { status: string; at: string }[]) : [],
     })),
   };
 }

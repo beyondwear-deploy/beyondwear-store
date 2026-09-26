@@ -22,17 +22,26 @@ import type { Order } from "@/lib/types";
 
 export interface DayPoint { date: string; value: number; secondary?: number }
 
-/** Maps a raw `orders` row (snake_case DB columns) to the app's `Order` shape. */
+const FALLBACK_CUSTOMER: Order["customer"] = { fullName: "—", phone: "—", email: "—" };
+const FALLBACK_SHIPPING: Order["shipping"] = { fullName: "—", phone: "—", address: "—", city: "—", province: "—", postalCode: "—" };
+
+/**
+ * Maps a raw `orders` row (snake_case DB columns) to the app's `Order` shape.
+ * Guards every nested/array field rather than trusting the DB row matches the
+ * current shape exactly — a handful of very early test/legacy orders predate
+ * later columns or field additions, and one broken order shouldn't crash the
+ * order detail or tracking page for everyone else.
+ */
 function rowToOrder(o: Record<string, unknown>): Order {
   return {
     id: o.id as string,
     placedAt: o.placed_at as string,
-    customer: o.customer as Order["customer"],
-    shipping: o.shipping as Order["shipping"],
-    deliveryMethod: o.delivery_method as string,
+    customer: (o.customer as Order["customer"] | null) ?? FALLBACK_CUSTOMER,
+    shipping: (o.shipping as Order["shipping"] | null) ?? FALLBACK_SHIPPING,
+    deliveryMethod: (o.delivery_method as string) ?? "—",
     paymentMethod: o.payment_method as Order["paymentMethod"],
     paymentStatus: o.payment_status as Order["paymentStatus"],
-    items: o.items as Order["items"],
+    items: Array.isArray(o.items) ? (o.items as Order["items"]) : [],
     subtotal: Number(o.subtotal) || 0,
     discount: Number(o.discount) || 0,
     deliveryFee: Number(o.delivery_fee) || 0,

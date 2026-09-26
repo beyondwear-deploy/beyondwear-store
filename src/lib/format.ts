@@ -38,7 +38,10 @@ export const CONDITIONS: {
   { id: "fair", label: "Fair", short: "Fair", description: "Noticeable wear but still functional and wearable.", rank: 1 },
 ];
 
-export const conditionMeta = (c: Condition) => CONDITIONS.find((x) => x.id === c)!;
+// Falls back to "Excellent" (rather than crashing) if a stored order/product ever has a
+// condition value that isn't one of the five current ids — e.g. a legacy row from before
+// this list was finalized. Real data should always match, but rendering shouldn't depend on it.
+export const conditionMeta = (c: Condition) => CONDITIONS.find((x) => x.id === c) ?? CONDITIONS[2];
 
 export const ORDER_STEPS: { id: OrderStatus; label: string; hint: string }[] = [
   { id: "placed", label: "Order placed", hint: "We've received your order." },

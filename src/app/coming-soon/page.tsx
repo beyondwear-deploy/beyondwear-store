@@ -5,6 +5,7 @@ import { NewsletterForm } from "@/components/layout/NewsletterForm";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Reveal } from "@/components/ui/Reveal";
+import { EditableText } from "@/components/edit/EditableText";
 import { COMING_SOON, categoryLabel } from "@/lib/catalog";
 import { siteConfig } from "@/lib/config";
 
@@ -23,7 +24,7 @@ export default function ComingSoonPage() {
         eyebrow="Coming soon"
         crumbs={[{ label: "Coming soon" }]}
         title={<>Shoes first. <em className="text-accent">More next.</em></>}
-        blurb={`${siteConfig.brand.name} is launching with preloved shoes, so we can get the inspection, grading and photography exactly right. These categories follow.`}
+        blurb={<EditableText id="coming-soon.hero.blurb" defaultValue={`${siteConfig.brand.name} is launching with preloved shoes, so we can get the inspection, grading and photography exactly right. These categories follow.`} />}
       >
         <Button href="/shop" size="lg" arrow>Shop shoes now</Button>
         <Button href="#notify" size="lg" variant="outline">Get notified</Button>
@@ -54,9 +55,9 @@ export default function ComingSoonPage() {
         <Reveal className="relative isolate overflow-hidden rounded-[2rem] bg-inverse px-6 py-14 text-inverse-fg sm:px-14 sm:py-20">
           <div aria-hidden className="absolute -left-20 -top-20 -z-10 size-96 rounded-full bg-accent/25 blur-3xl" />
           <div className="mx-auto max-w-2xl text-center">
-            <p className="eyebrow mb-4 !text-inverse-fg/60">Be the first to know</p>
-            <h2 id="notify-h" className="text-balance text-4xl sm:text-6xl">Tell me when it opens.</h2>
-            <p className="mx-auto mt-4 max-w-md text-inverse-fg/70">Leave your email and we&apos;ll message you when a new category goes live — no spam, one email per launch.</p>
+            <p className="eyebrow mb-4 !text-inverse-fg/60"><EditableText id="coming-soon.notify.eyebrow" defaultValue="Be the first to know" as="span" multiline={false} /></p>
+            <h2 id="notify-h" className="text-balance text-4xl sm:text-6xl"><EditableText id="coming-soon.notify.title" defaultValue="Tell me when it opens." as="span" multiline={false} /></h2>
+            <p className="mx-auto mt-4 max-w-md text-inverse-fg/70"><EditableText id="coming-soon.notify.blurb" defaultValue="Leave your email and we'll message you when a new category goes live — no spam, one email per launch." as="span" /></p>
             <div className="mx-auto mt-9 max-w-xl text-left"><NewsletterForm tone="dark" /></div>
           </div>
         </Reveal>

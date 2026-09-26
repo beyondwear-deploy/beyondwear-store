@@ -4,6 +4,7 @@ import { SustainabilitySection } from "@/components/home/Sections";
 import { PageHero } from "@/components/layout/PageHero";
 import { Button } from "@/components/ui/Button";
 import { Reveal } from "@/components/ui/Reveal";
+import { EditableText } from "@/components/edit/EditableText";
 import { getAllProducts } from "@/lib/catalog";
 
 export const metadata: Metadata = {
@@ -22,7 +23,7 @@ const ACTIONS = [
 export default function SustainabilityPage() {
   return (
     <>
-      <PageHero eyebrow="Sustainability" crumbs={[{ label: "Sustainability" }]} title={<>Style deserves a <em className="text-accent">second life.</em></>} blurb="Circular fashion, kept simple: extend the life of shoes that are still good, and be honest about what that does — and doesn't — claim." />
+      <PageHero eyebrow="Sustainability" crumbs={[{ label: "Sustainability" }]} title={<>Style deserves a <em className="text-accent">second life.</em></>} blurb={<EditableText id="sustainability.hero.blurb" defaultValue="Circular fashion, kept simple: extend the life of shoes that are still good, and be honest about what that does — and doesn't — claim." />} />
       <section className="container-x py-16 sm:py-24">
         <ul className="grid gap-4 sm:grid-cols-2">
           {ACTIONS.map((a, i) => (

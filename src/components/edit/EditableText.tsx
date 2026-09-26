@@ -1,6 +1,7 @@
 "use client";
-import { Check, Loader2, Pencil, X } from "lucide-react";
-import { useRef, useState, type ElementType } from "react";
+import { Pencil } from "lucide-react";
+import { useState, type ElementType } from "react";
+import { BeforeAfter, FieldEditorModal } from "./FieldEditorModal";
 import { useEditMode, useOverride } from "./EditModeContext";
 
 interface EditableTextProps {
@@ -11,29 +12,29 @@ interface EditableTextProps {
   as?: ElementType;
   className?: string;
   multiline?: boolean;
+  /** Friendly name shown at the top of the edit dialog, e.g. "Homepage hero heading". Defaults to the id. */
+  label?: string;
 }
 
 /**
- * Wraps a piece of text so the signed-in admin can click a pencil, edit it
- * in place, and click Save — no code changes needed. Renders as plain text
- * for every other visitor.
+ * Wraps a piece of text so a signed-in admin can click it anywhere, review
+ * the current text next to their edit, and Save — no code changes needed.
+ * Renders as plain text for every other visitor.
  */
-export function EditableText({ id, defaultValue, as: Tag = "span", className, multiline = true }: EditableTextProps) {
+export function EditableText({ id, defaultValue, as: Tag = "span", className, multiline = true, label }: EditableTextProps) {
   const { editMode, setOverride } = useEditMode();
   const value = useOverride(id, defaultValue);
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(value);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
-  const ref = useRef<HTMLTextAreaElement | HTMLInputElement>(null);
 
   if (!editMode) return <Tag className={className}>{value}</Tag>;
 
   const startEdit = () => {
     setDraft(value);
-    setEditing(true);
     setError("");
-    requestAnimationFrame(() => ref.current?.focus());
+    setEditing(true);
   };
 
   const save = async () => {
@@ -56,39 +57,42 @@ export function EditableText({ id, defaultValue, as: Tag = "span", className, mu
     }
   };
 
-  if (editing) {
-    const Field = multiline ? "textarea" : "input";
-    return (
-      <span className="relative inline-block w-full rounded-lg ring-2 ring-accent">
-        <Field
-          ref={ref as never}
-          value={draft}
-          onChange={(e) => setDraft(e.target.value)}
-          rows={multiline ? Math.max(2, Math.ceil(draft.length / 60)) : undefined}
-          className={`w-full resize-y rounded-lg border-0 bg-elev p-2 text-fg outline-none ${className ?? ""}`}
-        />
-        <span className="mt-1 flex items-center gap-2">
-          <button type="button" onClick={save} disabled={saving} className="flex items-center gap-1 rounded-md bg-accent px-2.5 py-1 text-xs font-bold text-accent-fg disabled:opacity-60">
-            {saving ? <Loader2 className="size-3 animate-spin" aria-hidden /> : <Check className="size-3" aria-hidden />} Save
-          </button>
-          <button type="button" onClick={() => setEditing(false)} disabled={saving} className="flex items-center gap-1 rounded-md bg-soft px-2.5 py-1 text-xs font-semibold text-muted">
-            <X className="size-3" aria-hidden /> Cancel
-          </button>
-          {error && <span className="text-xs font-medium text-danger">{error}</span>}
+  return (
+    <>
+      <span
+        role="button"
+        tabIndex={0}
+        onClick={startEdit}
+        onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); startEdit(); } }}
+        title="Click to edit"
+        className="edit-target group relative inline-block cursor-pointer rounded outline-dashed outline-1 outline-accent/40 outline-offset-2 transition hover:bg-accent-soft/50 hover:outline-2 hover:outline-accent"
+      >
+        <Tag className={className}>{value}</Tag>
+        <span className="pointer-events-none absolute -right-1.5 -top-1.5 flex size-5 items-center justify-center rounded-full bg-accent text-accent-fg opacity-0 shadow transition group-hover:opacity-100">
+          <Pencil className="size-2.5" aria-hidden />
         </span>
       </span>
-    );
-  }
 
-  return (
-    <span className="group relative inline-block rounded outline-dashed outline-1 outline-accent/40 outline-offset-2">
-      <Tag className={className}>{value}</Tag>
-      <button
-        type="button" onClick={startEdit} aria-label="Edit this text"
-        className="absolute -right-7 top-0 flex size-6 items-center justify-center rounded-full bg-accent text-accent-fg opacity-0 shadow transition group-hover:opacity-100"
-      >
-        <Pencil className="size-3" aria-hidden />
-      </button>
-    </span>
+      {editing && (
+        <FieldEditorModal title={label ?? "Edit text"} onCancel={() => setEditing(false)} onSave={save} saving={saving} error={error}>
+          <BeforeAfter
+            before={<p className="whitespace-pre-wrap rounded-lg bg-soft px-3 py-2 text-sm text-muted">{value || <span className="italic text-subtle">(empty)</span>}</p>}
+            after={
+              multiline ? (
+                <textarea
+                  autoFocus value={draft} onChange={(e) => setDraft(e.target.value)} rows={Math.max(3, Math.min(10, Math.ceil(draft.length / 50)))}
+                  className="w-full resize-y rounded-lg border border-line bg-elev p-2.5 text-sm text-fg outline-none focus:border-accent"
+                />
+              ) : (
+                <input
+                  autoFocus value={draft} onChange={(e) => setDraft(e.target.value)}
+                  className="w-full rounded-lg border border-line bg-elev p-2.5 text-sm text-fg outline-none focus:border-accent"
+                />
+              )
+            }
+          />
+        </FieldEditorModal>
+      )}
+    </>
   );
 }

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { PRODUCTS } from "@/data/products";
 import { isAdmin } from "@/lib/adminAuth";
+import { deleteCustomProduct, updateCustomProduct } from "@/lib/customProducts";
 import { getAdminProduct } from "@/lib/productOverrides";
 import type { ProductPatch } from "@/lib/productPatch";
 import { getSupabaseAdmin } from "@/lib/supabase";
@@ -31,23 +32,20 @@ function validate(patch: ProductPatch): string | null {
   return null;
 }
 
-/** One product (any status/category), with saved edits applied — for the /admin/products/[id] edit form. */
+/** One product (built-in or admin-added), with saved edits applied — for the /admin/products/[id] edit form. */
 export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   if (!(await isAdmin())) return NextResponse.json({ ok: false, error: "Not signed in." }, { status: 401 });
   const { id } = await params;
-  const { configured, product, hasOverride } = await getAdminProduct(id);
+  const { configured, product, hasOverride, isCustom } = await getAdminProduct(id);
   if (!product) return NextResponse.json({ ok: false, error: "Product not found." }, { status: 404 });
-  return NextResponse.json({ ok: true, configured, product, hasOverride });
+  return NextResponse.json({ ok: true, configured, product, hasOverride, isCustom });
 }
 
 /** Saves an admin's edits to one product (price, photos, name, specs, condition, description, stock, status). */
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   if (!(await isAdmin())) return NextResponse.json({ ok: false, error: "Not signed in." }, { status: 401 });
   const { id } = await params;
-  if (!PRODUCTS.some((p) => p.id === id)) return NextResponse.json({ ok: false, error: "Product not found." }, { status: 404 });
-
-  const db = getSupabaseAdmin();
-  if (!db) return NextResponse.json({ ok: false, error: "Database not connected yet — see ADMIN_SETUP.md." }, { status: 503 });
+  const isBuiltIn = PRODUCTS.some((p) => p.id === id);
 
   let patch: ProductPatch;
   try {
@@ -58,6 +56,15 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   const problem = validate(patch);
   if (problem) return NextResponse.json({ ok: false, error: problem }, { status: 400 });
 
+  if (!isBuiltIn) {
+    const result = await updateCustomProduct(id, patch);
+    if (!result.ok) return NextResponse.json({ ok: false, error: result.error }, { status: result.error.includes("not found") ? 404 : 500 });
+    return NextResponse.json({ ok: true });
+  }
+
+  const db = getSupabaseAdmin();
+  if (!db) return NextResponse.json({ ok: false, error: "Database not connected yet — see ADMIN_SETUP.md." }, { status: 503 });
+
   const { error } = await db
     .from("product_overrides")
     .upsert({ product_id: id, patch, updated_at: new Date().toISOString() }, { onConflict: "product_id" });
@@ -65,10 +72,18 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   return NextResponse.json({ ok: true });
 }
 
-/** Resets a product back to its original built-in details. */
+/** Built-in product: resets it back to its original built-in details. Admin-added product: deletes it entirely. */
 export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   if (!(await isAdmin())) return NextResponse.json({ ok: false, error: "Not signed in." }, { status: 401 });
   const { id } = await params;
+  const isBuiltIn = PRODUCTS.some((p) => p.id === id);
+
+  if (!isBuiltIn) {
+    const result = await deleteCustomProduct(id);
+    if (!result.ok) return NextResponse.json({ ok: false, error: result.error }, { status: 500 });
+    return NextResponse.json({ ok: true });
+  }
+
   const db = getSupabaseAdmin();
   if (!db) return NextResponse.json({ ok: false, error: "Database not connected yet." }, { status: 503 });
 

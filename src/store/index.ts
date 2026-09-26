@@ -11,6 +11,7 @@ import { createJSONStorage, persist } from "zustand/middleware";
 import type { Address, CartLine, Order, PaymentMethodId, Product, User } from "@/lib/types";
 import type { DeliveryId } from "@/lib/config";
 import { getProductById } from "@/lib/catalog";
+import { setCustomProductsCache } from "@/lib/customProductsCache";
 import { setProductOverrideCache } from "@/lib/productOverrideCache";
 
 const storage = createJSONStorage(() => localStorage);
@@ -257,6 +258,18 @@ async function fetchClientProductOverrides() {
   }
 }
 
+/** Picks up any admin-added ("Add new product") listings for the client's own reads. */
+async function fetchClientCustomProducts() {
+  try {
+    const res = await fetch("/api/products/custom", { cache: "no-store" });
+    if (!res.ok) return;
+    const data = await res.json();
+    setCustomProductsCache(data.products ?? []);
+  } catch {
+    // keep whatever the server already rendered with
+  }
+}
+
 /** Rehydrate every persisted store once on the client. */
 export async function hydrateStores() {
   await Promise.all([
@@ -267,6 +280,7 @@ export async function hydrateStores() {
     useAuth.persist.rehydrate(),
     useCheckout.persist.rehydrate(),
     fetchClientProductOverrides(),
+    fetchClientCustomProducts(),
   ]);
   useReadyStore.getState().setReady();
 }

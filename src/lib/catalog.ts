@@ -8,6 +8,7 @@
  */
 import { PRODUCTS } from "@/data/products";
 import { siteConfig } from "./config";
+import { getCustomProductsCache } from "./customProductsCache";
 import { getProductOverrideCache } from "./productOverrideCache";
 import { applyProductPatch } from "./productPatch";
 import type { Category, Gender, Product } from "./types";
@@ -29,9 +30,14 @@ function withOverrides(list: Product[]): Product[] {
   return list.map((p) => (overrides[p.id] ? applyProductPatch(p, overrides[p.id]) : p));
 }
 
-export const getAllProducts = (): Product[] => withOverrides(PRODUCTS).filter(isSellable);
-export const getProductBySlug = (slug: string) => withOverrides(PRODUCTS).find((p) => p.slug === slug && isSellable(p));
-export const getProductById = (id: string) => withOverrides(PRODUCTS).find((p) => p.id === id && isSellable(p));
+/** The built-in catalogue (with edits applied) plus any admin-added ("Add new product") listings. */
+function allRows(): Product[] {
+  return [...withOverrides(PRODUCTS), ...getCustomProductsCache()];
+}
+
+export const getAllProducts = (): Product[] => allRows().filter(isSellable);
+export const getProductBySlug = (slug: string) => allRows().find((p) => p.slug === slug && isSellable(p));
+export const getProductById = (id: string) => allRows().find((p) => p.id === id && isSellable(p));
 
 export const CATEGORIES: { id: Category; label: string; plural: string; blurb: string }[] = [
   { id: "shoes", label: "Shoes", plural: "Shoes", blurb: "Sneakers, boots & everyday pairs" },

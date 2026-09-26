@@ -1,11 +1,11 @@
 "use client";
-import { Loader2, Pencil, RotateCcw, Save, X } from "lucide-react";
+import { Loader2, Pencil, Plus, RotateCcw, Save, Trash2, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useRef, useState, type ReactNode } from "react";
 import { ProductImage } from "@/components/product/ProductImage";
 import { CONDITIONS } from "@/lib/format";
 import { toPatch, type ProductPatchSnapshot } from "@/lib/productPatch";
-import type { Measurement, Product, ProductImage as ProductImageType } from "@/lib/types";
+import type { ImageView, Measurement, Product, ProductImage as ProductImageType } from "@/lib/types";
 
 const STATUSES: { id: Product["status"]; label: string; hint: string }[] = [
   { id: "active", label: "Active", hint: "Shown and buyable on the live site." },
@@ -13,7 +13,10 @@ const STATUSES: { id: Product["status"]; label: string; hint: string }[] = [
   { id: "archived", label: "Archived", hint: "Hidden — kept for records only." },
 ];
 
-export function ProductEditForm({ product, configured, hasOverride }: { product: Product; configured: boolean; hasOverride: boolean }) {
+const VIEW_CYCLE: ImageView[] = ["front", "back", "side", "detail", "label", "wear"];
+const nextView = (used: ImageView[]): ImageView => VIEW_CYCLE.find((v) => !used.includes(v)) ?? "front";
+
+export function ProductEditForm({ product, configured, hasOverride, isCustom }: { product: Product; configured: boolean; hasOverride: boolean; isCustom: boolean }) {
   const router = useRouter();
   const [form, setForm] = useState<ProductPatchSnapshot>(() => toPatch(product));
   const [conditionNotesText, setConditionNotesText] = useState(product.conditionNotes.join("\n"));
@@ -35,6 +38,11 @@ export function ProductEditForm({ product, configured, hasOverride }: { product:
 
   const setImageSrc = (i: number, src: string | undefined) => {
     set("images", form.images.map((img, idx) => (idx === i ? { ...img, src } : img)));
+  };
+  const removeImageSlot = (i: number) => set("images", form.images.filter((_, idx) => idx !== i));
+  const addImageSlot = (src: string) => {
+    const view = nextView(form.images.map((i) => i.view));
+    set("images", [...form.images, { view, alt: `${form.brand} ${form.name}`.trim() || "Product photo", src }]);
   };
 
   const save = async () => {
@@ -60,17 +68,24 @@ export function ProductEditForm({ product, configured, hasOverride }: { product:
   };
 
   const reset = async () => {
-    if (!confirm("Reset this product back to its original built-in details? This can't be undone.")) return;
+    const confirmMsg = isCustom
+      ? "Delete this product for good? This can't be undone."
+      : "Reset this product back to its original built-in details? This can't be undone.";
+    if (!confirm(confirmMsg)) return;
     setResetting(true);
     setError("");
     try {
       const res = await fetch(`/api/admin/products/${product.id}`, { method: "DELETE" });
       const data = await res.json();
-      if (!data.ok) throw new Error(data.error || "Reset failed.");
-      router.refresh();
-      router.push(`/admin/products/${product.id}`);
+      if (!data.ok) throw new Error(data.error || (isCustom ? "Delete failed." : "Reset failed."));
+      if (isCustom) {
+        router.push("/admin/products");
+      } else {
+        router.refresh();
+        router.push(`/admin/products/${product.id}`);
+      }
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Reset failed.");
+      setError(e instanceof Error ? e.message : "That didn't work.");
     } finally {
       setResetting(false);
     }
@@ -87,8 +102,13 @@ export function ProductEditForm({ product, configured, hasOverride }: { product:
       <Section title="Photos">
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
           {form.images.map((img, i) => (
-            <ImageSlot key={img.view} product={product} images={form.images} index={i} productId={product.id} onChange={(src) => setImageSrc(i, src)} />
+            <ImageSlot
+              key={img.view} product={product} images={form.images} index={i} productId={product.id}
+              isCustom={isCustom} canRemove={isCustom && form.images.length > 1}
+              onChange={(src) => setImageSrc(i, src)} onRemove={() => removeImageSlot(i)}
+            />
           ))}
+          {isCustom && form.images.length < 6 && <AddImageSlot productId={product.id} onAdd={addImageSlot} />}
         </div>
       </Section>
 
@@ -177,12 +197,13 @@ export function ProductEditForm({ product, configured, hasOverride }: { product:
           {saving ? "Saving…" : "Save changes"}
         </button>
         {saved && <span className="text-sm font-medium text-success">Saved — live now.</span>}
-        {hasOverride && (
+        {(hasOverride || isCustom) && (
           <button
             type="button" onClick={reset} disabled={resetting}
-            className="ml-auto flex items-center gap-2 rounded-lg bg-soft px-3.5 py-2.5 text-sm font-semibold text-muted transition hover:bg-line disabled:opacity-60"
+            className={`ml-auto flex items-center gap-2 rounded-lg px-3.5 py-2.5 text-sm font-semibold transition disabled:opacity-60 ${isCustom ? "bg-danger-soft text-danger hover:opacity-90" : "bg-soft text-muted hover:bg-line"}`}
           >
-            <RotateCcw className="size-4" aria-hidden /> {resetting ? "Resetting…" : "Reset to original"}
+            {isCustom ? <Trash2 className="size-4" aria-hidden /> : <RotateCcw className="size-4" aria-hidden />}
+            {resetting ? (isCustom ? "Deleting…" : "Resetting…") : isCustom ? "Delete product" : "Reset to original"}
           </button>
         )}
       </div>
@@ -211,8 +232,11 @@ function Field({ label, children }: { label: string; children: ReactNode }) {
 }
 
 function ImageSlot({
-  product, images, index, productId, onChange,
-}: { product: Product; images: ProductImageType[]; index: number; productId: string; onChange: (src: string | undefined) => void }) {
+  product, images, index, productId, isCustom, canRemove, onChange, onRemove,
+}: {
+  product: Product; images: ProductImageType[]; index: number; productId: string;
+  isCustom: boolean; canRemove: boolean; onChange: (src: string | undefined) => void; onRemove: () => void;
+}) {
   const img = images[index];
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
@@ -241,6 +265,8 @@ function ImageSlot({
     }
   };
 
+  const removeLabel = canRemove ? "Remove this photo" : "Remove photo, use generated art instead";
+
   return (
     <div className="space-y-1.5">
       <div className="group relative aspect-[4/5] overflow-hidden rounded-xl bg-soft outline-dashed outline-1 outline-line-strong">
@@ -252,16 +278,59 @@ function ImageSlot({
         >
           {uploading ? <Loader2 className="size-4 animate-spin" aria-hidden /> : <Pencil className="size-4" aria-hidden />}
         </button>
-        {img.src && (
+        {(img.src || canRemove) && (
           <button
-            type="button" onClick={() => onChange(undefined)} aria-label="Remove photo, use generated art instead"
+            type="button" onClick={() => (canRemove ? onRemove() : onChange(undefined))} aria-label={removeLabel} title={removeLabel}
             className="absolute left-2 top-2 flex size-8 items-center justify-center rounded-full bg-fg/80 text-bg opacity-0 shadow transition group-hover:opacity-100"
           >
             <X className="size-4" aria-hidden />
           </button>
         )}
       </div>
-      <p className="text-center text-[11px] font-medium capitalize text-subtle">{img.view}</p>
+      <p className="text-center text-[11px] font-medium capitalize text-subtle">{isCustom ? (index === 0 ? "Main photo" : `Photo ${index + 1}`) : img.view}</p>
+      {error && <p className="text-center text-[10px] text-danger">{error}</p>}
+    </div>
+  );
+}
+
+/** Extra "+" tile that uploads and appends a new photo — only shown for admin-added products, which can have any number of photos. */
+function AddImageSlot({ productId, onAdd }: { productId: string; onAdd: (src: string) => void }) {
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const pick = () => inputRef.current?.click();
+  const onFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    setUploading(true);
+    setError("");
+    try {
+      const fd = new FormData();
+      fd.set("file", file);
+      fd.set("view", "front");
+      const res = await fetch(`/api/admin/products/${productId}/upload`, { method: "POST", body: fd });
+      const data = await res.json();
+      if (!data.ok) throw new Error(data.error || "Upload failed.");
+      onAdd(data.url);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Upload failed.");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  return (
+    <div className="space-y-1.5">
+      <button
+        type="button" onClick={pick} disabled={uploading}
+        className="flex aspect-[4/5] w-full flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-line-strong text-subtle transition hover:border-accent hover:text-accent disabled:opacity-60"
+      >
+        {uploading ? <Loader2 className="size-6 animate-spin" aria-hidden /> : <Plus className="size-6" aria-hidden />}
+        <span className="text-xs font-semibold">{uploading ? "Uploading…" : "Add photo"}</span>
+      </button>
+      <input ref={inputRef} type="file" accept="image/png,image/jpeg,image/webp,image/gif" className="hidden" onChange={onFile} />
       {error && <p className="text-center text-[10px] text-danger">{error}</p>}
     </div>
   );

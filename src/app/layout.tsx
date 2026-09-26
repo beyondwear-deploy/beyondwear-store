@@ -11,6 +11,8 @@ import { SiteChrome } from "@/components/layout/SiteChrome";
 import { isAdmin } from "@/lib/adminAuth";
 import { siteConfig } from "@/lib/config";
 import { getOverrides } from "@/lib/content";
+import { setCustomProductsCache } from "@/lib/customProductsCache";
+import { fetchCustomProducts } from "@/lib/customProducts";
 import { setProductOverrideCache } from "@/lib/productOverrideCache";
 import { fetchAllProductOverrides } from "@/lib/productOverrides";
 
@@ -52,8 +54,11 @@ const orgLd = {
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
 
 export default async function RootLayout({ children }: { children: ReactNode }) {
-  const [admin, overrides, productOverrides] = await Promise.all([isAdmin(), getOverrides(), fetchAllProductOverrides()]);
+  const [admin, overrides, productOverrides, customProducts] = await Promise.all([
+    isAdmin(), getOverrides(), fetchAllProductOverrides(), fetchCustomProducts(),
+  ]);
   setProductOverrideCache(productOverrides);
+  setCustomProductsCache(customProducts);
   return (
     <html lang="en" data-theme="light" suppressHydrationWarning>
       <head>

@@ -4,6 +4,7 @@ import { PageHero } from "@/components/layout/PageHero";
 import { Button } from "@/components/ui/Button";
 import { ConditionBadge } from "@/components/ui/Badge";
 import { Reveal } from "@/components/ui/Reveal";
+import { EditableText } from "@/components/edit/EditableText";
 import { PROCESS } from "@/data/process";
 import { CONDITIONS, cn } from "@/lib/format";
 
@@ -19,7 +20,7 @@ export default function OurWorkPage() {
       <PageHero
         eyebrow="Our work" crumbs={[{ label: "Our work" }]}
         title={<>Six steps between <em className="text-accent">closet</em> and doorstep.</>}
-        blurb="Nothing is listed until it's been sourced, inspected, cleaned, photographed and described honestly. This is how it works."
+        blurb={<EditableText id="our-work.hero.blurb" defaultValue="Nothing is listed until it's been sourced, inspected, cleaned, photographed and described honestly. This is how it works." />}
       >
         <Button href="/shop" size="lg" arrow>Shop inspected pairs</Button>
       </PageHero>
@@ -49,7 +50,11 @@ export default function OurWorkPage() {
 
       <section id="grading" className="scroll-mt-28 bg-soft py-20 sm:py-28" aria-labelledby="grade-h">
         <div className="container-x">
-          <Reveal className="mb-12 max-w-2xl"><p className="eyebrow mb-3">Condition grading</p><h2 id="grade-h" className="text-4xl sm:text-6xl">One scale. Every product.</h2><p className="mt-4 text-lg text-muted">Each pair gets a grade from this five-step scale, plus written notes on every visible mark.</p></Reveal>
+          <Reveal className="mb-12 max-w-2xl">
+            <p className="eyebrow mb-3">Condition grading</p>
+            <h2 id="grade-h" className="text-4xl sm:text-6xl"><EditableText id="our-work.grading.title" defaultValue="One scale. Every product." as="span" multiline={false} /></h2>
+            <p className="mt-4 text-lg text-muted"><EditableText id="our-work.grading.blurb" defaultValue="Each pair gets a grade from this five-step scale, plus written notes on every visible mark." as="span" /></p>
+          </Reveal>
           <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
             {CONDITIONS.map((c, i) => (
               <Reveal as="li" key={c.id} delay={i * 0.07} className="rounded-3xl border border-line bg-elev p-6">

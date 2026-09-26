@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Modal } from "@/components/ui/Modal";
 import { cn } from "@/lib/format";
 import type { ImageView, Product } from "@/lib/types";
+import { InlinePhotoEditor } from "./InlinePhotoEditor";
 import { ProductImage } from "./ProductImage";
 
 export const VIEW_LABEL: Record<ImageView, string> = {
@@ -74,6 +75,8 @@ export function ProductGallery({ product: p, sold, openAt, onOpenAtHandled }: { 
               </button>
             ))}
           </div>
+
+          <InlinePhotoEditor product={p} />
 
           {sold && <div className="pointer-events-none absolute inset-0 grid place-items-center rounded-3xl bg-bg/40"><span className="rounded-full bg-fg px-6 py-2.5 text-xs font-bold uppercase tracking-[0.22em] text-bg shadow-lift">Sold out</span></div>}
 

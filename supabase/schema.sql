@@ -101,6 +101,28 @@ create policy "no public update" on product_overrides for update using (false);
 drop policy if exists "no public delete" on product_overrides;
 create policy "no public delete" on product_overrides for delete using (false);
 
+-- ─────────────────────────────────────────────────────────────────────────
+-- Custom products — listings an admin added from scratch via "Add new
+-- product" (not part of the built-in demo catalogue in src/data/products.ts).
+-- Each row is a full product record (same shape as the Product type).
+-- ─────────────────────────────────────────────────────────────────────────
+create table if not exists custom_products (
+  id          text primary key,          -- e.g. "c7f3a1c2"
+  data        jsonb not null,
+  created_at  timestamptz not null default now(),
+  updated_at  timestamptz not null default now()
+);
+
+alter table custom_products enable row level security;
+drop policy if exists "public read" on custom_products;
+create policy "public read" on custom_products for select using (true);
+drop policy if exists "no public insert" on custom_products;
+create policy "no public insert" on custom_products for insert with check (false);
+drop policy if exists "no public update" on custom_products;
+create policy "no public update" on custom_products for update using (false);
+drop policy if exists "no public delete" on custom_products;
+create policy "no public delete" on custom_products for delete using (false);
+
 -- Row Level Security: lock every table down from the public/anon key.
 -- The app only ever talks to these tables using the SERVICE ROLE key on the
 -- server (in API routes), which bypasses RLS entirely — so these policies

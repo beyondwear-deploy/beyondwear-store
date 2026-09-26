@@ -15,7 +15,7 @@ export default function ShopPage() {
   return (
     <>
       <Suspense fallback={<div className="container-x py-16"><ProductGridSkeleton count={8} /></div>}>
-        <ShopClient title="Shop all shoes" eyebrow="The full collection" blurb="Every pair inspected, graded and photographed in detail." crumbs={[{ label: "Shop" }]} />
+        <ShopClient heroId="shop" title="Shop all shoes" eyebrow="The full collection" blurb="Every pair inspected, graded and photographed in detail." crumbs={[{ label: "Shop" }]} />
       </Suspense>
       {/* crawlable product links for search engines */}
       <nav aria-label="All shoes" className="sr-only">

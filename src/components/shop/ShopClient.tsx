@@ -7,6 +7,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { ProductFilter, type Counts } from "@/components/product/ProductFilter";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { ComingSoonPanel } from "@/components/shop/ComingSoon";
+import { EditableText } from "@/components/edit/EditableText";
 import { Breadcrumbs, type Crumb } from "@/components/ui/Breadcrumbs";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -37,9 +38,11 @@ interface Props {
   defaults?: Partial<Filters>;
   isSearch?: boolean;
   showCategoryNav?: boolean;
+  /** Pass a stable id (e.g. "shop") to make the eyebrow/title/blurb editable from the live site. */
+  heroId?: string;
 }
 
-export function ShopClient({ title, eyebrow, blurb, crumbs, defaults = EMPTY, isSearch, showCategoryNav = true }: Props) {
+export function ShopClient({ title, eyebrow, blurb, crumbs, defaults = EMPTY, isSearch, showCategoryNav = true, heroId }: Props) {
   const sp = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
@@ -128,9 +131,20 @@ export function ShopClient({ title, eyebrow, blurb, crumbs, defaults = EMPTY, is
     <div className="container-x pb-8 pt-6 sm:pt-8">
       <Breadcrumbs items={crumbs} />
       <header className="mb-8 mt-6 flex flex-col gap-3 sm:mb-10">
-        {eyebrow && <p className="eyebrow flex items-center gap-3"><span className="h-px w-8 bg-accent" aria-hidden />{eyebrow}</p>}
-        <h1 className="text-5xl leading-none sm:text-7xl">{isSearch && filters.q ? <>Results for <em className="text-accent">“{filters.q}”</em></> : title}</h1>
-        {blurb && !filters.q && <p className="max-w-xl text-muted sm:text-lg">{blurb}</p>}
+        {eyebrow && (
+          <p className="eyebrow flex items-center gap-3">
+            <span className="h-px w-8 bg-accent" aria-hidden />
+            {heroId ? <EditableText id={`${heroId}.hero.eyebrow`} defaultValue={eyebrow} as="span" multiline={false} label="Page label" /> : eyebrow}
+          </p>
+        )}
+        <h1 className="text-5xl leading-none sm:text-7xl">
+          {isSearch && filters.q ? <>Results for <em className="text-accent">“{filters.q}”</em></> : heroId ? <EditableText id={`${heroId}.hero.title`} defaultValue={title} as="span" multiline={false} label="Page heading" /> : title}
+        </h1>
+        {blurb && !filters.q && (
+          <p className="max-w-xl text-muted sm:text-lg">
+            {heroId ? <EditableText id={`${heroId}.hero.blurb`} defaultValue={blurb} as="span" label="Page blurb" /> : blurb}
+          </p>
+        )}
       </header>
 
       {showCategoryNav && (

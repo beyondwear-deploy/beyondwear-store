@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { EditableText } from "@/components/edit/EditableText";
 import { COMING_SOON } from "@/lib/catalog";
 import { cn } from "@/lib/format";
 
@@ -14,7 +15,7 @@ export function ComingSoonStrip({ heading = true, className }: { heading?: boole
   return (
     <section className={cn("container-x", className)} aria-labelledby="soon-h">
       {heading ? (
-        <SectionHeading eyebrow="Coming soon" title="More to come." blurb="We're starting with shoes and doing them properly. These categories are next." href="/coming-soon" hrefLabel="Get notified" />
+        <SectionHeading id="coming-soon.strip" eyebrow="Coming soon" title="More to come." blurb="We're starting with shoes and doing them properly. These categories are next." href="/coming-soon" hrefLabel="Get notified" />
       ) : (
         <h2 id="soon-h" className="sr-only">Coming soon</h2>
       )}
@@ -48,7 +49,9 @@ export function ComingSoonPanel({ label, blurb }: { label: string; blurb: string
     <div className="mx-auto max-w-xl rounded-3xl border border-dashed border-line-strong bg-soft/60 px-6 py-14 text-center sm:px-10" role="status">
       <Badge tone="dark">Coming soon</Badge>
       <h2 className="mt-5 text-4xl sm:text-5xl">{label} are on the way.</h2>
-      <p className="mx-auto mt-4 max-w-sm text-muted">{blurb}. We&apos;re launching with shoes first — join the list and we&apos;ll tell you the moment this opens.</p>
+      <p className="mx-auto mt-4 max-w-sm text-muted">
+        {blurb}. <EditableText id="coming-soon.panel.note" defaultValue="We're launching with shoes first — join the list and we'll tell you the moment this opens." as="span" label="Coming-soon panel note" />
+      </p>
       <div className="mt-8 flex flex-wrap justify-center gap-3">
         <Button href="/shop" size="lg" arrow>Shop shoes</Button>
         <Button href="/coming-soon#notify" size="lg" variant="outline">Get notified</Button>

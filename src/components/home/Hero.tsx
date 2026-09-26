@@ -6,12 +6,18 @@ import { useRef } from "react";
 import { ProductImage } from "@/components/product/ProductImage";
 import { Button } from "@/components/ui/Button";
 import { ConditionBadge } from "@/components/ui/Badge";
+import { EditableText } from "@/components/edit/EditableText";
+import { useEditMode, useOverride } from "@/components/edit/EditModeContext";
 import { formatPrice } from "@/lib/format";
 import type { Product } from "@/lib/types";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
 export function Hero({ main, topRight, midRight, badge, featured }: { main: Product; topRight: Product; midRight: Product; badge: Product; featured: Product }) {
+  const { editMode } = useEditMode();
+  const line1 = useOverride("home.hero.line1", "Beyond");
+  const line2 = useOverride("home.hero.line2", "the first wear.");
+  const blurb = useOverride("home.hero.blurb", "Carefully selected preloved shoes, inspected and honestly graded. Every great pair deserves to go beyond its first life.");
   const ref = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const yA = useTransform(scrollYProgress, [0, 1], [0, -70]);
@@ -38,11 +44,20 @@ export function Hero({ main, topRight, midRight, badge, featured }: { main: Prod
         <div>
           <motion.p {...fade(-2)} className="eyebrow mb-6 flex items-center gap-3"><span className="h-px w-10 bg-accent" aria-hidden />Preloved shoes · New pairs every week</motion.p>
           <h1 className="text-[clamp(3.4rem,11.5vw,8.6rem)] font-medium uppercase leading-[0.9] tracking-[-0.035em]">
-            {line("Beyond", 0)}
-            {line("the first wear.", 1, "italic text-accent")}
+            {editMode ? (
+              <>
+                <EditableText id="home.hero.line1" defaultValue="Beyond" as="span" className="block" multiline={false} label="Homepage hero — line 1" />
+                <EditableText id="home.hero.line2" defaultValue="the first wear." as="span" className="block italic text-accent" multiline={false} label="Homepage hero — line 2" />
+              </>
+            ) : (
+              <>
+                {line(line1, 0)}
+                {line(line2, 1, "italic text-accent")}
+              </>
+            )}
           </h1>
           <motion.p {...fade(0)} className="mt-7 max-w-md text-base leading-relaxed text-muted sm:text-lg">
-            Carefully selected preloved shoes, inspected and honestly graded. Every great pair deserves to go beyond its first life.
+            {editMode ? <EditableText id="home.hero.blurb" defaultValue="Carefully selected preloved shoes, inspected and honestly graded. Every great pair deserves to go beyond its first life." label="Homepage hero blurb" /> : blurb}
           </motion.p>
           <motion.div {...fade(1)} className="mt-9 flex flex-wrap gap-3">
             <Button href="/shop" size="lg" arrow>Shop now</Button>

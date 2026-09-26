@@ -1,5 +1,6 @@
 import { ArrowRight, Footprints, Instagram, Leaf, Quote, Recycle, Star, Tag, Gem } from "lucide-react";
 import Link from "next/link";
+import { EditableText } from "@/components/edit/EditableText";
 import { CategoryCard } from "@/components/product/CategoryCard";
 import { ProductCard } from "@/components/product/ProductCard";
 import { ProductGrid, ProductRail } from "@/components/product/ProductGrid";
@@ -39,7 +40,7 @@ export function FeaturedCategories({ picks }: { picks: Record<"men" | "women" | 
   return (
     <>
       <section id="collections" className="container-x scroll-mt-24 py-20 sm:py-28">
-        <SectionHeading eyebrow="Shop shoes" title="Find your next favourite pair." blurb="Sneakers, boots and everyday pairs — browse by department or see every pair we have." href="/shop" hrefLabel="Shop all shoes" />
+        <SectionHeading id="home.collections" eyebrow="Shop shoes" title="Find your next favourite pair." blurb="Sneakers, boots and everyday pairs — browse by department or see every pair we have." href="/shop" hrefLabel="Shop all shoes" />
         <div className="grid gap-4 sm:gap-5 md:grid-cols-3">
           {[
             { t: "Men", b: "Sneakers, boots & everyday pairs", h: "/men", p: picks.men, c: count((p) => p.gender === "men" || p.gender === "unisex") },
@@ -58,7 +59,7 @@ export function FeaturedCategories({ picks }: { picks: Record<"men" | "women" | 
 export function NewArrivalsSection({ products }: { products: Product[] }) {
   return (
     <section className="container-x py-12 sm:py-16" aria-labelledby="new-h">
-      <SectionHeading eyebrow="Just in" title="New arrivals" blurb="Fresh pairs, added this week. One of each — once it's gone, it's gone." href="/new-arrivals" hrefLabel="See all new" />
+      <SectionHeading id="home.new-arrivals" eyebrow="Just in" title="New arrivals" blurb="Fresh pairs, added this week. One of each — once it's gone, it's gone." href="/new-arrivals" hrefLabel="See all new" />
       <ProductRail products={products} label="New arrivals" />
     </section>
   );
@@ -67,27 +68,30 @@ export function NewArrivalsSection({ products }: { products: Product[] }) {
 export function TrendingSection({ products }: { products: Product[] }) {
   return (
     <section className="container-x py-16 sm:py-24" aria-labelledby="trend-h">
-      <SectionHeading eyebrow="Most wanted" title="Trending now" blurb="The pairs everyone's saving to their wishlist." href="/shop?sort=popular" hrefLabel="Shop popular" />
+      <SectionHeading id="home.trending" eyebrow="Most wanted" title="Trending now" blurb="The pairs everyone's saving to their wishlist." href="/shop?sort=popular" hrefLabel="Shop popular" />
       <ProductGrid products={products} />
     </section>
   );
 }
 
 export function DepartmentSplit({ title, eyebrow, blurb, href, hero, products, tint, reverse }: { title: string; eyebrow: string; blurb: string; href: string; hero: Product; products: Product[]; tint: string; reverse?: boolean }) {
+  const editId = `home.dept${href.replace(/\//g, "-")}`;
   return (
     <section className="container-x py-12 sm:py-16">
       <div className={`grid items-stretch gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:gap-10 ${reverse ? "lg:[&>*:first-child]:order-2" : ""}`}>
         <Reveal>
-          <Link href={href} className="group relative block h-full min-h-[420px] overflow-hidden rounded-[2rem] ring-1 ring-line/60">
-            <div className="absolute inset-0 transition-transform duration-[1400ms] ease-[var(--ease)] group-hover:scale-105"><ProductImage product={hero} tint={tint} /></div>
-            <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/5 to-transparent" aria-hidden />
-            <div className="absolute inset-x-0 bottom-0 p-7 text-white sm:p-9">
-              <p className="eyebrow mb-3 !text-white/70">{eyebrow}</p>
-              <h2 className="text-5xl !text-white sm:text-6xl">{title}</h2>
-              <p className="mt-3 max-w-xs text-sm text-white/80">{blurb}</p>
-              <span className="mt-6 inline-flex items-center gap-2 rounded-full bg-white px-5 py-3 text-xs font-bold uppercase tracking-[0.12em] text-black transition group-hover:gap-3">Shop {title} <ArrowRight className="size-4" aria-hidden /></span>
+          <div className="group relative block h-full min-h-[420px] overflow-hidden rounded-[2rem] ring-1 ring-line/60">
+            <Link href={href} className="absolute inset-0 z-0" aria-label={`Shop ${title}`}>
+              <div className="absolute inset-0 transition-transform duration-[1400ms] ease-[var(--ease)] group-hover:scale-105"><ProductImage product={hero} tint={tint} /></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/5 to-transparent" aria-hidden />
+            </Link>
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 p-7 text-white sm:p-9">
+              <p className="eyebrow pointer-events-auto mb-3 !text-white/70"><EditableText id={`${editId}.eyebrow`} defaultValue={eyebrow} as="span" multiline={false} label={`${title} edit — label`} /></p>
+              <h2 className="pointer-events-auto text-5xl !text-white sm:text-6xl"><EditableText id={`${editId}.title`} defaultValue={title} as="span" multiline={false} label={`${title} edit — heading`} /></h2>
+              <p className="pointer-events-auto mt-3 max-w-xs text-sm text-white/80"><EditableText id={`${editId}.blurb`} defaultValue={blurb} as="span" label={`${title} edit — blurb`} /></p>
+              <Link href={href} className="pointer-events-auto mt-6 inline-flex items-center gap-2 rounded-full bg-white px-5 py-3 text-xs font-bold uppercase tracking-[0.12em] text-black transition group-hover:gap-3">Shop {title} <ArrowRight className="size-4" aria-hidden /></Link>
             </div>
-          </Link>
+          </div>
         </Reveal>
         <div className="grid grid-cols-2 gap-x-4 gap-y-8 self-center sm:gap-x-5">
           {products.map((p, i) => <Reveal key={p.id} delay={i * 0.07}><ProductCard product={p} /></Reveal>)}
@@ -109,9 +113,9 @@ export function WhyPreloved() {
       <div className="container-x">
         <div className="grid gap-12 lg:grid-cols-[1fr_1.2fr] lg:gap-20">
           <Reveal>
-            <p className="eyebrow mb-4 flex items-center gap-3"><span className="h-px w-8 bg-accent" aria-hidden />Why preloved?</p>
-            <h2 className="text-balance text-5xl leading-[1.02] sm:text-6xl lg:text-7xl">Preloved doesn't mean <em className="text-accent">compromised.</em></h2>
-            <p className="mt-6 max-w-md text-lg text-muted">Quality, style, value, transparency and a second life — every pair inspected, honestly graded and photographed in detail before it reaches you.</p>
+            <p className="eyebrow mb-4 flex items-center gap-3"><span className="h-px w-8 bg-accent" aria-hidden /><EditableText id="home.why.eyebrow" defaultValue="Why preloved?" as="span" multiline={false} label="Why preloved — label" /></p>
+            <h2 className="text-balance text-5xl leading-[1.02] sm:text-6xl lg:text-7xl"><EditableText id="home.why.title" defaultValue="Preloved doesn't mean compromised." as="span" multiline={false} label="Why preloved — heading" /></h2>
+            <p className="mt-6 max-w-md text-lg text-muted"><EditableText id="home.why.blurb" defaultValue="Quality, style, value, transparency and a second life — every pair inspected, honestly graded and photographed in detail before it reaches you." label="Why preloved — blurb" /></p>
             <Button href="/about" variant="outline" className="mt-8" arrow>Our philosophy</Button>
           </Reveal>
           <ul className="grid gap-4 sm:grid-cols-2">
@@ -132,7 +136,7 @@ export function WhyPreloved() {
 export function ProcessStrip() {
   return (
     <section className="container-x py-20 sm:py-28" aria-labelledby="process-h">
-      <SectionHeading eyebrow="Our process" title="From closet to your door." blurb="Six careful steps between a pair being sourced and it reaching you." href="/our-work" hrefLabel="See how we work" />
+      <SectionHeading id="home.process" eyebrow="Our process" title="From closet to your door." blurb="Six careful steps between a pair being sourced and it reaching you." href="/our-work" hrefLabel="See how we work" />
       <ol className="grid gap-px overflow-hidden rounded-3xl border border-line bg-line sm:grid-cols-2 lg:grid-cols-3">
         {PROCESS.map((s, i) => (
           <Reveal as="li" key={s.n} delay={(i % 3) * 0.08} className="group relative bg-bg p-7 transition-colors duration-500 hover:bg-elev sm:p-9">
@@ -157,9 +161,9 @@ export function SustainabilitySection({ listedCount }: { listedCount: number }) 
       <div className="container-x py-24 sm:py-32">
         <div className="grid gap-14 lg:grid-cols-[1.2fr_1fr] lg:items-end">
           <Reveal>
-            <p className="eyebrow mb-5 flex items-center gap-3 !text-secondary-fg/70"><Leaf className="size-4" aria-hidden />Sustainability</p>
-            <h2 id="sust-h" className="text-balance text-5xl uppercase leading-[0.98] tracking-[-0.03em] sm:text-7xl lg:text-8xl">Style deserves a <em className="text-accent">second life.</em></h2>
-            <p className="mt-7 max-w-lg text-lg text-secondary-fg/80">Buying preloved extends the life of shoes that are still in great shape and keeps them in use for longer. We keep our claims simple and honest — no borrowed statistics.</p>
+            <p className="eyebrow mb-5 flex items-center gap-3 !text-secondary-fg/70"><Leaf className="size-4" aria-hidden /><EditableText id="home.sustainability.eyebrow" defaultValue="Sustainability" as="span" multiline={false} label="Sustainability — label" /></p>
+            <h2 id="sust-h" className="text-balance text-5xl uppercase leading-[0.98] tracking-[-0.03em] sm:text-7xl lg:text-8xl"><EditableText id="home.sustainability.title" defaultValue="Style deserves a second life." as="span" multiline={false} label="Sustainability — heading" /></h2>
+            <p className="mt-7 max-w-lg text-lg text-secondary-fg/80"><EditableText id="home.sustainability.blurb" defaultValue="Buying preloved extends the life of shoes that are still in great shape and keeps them in use for longer. We keep our claims simple and honest — no borrowed statistics." label="Sustainability — blurb" /></p>
             <Button href="/sustainability" variant="inverse" className="mt-9" arrow>Our approach</Button>
           </Reveal>
           <ul className="grid grid-cols-3 gap-3 sm:gap-5">
@@ -185,7 +189,7 @@ export function TestimonialsSection() {
   if (TESTIMONIALS.length === 0) {
     return (
       <section className="container-x py-20 sm:py-28" aria-labelledby="rev-h">
-        <SectionHeading eyebrow="Reviews" title="What customers say." />
+        <SectionHeading id="home.testimonials" eyebrow="Reviews" title="What customers say." />
         <div className="rounded-3xl border border-dashed border-line-strong bg-elev/50 p-10 text-center sm:p-14">
           <Quote className="mx-auto mb-4 size-8 text-accent/60" aria-hidden />
           <p className="mx-auto max-w-md text-sm text-muted">We're just getting started — real reviews from real customers will show up here as they come in.</p>
@@ -195,7 +199,7 @@ export function TestimonialsSection() {
   }
   return (
     <section className="container-x py-20 sm:py-28" aria-labelledby="rev-h">
-      <SectionHeading eyebrow="Reviews" title="What customers say." />
+      <SectionHeading id="home.testimonials" eyebrow="Reviews" title="What customers say." />
       <ul className="grid gap-5 md:grid-cols-3">
         {TESTIMONIALS.map((t, i) => (
           <Reveal as="li" key={i} delay={i * 0.1} className="flex flex-col rounded-3xl border border-line bg-elev p-7 sm:p-8">
@@ -219,7 +223,7 @@ export function InstagramSection({ tiles }: { tiles: { product: Product; index: 
   const ig = siteConfig.socials.instagram;
   return (
     <section className="container-x pb-20 sm:pb-28" aria-labelledby="ig-h">
-      <SectionHeading eyebrow="Follow along" title={`${ig.handle} on Instagram`} blurb="New pairs, styling ideas and behind-the-scenes." href={ig.url} hrefLabel="Follow us" />
+      <SectionHeading id="home.instagram" eyebrow="Follow along" title={`${ig.handle} on Instagram`} blurb="New pairs, styling ideas and behind-the-scenes." href={ig.url} hrefLabel="Follow us" />
       {siteConfig.demoMode && <p className="-mt-6 mb-6 text-xs text-subtle">Demo grid — connect your Instagram feed (Meta Graph API) or upload post images to replace these tiles.</p>}
       <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 lg:grid-cols-6">
         {tiles.map(({ product, index }, i) => (
@@ -242,9 +246,9 @@ export function NewsletterSection() {
       <div className="relative isolate overflow-hidden rounded-[2rem] bg-inverse px-6 py-16 text-inverse-fg sm:px-14 sm:py-20">
         <div aria-hidden className="absolute -left-20 -top-20 -z-10 size-96 rounded-full bg-accent/25 blur-3xl" />
         <div className="mx-auto max-w-2xl text-center">
-          <p className="eyebrow mb-4 !text-inverse-fg/60">The drop list</p>
-          <h2 className="text-balance text-4xl sm:text-6xl">{siteConfig.newsletter.title}</h2>
-          <p className="mx-auto mt-4 max-w-md text-inverse-fg/70">One-of-one pairs move fast. Members see new arrivals first.</p>
+          <p className="eyebrow mb-4 !text-inverse-fg/60"><EditableText id="home.newsletter.eyebrow" defaultValue="The drop list" as="span" multiline={false} label="Newsletter — label" /></p>
+          <h2 className="text-balance text-4xl sm:text-6xl"><EditableText id="home.newsletter.title" defaultValue={siteConfig.newsletter.title} as="span" multiline={false} label="Newsletter — heading" /></h2>
+          <p className="mx-auto mt-4 max-w-md text-inverse-fg/70"><EditableText id="home.newsletter.blurb" defaultValue="One-of-one pairs move fast. Members see new arrivals first." label="Newsletter — blurb" /></p>
           <div className="mx-auto mt-9 max-w-xl text-left"><NewsletterForm tone="dark" /></div>
         </div>
       </div>

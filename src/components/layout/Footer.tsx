@@ -3,6 +3,7 @@ import { CheckCircle2, Facebook, Instagram, MessageCircle, Music2, ShieldCheck, 
 import Link from "next/link";
 import { useState, type FormEvent } from "react";
 import { Honeypot, clean } from "@/components/ui/Form";
+import { EditableText } from "@/components/edit/EditableText";
 import { isEmail } from "@/lib/adapters/auth";
 import { subscribeNewsletter } from "@/lib/adapters/forms";
 import { siteConfig } from "@/lib/config";
@@ -70,10 +71,13 @@ export function Footer() {
     <footer className="mt-24 border-t-2 border-accent bg-elev text-fg">
       <div className="container-x">
         <ul className="grid grid-cols-2 gap-6 border-b border-line py-10 lg:grid-cols-4">
-          {TRUST.map((t) => (
+          {TRUST.map((t, i) => (
             <li key={t.title} className="flex items-start gap-3">
               <t.icon className="mt-0.5 size-6 shrink-0 text-accent" strokeWidth={1.5} aria-hidden />
-              <div><p className="text-sm font-semibold">{t.title}</p><p className="text-xs opacity-60">{t.text}</p></div>
+              <div>
+                <p className="text-sm font-semibold"><EditableText id={`footer.trust.${i}.title`} defaultValue={t.title} as="span" multiline={false} label="Footer trust strip — title" /></p>
+                <p className="text-xs opacity-60"><EditableText id={`footer.trust.${i}.text`} defaultValue={t.text} as="span" multiline={false} label="Footer trust strip — text" /></p>
+              </div>
             </li>
           ))}
         </ul>
@@ -81,7 +85,7 @@ export function Footer() {
         <div className="grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-4">
           <div className="max-w-xs">
             <Logo />
-            <p className="mt-4 text-sm leading-relaxed opacity-70">{siteConfig.brand.description}</p>
+            <p className="mt-4 text-sm leading-relaxed opacity-70"><EditableText id="footer.brand.description" defaultValue={siteConfig.brand.description} label="Footer brand description" /></p>
             <div className="mt-5 flex items-center gap-3">
               {social.map((x) => (
                 <a key={x.label} href={x.url} target="_blank" rel="noopener noreferrer" aria-label={`${x.label} (opens in a new tab)`}
@@ -111,8 +115,8 @@ export function Footer() {
           </nav>
 
           <div>
-            <h2 className="mb-3 text-[11px] font-bold uppercase tracking-[0.2em] text-accent">Stay in the loop</h2>
-            <p className="mb-4 text-sm opacity-70">Get first access to new drops and exclusive deals.</p>
+            <h2 className="mb-3 text-[11px] font-bold uppercase tracking-[0.2em] text-accent"><EditableText id="footer.newsletter.title" defaultValue="Stay in the loop" as="span" multiline={false} label="Footer newsletter heading" /></h2>
+            <p className="mb-4 text-sm opacity-70"><EditableText id="footer.newsletter.blurb" defaultValue="Get first access to new drops and exclusive deals." as="span" label="Footer newsletter blurb" /></p>
             <FooterNewsletter />
           </div>
         </div>

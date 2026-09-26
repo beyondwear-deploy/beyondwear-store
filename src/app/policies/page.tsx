@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { PageHero } from "@/components/layout/PageHero";
+import { EditableText } from "@/components/edit/EditableText";
 import { POLICIES } from "@/data/policies";
 
 export const metadata: Metadata = { title: "Store Policies", description: "Shipping, returns, refunds, privacy and terms.", alternates: { canonical: "/policies" } };
@@ -9,7 +10,11 @@ export const metadata: Metadata = { title: "Store Policies", description: "Shipp
 export default function PoliciesIndex() {
   return (
     <>
-      <PageHero eyebrow="Policies" crumbs={[{ label: "Policies" }]} title="Store policies." blurb="Clear rules for shipping, returns, refunds, privacy and terms." />
+      <PageHero
+        eyebrow="Policies" crumbs={[{ label: "Policies" }]}
+        title={<EditableText id="policies.hero.title" defaultValue="Store policies." as="span" multiline={false} />}
+        blurb={<EditableText id="policies.hero.blurb" defaultValue="Clear rules for shipping, returns, refunds, privacy and terms." />}
+      />
       <ul className="container-x grid gap-4 py-16 sm:grid-cols-2 sm:py-24 lg:grid-cols-3">
         {POLICIES.map((p) => (
           <li key={p.slug}>

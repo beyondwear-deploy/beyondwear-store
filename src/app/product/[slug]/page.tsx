@@ -62,7 +62,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }} />
       <ProductView product={p} />
       <section className="container-x py-16 sm:py-24">
-        <SectionHeading eyebrow="You may also like" title="Similar pairs" href={`/shop?category=${p.category}`} />
+        <SectionHeading id="product.similar" eyebrow="You may also like" title="Similar pairs" href={`/shop?category=${p.category}`} />
         <ProductGrid products={related} />
       </section>
       <RecentlyViewed excludeId={p.id} />

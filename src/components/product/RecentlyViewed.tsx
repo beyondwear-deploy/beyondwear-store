@@ -13,7 +13,7 @@ export function RecentlyViewed({ excludeId, title = "Recently viewed" }: { exclu
   if (!ready || items.length === 0) return null;
   return (
     <section className="container-x pb-16 sm:pb-24">
-      <SectionHeading eyebrow="Pick up where you left off" title={title} />
+      <SectionHeading id="recently-viewed" eyebrow="Pick up where you left off" title={title} />
       <ProductRail products={items} label="Recently viewed products" />
     </section>
   );

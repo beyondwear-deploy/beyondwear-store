@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { EditableText } from "@/components/edit/EditableText";
 import { CategoryCard } from "@/components/product/CategoryCard";
 import { ProductGrid, ProductRail } from "@/components/product/ProductGrid";
 import { ProductImage } from "@/components/product/ProductImage";
@@ -35,8 +36,12 @@ export function DepartmentPage({ dept }: { dept: Dept }) {
           <div>
             <Breadcrumbs items={[{ label: d.label }]} />
             <p className="eyebrow mb-4 mt-10 flex items-center gap-3"><span className="h-px w-8 bg-accent" aria-hidden />{d.label}</p>
-            <h1 className="text-balance text-5xl leading-[0.98] sm:text-7xl">{d.headline}</h1>
-            <p className="mt-6 max-w-md text-lg text-muted">{d.blurb}</p>
+            <h1 className="text-balance text-5xl leading-[0.98] sm:text-7xl">
+              <EditableText id={`dept.${dept}.headline`} defaultValue={d.headline} as="span" multiline={false} label={`${d.label} page — headline`} />
+            </h1>
+            <p className="mt-6 max-w-md text-lg text-muted">
+              <EditableText id={`dept.${dept}.blurb`} defaultValue={d.blurb} as="span" label={`${d.label} page — blurb`} />
+            </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Button href={`/shop?gender=${gq}`} size="lg" arrow>Shop all {d.label.toLowerCase()}</Button>
               <Button href={`/new-arrivals?gender=${gq}`} size="lg" variant="outline">New arrivals</Button>
@@ -55,7 +60,7 @@ export function DepartmentPage({ dept }: { dept: Dept }) {
       {/* shop by type */}
       {types.length > 1 && (
         <section className="container-x py-16 sm:py-24">
-          <SectionHeading eyebrow="Shop by type" title={`${d.label}'s shoes by style`} />
+          <SectionHeading id={`dept.${dept}.types`} eyebrow="Shop by type" title={`${d.label}'s shoes by style`} />
           <ul className="grid grid-cols-2 gap-3 sm:gap-5 md:grid-cols-4">
             {types.map((t, i) => (
               <Reveal as="li" key={t.type} delay={(i % 4) * 0.06}>
@@ -67,18 +72,18 @@ export function DepartmentPage({ dept }: { dept: Dept }) {
       )}
 
       <section className="container-x pb-16 sm:pb-24">
-        <SectionHeading eyebrow="Featured" title={`Featured for ${d.label.toLowerCase()}`} href={`/shop?gender=${gq}&sort=popular`} />
+        <SectionHeading id={`dept.${dept}.featured`} eyebrow="Featured" title={`Featured for ${d.label.toLowerCase()}`} href={`/shop?gender=${gq}&sort=popular`} />
         <ProductGrid products={featured} />
       </section>
 
       <section className="container-x pb-16 sm:pb-24">
-        <SectionHeading eyebrow="Just in" title="New arrivals" href={`/new-arrivals?gender=${gq}`} hrefLabel="See all new" />
+        <SectionHeading id={`dept.${dept}.arrivals`} eyebrow="Just in" title="New arrivals" href={`/new-arrivals?gender=${gq}`} hrefLabel="See all new" />
         <ProductRail products={arrivals} label={`${d.label} new arrivals`} />
       </section>
 
       {best.length > 0 && (
       <section className="container-x pb-16 sm:pb-24">
-        <SectionHeading eyebrow="Best sellers" title="Most loved" blurb="What other shoppers are saving to their wishlists." href={`/shop?gender=${gq}&sort=popular`} />
+        <SectionHeading id={`dept.${dept}.bestsellers`} eyebrow="Best sellers" title="Most loved" blurb="What other shoppers are saving to their wishlists." href={`/shop?gender=${gq}&sort=popular`} />
         <ProductGrid products={best} />
       </section>
       )}

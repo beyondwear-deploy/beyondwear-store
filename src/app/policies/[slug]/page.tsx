@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PageHero } from "@/components/layout/PageHero";
+import { EditableText } from "@/components/edit/EditableText";
 import { POLICIES, getPolicy } from "@/data/policies";
 import { cn } from "@/lib/format";
 
@@ -21,7 +22,11 @@ export default async function PolicyPage({ params }: { params: Promise<{ slug: s
 
   return (
     <>
-      <PageHero eyebrow={`Updated ${policy.updated}`} crumbs={[{ label: "Policies", href: "/policies" }, { label: policy.title }]} title={policy.title} blurb={policy.summary} />
+      <PageHero
+        eyebrow={`Updated ${policy.updated}`} crumbs={[{ label: "Policies", href: "/policies" }, { label: policy.title }]}
+        title={<EditableText id={`policy.${policy.slug}.title`} defaultValue={policy.title} as="span" multiline={false} />}
+        blurb={<EditableText id={`policy.${policy.slug}.summary`} defaultValue={policy.summary} />}
+      />
       <div className="container-x grid gap-12 py-14 sm:py-20 lg:grid-cols-[240px_1fr] lg:gap-20">
         <nav aria-label="Policies" className="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4 lg:sticky lg:top-28 lg:mx-0 lg:h-fit lg:flex-col lg:gap-1 lg:px-0">
           {POLICIES.map((p) => (

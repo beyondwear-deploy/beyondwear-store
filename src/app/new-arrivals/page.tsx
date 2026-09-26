@@ -13,7 +13,7 @@ const defaults = { sort: "newest" as const, availability: "in-stock" as const };
 export default function NewArrivalsPage() {
   return (
     <Suspense fallback={<div className="container-x py-16"><ProductGridSkeleton count={8} /></div>}>
-      <ShopClient title="New arrivals" eyebrow="Just in" blurb="Freshly listed, newest first. Every pair is one-of-one." defaults={defaults} crumbs={[{ label: "New Arrivals" }]} />
+      <ShopClient heroId="new-arrivals" title="New arrivals" eyebrow="Just in" blurb="Freshly listed, newest first. Every pair is one-of-one." defaults={defaults} crumbs={[{ label: "New Arrivals" }]} />
     </Suspense>
   );
 }

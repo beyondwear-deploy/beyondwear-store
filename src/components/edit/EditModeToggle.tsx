@@ -14,7 +14,7 @@ export function EditModeToggle() {
     <div className="fixed bottom-5 right-5 z-[500] flex flex-col items-end gap-2">
       {editMode && (
         <p className="max-w-[220px] rounded-xl bg-fg px-3 py-2 text-right text-xs font-medium text-bg shadow-lg">
-          Edit mode is on — hover any outlined text or photo and click the pencil.
+          Edit mode is on — click anywhere with a dashed outline to change it. You&apos;ll see the current version next to your edit before you save.
         </p>
       )}
       <div className="flex items-center gap-2">

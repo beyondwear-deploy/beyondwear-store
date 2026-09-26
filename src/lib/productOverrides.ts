@@ -4,6 +4,7 @@
  * status). Mirrors lib/content.ts's pattern, one row per product id.
  */
 import { PRODUCTS } from "@/data/products";
+import { fetchCustomProducts, getCustomProduct } from "@/lib/customProducts";
 import { getSupabaseAdmin, isDbConfigured } from "@/lib/supabase";
 import { applyProductPatch, type ProductPatch } from "@/lib/productPatch";
 import type { Product } from "@/lib/types";
@@ -19,19 +20,23 @@ export async function fetchAllProductOverrides(): Promise<Record<string, Product
   return map;
 }
 
-/** Every product (including draft/archived/not-yet-live categories) with saved edits applied — for the admin products list. */
+/** Every product (including draft/archived/not-yet-live categories, plus admin-added listings) with saved edits applied — for the admin products list. */
 export async function getAdminProductList(): Promise<{ configured: boolean; products: Product[] }> {
-  const overrides = await fetchAllProductOverrides();
-  const products = PRODUCTS.map((p) => applyProductPatch(p, overrides[p.id]));
-  return { configured: isDbConfigured(), products };
+  const [overrides, custom] = await Promise.all([fetchAllProductOverrides(), fetchCustomProducts()]);
+  const builtIn = PRODUCTS.map((p) => applyProductPatch(p, overrides[p.id]));
+  return { configured: isDbConfigured(), products: [...custom, ...builtIn] };
 }
 
-/** One product (any status/category) with saved edits applied — for the admin edit form. */
-export async function getAdminProduct(id: string): Promise<{ configured: boolean; product: Product | null; hasOverride: boolean }> {
-  const base = PRODUCTS.find((p) => p.id === id) ?? null;
+/** One product (built-in or admin-added, any status/category) with saved edits applied — for the admin edit form. */
+export async function getAdminProduct(id: string): Promise<{ configured: boolean; product: Product | null; hasOverride: boolean; isCustom: boolean }> {
   const configured = isDbConfigured();
-  if (!base) return { configured, product: null, hasOverride: false };
-  const overrides = await fetchAllProductOverrides();
-  const patch = overrides[id];
-  return { configured, product: applyProductPatch(base, patch), hasOverride: Boolean(patch && Object.keys(patch).length) };
+  const base = PRODUCTS.find((p) => p.id === id) ?? null;
+  if (base) {
+    const overrides = await fetchAllProductOverrides();
+    const patch = overrides[id];
+    return { configured, product: applyProductPatch(base, patch), hasOverride: Boolean(patch && Object.keys(patch).length), isCustom: false };
+  }
+  const custom = await getCustomProduct(id);
+  if (custom) return { configured, product: custom, hasOverride: false, isCustom: true };
+  return { configured, product: null, hasOverride: false, isCustom: false };
 }

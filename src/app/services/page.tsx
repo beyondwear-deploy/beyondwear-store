@@ -4,6 +4,7 @@ import { PageHero } from "@/components/layout/PageHero";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Reveal } from "@/components/ui/Reveal";
+import { EditableText } from "@/components/edit/EditableText";
 import { siteConfig } from "@/lib/config";
 
 export const metadata: Metadata = {
@@ -25,7 +26,7 @@ export default function ServicesPage() {
   const wa = `https://wa.me/${siteConfig.contact.whatsappNumber}?text=${encodeURIComponent("Hi! I'd like to know more about selling / consigning with you.")}`;
   return (
     <>
-      <PageHero eyebrow="Services" crumbs={[{ label: "Services" }]} title={<>More than a shop, <em className="text-accent">a process.</em></>} blurb="Everything we do is designed to make buying preloved shoes as easy and trustworthy as buying new." />
+      <PageHero eyebrow="Services" crumbs={[{ label: "Services" }]} title={<>More than a shop, <em className="text-accent">a process.</em></>} blurb={<EditableText id="services.hero.blurb" defaultValue="Everything we do is designed to make buying preloved shoes as easy and trustworthy as buying new." />} />
       <section className="container-x py-16 sm:py-24">
         <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {SERVICES.map((s, i) => (
@@ -44,9 +45,9 @@ export default function ServicesPage() {
           <Badge tone="accent" className="mb-5">Coming soon</Badge>
           <div className="grid items-end gap-8 lg:grid-cols-[1.4fr_1fr]">
             <div>
-              <h2 id="consign-h" className="flex items-center gap-3 text-4xl sm:text-6xl"><HandCoins className="hidden size-10 text-accent sm:block" aria-hidden />Sell or consign with us</h2>
-              <p className="mt-5 max-w-xl text-lg text-secondary-fg/80">Have quality shoes that deserve a second home? We&apos;re planning a consignment service. Tell us what you have and we&apos;ll get in touch when it opens.</p>
-              <p className="mt-3 text-xs text-secondary-fg/60">Placeholder service — terms, commission and process to be defined by the store owner.</p>
+              <h2 id="consign-h" className="flex items-center gap-3 text-4xl sm:text-6xl"><HandCoins className="hidden size-10 text-accent sm:block" aria-hidden /><EditableText id="services.consign.title" defaultValue="Sell or consign with us" as="span" multiline={false} /></h2>
+              <p className="mt-5 max-w-xl text-lg text-secondary-fg/80"><EditableText id="services.consign.blurb" defaultValue="Have quality shoes that deserve a second home? We're planning a consignment service. Tell us what you have and we'll get in touch when it opens." as="span" /></p>
+              <p className="mt-3 text-xs text-secondary-fg/60"><EditableText id="services.consign.note" defaultValue="Placeholder service — terms, commission and process to be defined by the store owner." as="span" /></p>
             </div>
             <div className="flex flex-wrap gap-3 lg:justify-end">
               <Button href="/contact?subject=Sell%20or%20consign%20with%20us" variant="inverse" size="lg" arrow>Register interest</Button>

@@ -3,6 +3,7 @@ import { MessageCircle } from "lucide-react";
 import { PageHero } from "@/components/layout/PageHero";
 import { Accordion } from "@/components/ui/Accordion";
 import { Button } from "@/components/ui/Button";
+import { EditableText } from "@/components/edit/EditableText";
 import { FAQ } from "@/data/faq";
 import { siteConfig } from "@/lib/config";
 
@@ -20,7 +21,7 @@ export default function FaqPage() {
   };
   return (
     <>
-      <PageHero eyebrow="FAQ" crumbs={[{ label: "FAQ" }]} title={<>Questions, <em className="text-accent">answered.</em></>} blurb="Everything about condition, sizing, payment and delivery. Can't find it? Ask us." />
+      <PageHero eyebrow="FAQ" crumbs={[{ label: "FAQ" }]} title={<>Questions, <em className="text-accent">answered.</em></>} blurb={<EditableText id="faq.hero.blurb" defaultValue="Everything about condition, sizing, payment and delivery. Can't find it? Ask us." />} />
       <div className="container-x grid gap-14 py-16 sm:py-24 lg:grid-cols-[1fr_320px]">
         <div className="space-y-14">
           {FAQ.map((g, gi) => (
@@ -31,8 +32,8 @@ export default function FaqPage() {
           ))}
         </div>
         <aside className="h-fit rounded-3xl bg-soft p-7 lg:sticky lg:top-28">
-          <h2 className="text-2xl">Still have a question?</h2>
-          <p className="mt-2 text-sm text-muted">We usually reply the same day.</p>
+          <h2 className="text-2xl"><EditableText id="faq.aside.title" defaultValue="Still have a question?" as="span" multiline={false} label="FAQ sidebar heading" /></h2>
+          <p className="mt-2 text-sm text-muted"><EditableText id="faq.aside.blurb" defaultValue="We usually reply the same day." as="span" multiline={false} label="FAQ sidebar note" /></p>
           <div className="mt-6 flex flex-col gap-3">
             <Button href={`https://wa.me/${siteConfig.contact.whatsappNumber}`} target="_blank" rel="noopener noreferrer" variant="accent" icon={<MessageCircle className="size-4" />}>WhatsApp us</Button>
             <Button href="/contact" variant="outline">Send a message</Button>

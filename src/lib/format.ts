@@ -1,5 +1,5 @@
 import { siteConfig } from "./config";
-import type { Condition, OrderStatus } from "./types";
+import type { Condition, Order, OrderStatus } from "./types";
 
 export function formatPrice(n: number): string {
   const { symbol, locale } = siteConfig.currency;
@@ -65,3 +65,15 @@ export function formatDate(iso: string, withTime = false): string {
 export function cn(...classes: (string | false | null | undefined)[]): string {
   return classes.filter(Boolean).join(" ");
 }
+
+// Plain functions (no hooks/browser APIs) shared by both server and client
+// order views. These must NOT live in a "use client" file — a Server
+// Component that imports a named export from a client-component module gets
+// a client reference back, not the real function, and calling it directly
+// (rather than rendering it as JSX) throws "Attempted to call X() from the
+// server but X is on the client." This is exactly what crashed
+// /admin/orders/[id]: that page is a Server Component that called
+// paymentLabel()/paymentStatusLabel() imported from OrderDetails.tsx
+// ("use client"). Keeping them here keeps them safe to call from anywhere.
+export const paymentLabel = (m: Order["paymentMethod"]) => (m === "cod" ? "Cash on Delivery" : m === "bank-transfer" ? "Mobile Wallet Transfer" : "Pay via WhatsApp");
+export const paymentStatusLabel = (s: Order["paymentStatus"]) => (s === "paid" ? "Paid" : s === "awaiting-verification" ? "Awaiting verification" : "Pay on delivery / pending");

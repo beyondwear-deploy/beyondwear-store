@@ -2,9 +2,9 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { notFound } from "next/navigation";
 import { NotConfigured } from "@/components/admin/NotConfigured";
-import { OrderDetails, paymentLabel, paymentStatusLabel } from "@/components/orders/OrderDetails";
+import { OrderDetails } from "@/components/orders/OrderDetails";
 import { getOrder } from "@/lib/adminData";
-import { formatDate } from "@/lib/format";
+import { formatDate, paymentLabel, paymentStatusLabel } from "@/lib/format";
 import { StatusEditor } from "./StatusEditor";
 
 export const metadata = { title: "Admin — Order" };

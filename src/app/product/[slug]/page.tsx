@@ -4,15 +4,20 @@ import { ProductView } from "@/components/product/ProductView";
 import { RecentlyViewed } from "@/components/product/RecentlyViewed";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { getAllProducts, getProductBySlug, relatedProducts } from "@/lib/catalog";
+import { getProductBySlug, relatedProducts } from "@/lib/catalog";
 import { siteConfig } from "@/lib/config";
 import { conditionMeta } from "@/lib/format";
 
-// true (not false): products are now added live from the admin panel, after
-// the last build — a slug that generateStaticParams didn't know about at
-// build time must still render on demand instead of 404ing.
-export const dynamicParams = true;
-export function generateStaticParams() { return getAllProducts().map((p) => ({ slug: p.slug })); }
+// Products are added/edited/removed live from the admin panel, so this page
+// can never be safely pre-rendered at build time. It has to be forced fully
+// dynamic (not just "dynamicParams: true" static-with-fallback) because the
+// root layout reads the admin session cookie on every request (isAdmin()) —
+// mixing that per-request cookie read with an SSG/ISR page crashes on-demand
+// generation with a DYNAMIC_SERVER_USAGE error (a 500 for every visitor, on
+// every product, whether the slug exists or not). Every other route in this
+// app is already fully dynamic for the same reason; this page just hadn't
+// caught up.
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
@@ -24,7 +29,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const img = p.images.find((i) => i.src)?.src ?? siteConfig.seo.ogImage;
   return {
     title, description, alternates: { canonical: `/product/${p.slug}` },
-    openGraph: { type: "website", title, description, url: `/product/${p.slug}`, images: [{ url: img, alt: p.images[0].alt }] },
+    openGraph: { type: "website", title, description, url: `/product/${p.slug}`, images: [{ url: img, alt: p.images[0]?.alt ?? title }] },
     twitter: { card: "summary_large_image", title, description, images: [img] },
   };
 }

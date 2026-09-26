@@ -1,13 +1,10 @@
 "use client";
 import Link from "next/link";
 import { deliveryLabel } from "@/lib/adapters/orders";
-import { formatDate, formatPrice, conditionMeta } from "@/lib/format";
+import { formatDate, formatPrice, conditionMeta, paymentLabel, paymentStatusLabel } from "@/lib/format";
 import { getProductBySlug } from "@/lib/catalog";
 import type { Order } from "@/lib/types";
 import { ProductImage } from "@/components/product/ProductImage";
-
-export const paymentLabel = (m: Order["paymentMethod"]) => (m === "cod" ? "Cash on Delivery" : m === "bank-transfer" ? "Mobile Wallet Transfer" : "Pay via WhatsApp");
-export const paymentStatusLabel = (s: Order["paymentStatus"]) => (s === "paid" ? "Paid" : s === "awaiting-verification" ? "Awaiting verification" : "Pay on delivery / pending");
 
 export function OrderDetails({ order }: { order: Order }) {
   return (

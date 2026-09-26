@@ -6,9 +6,9 @@ import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Skeleton } from "@/components/ui/LoadingState";
 import { siteConfig } from "@/lib/config";
-import { formatPrice } from "@/lib/format";
+import { formatPrice, paymentLabel } from "@/lib/format";
 import { useAuth, useOrders, useReady } from "@/store";
-import { OrderDetails, paymentLabel } from "./OrderDetails";
+import { OrderDetails } from "./OrderDetails";
 import { OrderTracker } from "./OrderTracker";
 
 export function ConfirmationClient() {

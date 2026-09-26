@@ -27,7 +27,7 @@ export function TrackOrderClient() {
 
   const lookup = async (idv: string, cv: string) => {
     const e: typeof errors = {};
-    if (!clean(idv)) e.id = "Enter your order number, e.g. SEQ-ABC123.";
+    if (!clean(idv)) e.id = "Enter your order number, e.g. BW-ABC123.";
     if (!clean(cv)) e.contact = "Enter the email or phone number used at checkout.";
     setErrors(e);
     if (Object.keys(e).length) return;
@@ -83,13 +83,13 @@ export function TrackOrderClient() {
 
       <form onSubmit={submit} noValidate className="relative mx-auto mt-10 grid max-w-2xl gap-4 rounded-3xl border border-line bg-elev p-6 sm:grid-cols-2 sm:p-8">
         <Honeypot />
-        <TextField label="Order number" required value={id} onChange={(e) => setId(e.target.value)} error={errors.id} placeholder="SEQ-ABC123" autoComplete="off" autoCapitalize="characters" />
+        <TextField label="Order number" required value={id} onChange={(e) => setId(e.target.value)} error={errors.id} placeholder="BW-ABC123" autoComplete="off" autoCapitalize="characters" />
         <TextField label="Email or phone" required value={contact} onChange={(e) => setContact(e.target.value)} error={errors.contact} placeholder="you@example.com" autoComplete="email" />
         <div className="sm:col-span-2">
           <Button type="submit" full loading={busy} icon={<PackageSearch className="size-4" />}>Track order</Button>
           {siteConfig.demoMode && (
             <p className="mt-3 text-center text-xs text-subtle">
-              Try it: order <button type="button" className="font-semibold underline underline-offset-2" onClick={() => { setId("SEQ-DEMO01"); setContact("demo@example.com"); setErrors({}); }}>SEQ-DEMO01</button> with demo@example.com — or place your own order.
+              Try it: order <button type="button" className="font-semibold underline underline-offset-2" onClick={() => { setId("BW-DEMO01"); setContact("demo@example.com"); setErrors({}); }}>BW-DEMO01</button> with demo@example.com — or place your own order.
             </p>
           )}
         </div>

@@ -1,34 +1,55 @@
 import { BrandMarquee, DepartmentSplit, FeaturedCategories, InstagramSection, NewArrivalsSection, NewsletterSection, ProcessStrip, SustainabilitySection, TestimonialsSection, TrendingSection, WhyPreloved } from "@/components/home/Sections";
-import { Hero } from "@/components/home/Hero";
+import { EmptyCatalogHero, Hero } from "@/components/home/Hero";
 import { forDepartment, getAllProducts, newest, popular } from "@/lib/catalog";
 import type { Product } from "@/lib/types";
 
 export default function HomePage() {
   const all = getAllProducts();
-  // Pick showcase pairs by name; fall back to the most popular in-stock pair if a name changes.
-  const fallback = popular(all.filter((p) => p.stock > 0));
-  const find = (s: string) => all.find((p) => `${p.brand} ${p.name}`.includes(s)) ?? fallback[0] ?? all[0];
   const inStock = (l: Product[]) => l.filter((p) => p.stock > 0);
+
+  // Nothing listed yet (fresh install, before the first product is added from
+  // /admin/products/new) — show a simple, product-free hero instead of
+  // crashing on missing showcase images.
+  if (all.length === 0) {
+    return (
+      <>
+        <EmptyCatalogHero />
+        <WhyPreloved />
+        <ProcessStrip />
+        <SustainabilitySection listedCount={0} />
+        <TestimonialsSection />
+        <NewsletterSection />
+      </>
+    );
+  }
+
   const brands = Array.from(new Set(all.map((p) => p.brand))).sort();
 
-  const picks = { men: find("Jordan Air Jordan 1"), women: find("Adidas Suede"), kids: find("Puma Kids Runner") };
+  // Showcase pairs come from whatever's actually in the live catalogue (most
+  // popular in-stock first), cycling through what's available so even a
+  // small catalogue fills every slot without repeating a hardcoded demo name.
+  const showcase = popular(inStock(all)).length ? popular(inStock(all)) : popular(all);
+  const pick = (i: number) => showcase[i % showcase.length];
+  const pickForDept = (d: "men" | "women" | "kids") => {
+    const list = popular(inStock(forDepartment(d, all)));
+    return list[0] ?? showcase[0];
+  };
   const dept = (d: "men" | "women" | "kids") => popular(inStock(forDepartment(d, all))).slice(0, 4);
 
-  const igTiles = [
-    { product: find("Nike Air Max"), index: 0 }, { product: find("Adidas Samba"), index: 1 }, { product: find("Nike Dunk"), index: 2 },
-    { product: find("Dr. Martens"), index: 0 }, { product: find("Adidas Suede"), index: 4 }, { product: find("New Balance 550"), index: 3 },
-  ];
+  const picks = { men: pickForDept("men"), women: pickForDept("women"), kids: pickForDept("kids") };
+
+  const igTiles = Array.from({ length: Math.min(6, showcase.length) }).map((_, i) => ({ product: pick(i), index: i % 3 }));
 
   return (
     <>
-      <Hero main={find("Adidas Samba")} topRight={find("Nike Air Max")} midRight={find("Adidas Suede")} badge={find("Dr. Martens")} featured={find("Jordan Air Jordan 1")} />
+      <Hero main={pick(0)} topRight={pick(1)} midRight={pick(2)} badge={pick(3)} featured={pick(4)} />
       <BrandMarquee brands={brands} />
       <FeaturedCategories picks={picks} />
       <NewArrivalsSection products={newest(inStock(all)).slice(0, 10)} />
       <TrendingSection products={popular(inStock(all)).slice(0, 8)} />
-      <DepartmentSplit eyebrow="The men's edit" title="Men" blurb="Sneakers, boots and everyday pairs." href="/men" hero={find("Nike Dunk")} products={dept("men")} tint="var(--bg-soft)" />
-      <DepartmentSplit eyebrow="The women's edit" title="Women" blurb="Clean, wearable pairs with a second act." href="/women" hero={find("Timberland Premium")} products={dept("women")} tint="var(--art-tint-accent)" reverse />
-      <DepartmentSplit eyebrow="The kids' edit" title="Kids" blurb="Quality that's barely been outgrown." href="/kids" hero={find("Puma Kids Runner")} products={dept("kids")} tint="var(--bg-soft)" />
+      {dept("men").length > 0 && <DepartmentSplit eyebrow="The men's edit" title="Men" blurb="Sneakers, boots and everyday pairs." href="/men" hero={pickForDept("men")} products={dept("men")} tint="var(--bg-soft)" />}
+      {dept("women").length > 0 && <DepartmentSplit eyebrow="The women's edit" title="Women" blurb="Clean, wearable pairs with a second act." href="/women" hero={pickForDept("women")} products={dept("women")} tint="var(--art-tint-accent)" reverse />}
+      {dept("kids").length > 0 && <DepartmentSplit eyebrow="The kids' edit" title="Kids" blurb="Quality that's barely been outgrown." href="/kids" hero={pickForDept("kids")} products={dept("kids")} tint="var(--bg-soft)" />}
       <WhyPreloved />
       <ProcessStrip />
       <SustainabilitySection listedCount={all.length} />

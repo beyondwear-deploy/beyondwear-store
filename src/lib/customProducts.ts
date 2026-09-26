@@ -51,7 +51,7 @@ export function buildCustomProduct(input: NewProductInput): Product {
   }));
   return {
     id,
-    sku: `SEQ-CUSTOM-${id.slice(1, 7).toUpperCase()}`,
+    sku: `BW-CUSTOM-${id.slice(1, 7).toUpperCase()}`,
     slug: `${slugBase}-${id.slice(1, 5)}`,
     name: input.name,
     brand: input.brand,

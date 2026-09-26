@@ -1,20 +1,26 @@
 import Link from "next/link";
 import { NotConfigured } from "@/components/admin/NotConfigured";
+import { PeriodSelect } from "@/components/admin/PeriodSelect";
 import { getFinancialSummary } from "@/lib/financials";
 import { formatPrice } from "@/lib/format";
+import { parsePeriod } from "@/lib/period";
 import { FinancialsNav } from "../FinancialsNav";
 
 export const metadata = { title: "Admin — Inventory" };
 export const dynamic = "force-dynamic";
 
-export default async function AdminInventoryPage() {
-  const f = await getFinancialSummary();
+export default async function AdminInventoryPage({ searchParams }: { searchParams: Promise<{ period?: string }> }) {
+  const period = parsePeriod((await searchParams).period);
+  const f = await getFinancialSummary(period);
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">Inventory</h1>
-        <p className="text-sm text-muted">Every active or draft listing with stock on hand, valued at cost price.</p>
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold">Inventory</h1>
+          <p className="text-sm text-muted">Every active or draft listing with stock on hand, valued at cost price — always current stock, as of today, whatever period you pick.</p>
+        </div>
+        <PeriodSelect value={period} />
       </div>
 
       <FinancialsNav />

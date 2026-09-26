@@ -8,7 +8,10 @@ import { getAllProducts, getProductBySlug, relatedProducts } from "@/lib/catalog
 import { siteConfig } from "@/lib/config";
 import { conditionMeta } from "@/lib/format";
 
-export const dynamicParams = false;
+// true (not false): products are now added live from the admin panel, after
+// the last build — a slug that generateStaticParams didn't know about at
+// build time must still render on demand instead of 404ing.
+export const dynamicParams = true;
 export function generateStaticParams() { return getAllProducts().map((p) => ({ slug: p.slug })); }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {

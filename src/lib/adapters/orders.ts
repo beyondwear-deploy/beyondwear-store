@@ -30,7 +30,7 @@ export interface CheckoutInput {
   userId?: string;
 }
 
-const genId = () => "SEQ-" + Math.random().toString(36).slice(2, 8).toUpperCase();
+const genId = () => "BW-" + Math.random().toString(36).slice(2, 8).toUpperCase();
 
 /** Verifies stock again at the last moment (another shopper may have bought a one-of-one). */
 export function unavailableInCart(): string[] {
@@ -132,7 +132,7 @@ export function timeOfStep(o: Order, status: OrderStatus): string | undefined {
 /** Seeded so the tracking page can be tried without placing an order. */
 export const DEMO_ORDERS: Order[] = [
   {
-    id: "SEQ-DEMO01",
+    id: "BW-DEMO01",
     placedAt: new Date(Date.now() - 5 * 86400000).toISOString(),
     customer: { fullName: "Demo Customer", phone: "0300 0000000", email: "demo@example.com" },
     shipping: { fullName: "Demo Customer", phone: "0300 0000000", address: "House 1, Street 2, Block 3", city: "Karachi", province: "Sindh", postalCode: "75500" },

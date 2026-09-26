@@ -10,7 +10,7 @@ export function CategoryCard({ title, blurb, href, product, className, count }: 
   return (
     <Link href={href} className={cn("group relative block aspect-[4/5] overflow-hidden rounded-3xl bg-soft ring-1 ring-line/60", className)}>
       <div className="absolute inset-0 transition-transform duration-[1200ms] ease-[var(--ease)] group-hover:scale-110">
-        <ProductImage product={p} index={0} />
+        {p ? <ProductImage product={p} index={0} /> : <div className="size-full bg-gradient-to-br from-soft to-line" aria-hidden />}
       </div>
       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent transition-opacity duration-500 group-hover:from-black/80" aria-hidden />
       <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 p-5 text-white transition-transform duration-500 ease-[var(--ease)] group-hover:-translate-y-1">

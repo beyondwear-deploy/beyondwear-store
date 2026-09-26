@@ -1,6 +1,8 @@
 import { NotConfigured } from "@/components/admin/NotConfigured";
+import { PeriodSelect } from "@/components/admin/PeriodSelect";
 import { getFinancialSummary } from "@/lib/financials";
 import { formatPrice } from "@/lib/format";
+import { parsePeriod } from "@/lib/period";
 import { FinancialsNav } from "../FinancialsNav";
 
 export const metadata = { title: "Admin — Profit & Loss" };
@@ -11,15 +13,19 @@ function monthLabel(m: string) {
   return new Date(y, mo - 1, 1).toLocaleDateString("en-GB", { month: "short", year: "numeric" });
 }
 
-export default async function AdminPnlPage() {
-  const f = await getFinancialSummary();
-  const months = [...f.monthly].reverse(); // most recent first
+export default async function AdminPnlPage({ searchParams }: { searchParams: Promise<{ period?: string }> }) {
+  const period = parsePeriod((await searchParams).period);
+  const f = await getFinancialSummary(period);
+  const months = [...f.monthly].reverse(); // most recent first — always trailing 12 months, all-time
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">Profit &amp; Loss</h1>
-        <p className="text-sm text-muted">Revenue is attributed to the month an order was delivered; expenses to the month they were logged.</p>
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold">Profit &amp; Loss</h1>
+          <p className="text-sm text-muted">Revenue is attributed to the month an order was delivered; expenses to the month they were logged.</p>
+        </div>
+        <PeriodSelect value={period} />
       </div>
 
       <FinancialsNav />
@@ -29,11 +35,13 @@ export default async function AdminPnlPage() {
       {f.configured && (
         <>
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-            <Stat label="Revenue (all-time)" value={f.revenue} />
-            <Stat label="COGS (all-time)" value={f.cogs} />
+            <Stat label={`Revenue (${f.periodLabel.toLowerCase()})`} value={f.revenue} />
+            <Stat label={`COGS (${f.periodLabel.toLowerCase()})`} value={f.cogs} />
             <Stat label="Gross profit" value={f.grossProfit} />
             <Stat label="Net profit" value={f.netProfit} highlight />
           </div>
+
+          <p className="text-xs text-subtle">The monthly breakdown below always shows the trailing 12 months, regardless of the period filter above — use it to see the trend behind whichever period you&apos;ve selected.</p>
 
           <div className="overflow-x-auto rounded-2xl border border-line bg-elev">
             <table className="w-full min-w-[640px] text-sm">

@@ -1,5 +1,5 @@
 /**
- * Sequel Closet logo — outlined vector paths (generated from Fraunces + Inter, no font needed at runtime).
+ * BeyondWear logo — outlined vector paths (generated from Fraunces + Inter, no font needed at runtime).
  * Coordinates: mark is drawn in a 100x100 box scaled by ISZ/100; word paths start at TX.
  */
 export const LOGO = {

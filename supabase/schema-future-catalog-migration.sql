@@ -17,7 +17,7 @@
 -- =====================================================================
 
 -- =====================================================================
--- Sequel Closet (preloved shoe store) — Supabase / PostgreSQL schema
+-- BeyondWear (preloved shoe store) — Supabase / PostgreSQL schema
 -- Run in the Supabase SQL editor. Shapes match src/lib/types.ts so the
 -- local adapters can be swapped for these tables one at a time.
 -- =====================================================================
@@ -143,7 +143,7 @@ create table addresses (
 );
 
 create table orders (
-  id               text primary key,                 -- 'SEQ-XXXXXX'
+  id               text primary key,                 -- 'BW-XXXXXX'
   customer_id      uuid references customers(id),    -- null for guest checkout
   placed_at        timestamptz not null default now(),
   status           order_status not null default 'placed',
@@ -240,7 +240,7 @@ security definer
 set search_path = public
 as $$
 declare
-  v_order_id text := 'SEQ-' || upper(substr(md5(random()::text || clock_timestamp()::text), 1, 6));
+  v_order_id text := 'BW-' || upper(substr(md5(random()::text || clock_timestamp()::text), 1, 6));
   v_item     jsonb;
   v_product  products%rowtype;
   v_subtotal integer := 0;

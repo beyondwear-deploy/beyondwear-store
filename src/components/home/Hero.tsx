@@ -13,6 +13,42 @@ import type { Product } from "@/lib/types";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
+/** Shown instead of Hero while the catalogue is empty (before the first product is added from /admin/products/new) — same copy and CTA, no product collage since there's nothing to show yet. */
+export function EmptyCatalogHero() {
+  const { editMode } = useEditMode();
+  const line1 = useOverride("home.hero.line1", "Beyond");
+  const line2 = useOverride("home.hero.line2", "the first wear.");
+  const blurb = useOverride("home.hero.blurb", "Carefully selected preloved shoes, inspected and honestly graded. Every great pair deserves to go beyond its first life.");
+  return (
+    <section className="relative isolate overflow-hidden">
+      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
+        <div className="absolute -left-32 top-10 size-[38rem] rounded-full bg-accent/15 blur-[110px]" />
+        <div className="absolute -right-24 top-1/3 size-[32rem] rounded-full bg-secondary/15 blur-[110px]" />
+      </div>
+      <div className="container-x flex flex-col items-center gap-8 py-20 text-center sm:py-28">
+        <p className="eyebrow flex items-center gap-3"><span className="h-px w-10 bg-accent" aria-hidden />New pairs coming very soon</p>
+        <h1 className="text-[clamp(3rem,10vw,6.5rem)] font-medium uppercase leading-[0.95] tracking-[-0.035em]">
+          {editMode ? (
+            <>
+              <EditableText id="home.hero.line1" defaultValue="Beyond" as="span" className="block" multiline={false} label="Homepage hero — line 1" />
+              <EditableText id="home.hero.line2" defaultValue="the first wear." as="span" className="block italic text-accent" multiline={false} label="Homepage hero — line 2" />
+            </>
+          ) : (
+            <>
+              <span className="block">{line1}</span>
+              <span className="block italic text-accent">{line2}</span>
+            </>
+          )}
+        </h1>
+        <p className="max-w-md text-base leading-relaxed text-muted sm:text-lg">
+          {editMode ? <EditableText id="home.hero.blurb" defaultValue="Carefully selected preloved shoes, inspected and honestly graded. Every great pair deserves to go beyond its first life." label="Homepage hero blurb" /> : blurb}
+        </p>
+        <Button href="/coming-soon#notify" size="lg" arrow>Get notified at launch</Button>
+      </div>
+    </section>
+  );
+}
+
 export function Hero({ main, topRight, midRight, badge, featured }: { main: Product; topRight: Product; midRight: Product; badge: Product; featured: Product }) {
   const { editMode } = useEditMode();
   const line1 = useOverride("home.hero.line1", "Beyond");

@@ -13,7 +13,7 @@
 -- Orders — the real, durable order record (replaces "email is the record").
 -- ─────────────────────────────────────────────────────────────────────────
 create table if not exists orders (
-  id            text primary key,               -- e.g. "SEQ-AB12CD"
+  id            text primary key,               -- e.g. "BW-AB12CD"
   placed_at     timestamptz not null default now(),
   customer      jsonb not null,                  -- { fullName, phone, email }
   shipping      jsonb not null,                  -- { address, city, province, postalCode }

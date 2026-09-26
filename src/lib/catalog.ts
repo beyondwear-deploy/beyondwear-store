@@ -140,7 +140,8 @@ export function getFacets(list: Product[] = getAllProducts()) {
     sizes: sortSizes(uniq(list.map((p) => p.size))),
     types: uniq(list.map((p) => p.type)).sort(),
     colors: Array.from(colors.entries()).map(([name, hex]) => ({ name, hex })).sort((a, b) => a.name.localeCompare(b.name)),
-    minPrice: Math.min(...list.map((p) => p.price)),
-    maxPrice: Math.max(...list.map((p) => p.price)),
+    // No listings yet (fresh catalogue before the admin adds real inventory) — avoid Infinity/-Infinity from Math.min/max on an empty list.
+    minPrice: list.length ? Math.min(...list.map((p) => p.price)) : 0,
+    maxPrice: list.length ? Math.max(...list.map((p) => p.price)) : 0,
   };
 }

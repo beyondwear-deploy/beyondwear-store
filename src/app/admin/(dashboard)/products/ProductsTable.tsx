@@ -70,7 +70,7 @@ export function ProductsTable({ products }: { products: Product[] }) {
             ))}
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={6} className="px-4 py-10 text-center text-sm text-subtle">No products match &ldquo;{q}&rdquo;.</td>
+                <td colSpan={6} className="px-4 py-10 text-center text-sm text-subtle">{q ? <>No products match &ldquo;{q}&rdquo;.</> : "No products yet — add your first one to get started."}</td>
               </tr>
             )}
           </tbody>

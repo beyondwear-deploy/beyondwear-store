@@ -1,21 +1,29 @@
 import { NotConfigured } from "@/components/admin/NotConfigured";
+import { PeriodSelect } from "@/components/admin/PeriodSelect";
 import { getFinancialSummary } from "@/lib/financials";
 import { formatPrice } from "@/lib/format";
+import { parsePeriod } from "@/lib/period";
 import { FinancialsNav } from "../FinancialsNav";
 
 export const metadata = { title: "Admin — Balance Sheet" };
 export const dynamic = "force-dynamic";
 
-export default async function AdminBalanceSheetPage() {
-  const f = await getFinancialSummary();
+export default async function AdminBalanceSheetPage({ searchParams }: { searchParams: Promise<{ period?: string }> }) {
+  const period = parsePeriod((await searchParams).period);
+  const f = await getFinancialSummary(period);
   const b = f.balanceSheet;
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">Balance Sheet</h1>
-        <p className="text-sm text-muted">A snapshot of what the store owns and where its equity comes from, as of today.</p>
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold">Balance Sheet</h1>
+          <p className="text-sm text-muted">A snapshot of what the store owns and where its equity comes from, as of today.</p>
+        </div>
+        <PeriodSelect value={period} />
       </div>
+
+      <p className="-mt-2 text-xs text-subtle">The balance sheet is always as of today, whatever period you pick above — it&apos;s a point-in-time snapshot, not an activity report. Use the period filter on Overview, P&amp;L and Cash Flow instead to see a specific window of activity.</p>
 
       <FinancialsNav />
 

@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { Breadcrumbs, type Crumb } from "@/components/ui/Breadcrumbs";
 
 /** Shared header for content pages (About, Our Work, FAQ, policies …). */
-export function PageHero({ eyebrow, title, blurb, crumbs, children }: { eyebrow: string; title: ReactNode; blurb?: string; crumbs: Crumb[]; children?: ReactNode }) {
+export function PageHero({ eyebrow, title, blurb, crumbs, children }: { eyebrow: string; title: ReactNode; blurb?: ReactNode; crumbs: Crumb[]; children?: ReactNode }) {
   return (
     <section className="relative isolate overflow-hidden border-b border-line">
       <div aria-hidden className="absolute -right-32 -top-32 -z-10 size-[28rem] rounded-full bg-accent/12 blur-[110px]" />

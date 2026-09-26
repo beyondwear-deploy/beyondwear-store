@@ -2,7 +2,10 @@
 import { MotionConfig } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { useEffect, type ReactNode } from "react";
+import { PageViewTracker } from "@/components/analytics/PageViewTracker";
 import { CartDrawer } from "@/components/cart/CartDrawer";
+import { EditModeProvider } from "@/components/edit/EditModeContext";
+import { EditModeToggle } from "@/components/edit/EditModeToggle";
 import { QuickView } from "@/components/product/QuickView";
 import { SizeGuideModal } from "@/components/product/SizeGuideModal";
 import { Toaster } from "@/components/ui/Toaster";
@@ -11,7 +14,11 @@ import { MobileMenu } from "./MobileMenu";
 import { RouteProgress } from "./RouteProgress";
 import { SearchOverlay } from "./SearchOverlay";
 
-export function Providers({ children }: { children: ReactNode }) {
+export function Providers({
+  children, isAdmin = false, contentOverrides = {},
+}: {
+  children: ReactNode; isAdmin?: boolean; contentOverrides?: Record<string, string>;
+}) {
   const pathname = usePathname();
   const setSearchOpen = useUI((s) => s.setSearchOpen);
   useEffect(() => { hydrateStores(); }, []);
@@ -34,15 +41,19 @@ export function Providers({ children }: { children: ReactNode }) {
   }, [setSearchOpen]);
 
   return (
-    <MotionConfig reducedMotion="user">
-      <RouteProgress />
-      {children}
-      <SearchOverlay />
-      <CartDrawer />
-      <MobileMenu />
-      <QuickView />
-      <SizeGuideModal />
-      <Toaster />
-    </MotionConfig>
+    <EditModeProvider isAdmin={isAdmin} initialOverrides={contentOverrides}>
+      <MotionConfig reducedMotion="user">
+        <PageViewTracker />
+        <RouteProgress />
+        {children}
+        <SearchOverlay />
+        <CartDrawer />
+        <MobileMenu />
+        <QuickView />
+        <SizeGuideModal />
+        <Toaster />
+        <EditModeToggle />
+      </MotionConfig>
+    </EditModeProvider>
   );
 }

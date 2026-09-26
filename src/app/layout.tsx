@@ -6,11 +6,11 @@ import "@/styles/globals.css";
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import type { ReactNode } from "react";
-import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
-import { Footer } from "@/components/layout/Footer";
-import { Navbar } from "@/components/layout/Navbar";
 import { Providers } from "@/components/layout/Providers";
+import { SiteChrome } from "@/components/layout/SiteChrome";
+import { isAdmin } from "@/lib/adminAuth";
 import { siteConfig } from "@/lib/config";
+import { getOverrides } from "@/lib/content";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.brand.domain),
@@ -49,7 +49,8 @@ const orgLd = {
 
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default async function RootLayout({ children }: { children: ReactNode }) {
+  const [admin, overrides] = await Promise.all([isAdmin(), getOverrides()]);
   return (
     <html lang="en" data-theme="light" suppressHydrationWarning>
       <head>
@@ -67,11 +68,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       </head>
       <body>
         <a href="#main" className="fixed left-4 top-4 z-[400] -translate-y-24 rounded-full bg-fg px-5 py-3 text-sm font-semibold text-bg transition-transform focus:translate-y-0">Skip to content</a>
-        <Providers>
-          <AnnouncementBar />
-          <Navbar />
-          <main id="main" tabIndex={-1} className="relative outline-none">{children}</main>
-          <Footer />
+        <Providers isAdmin={admin} contentOverrides={overrides}>
+          <SiteChrome>{children}</SiteChrome>
         </Providers>
       </body>
     </html>

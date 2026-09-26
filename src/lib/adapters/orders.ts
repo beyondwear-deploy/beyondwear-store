@@ -1,6 +1,12 @@
 /**
- * ORDER SERVICE (local adapter). Swap `placeOrder` for a Supabase RPC that
- * decrements stock atomically (see `place_order` in supabase/schema.sql).
+ * ORDER SERVICE. Stock/availability is still tracked locally (useOrders'
+ * soldCounts, from src/store) — good enough for this store's volume — but
+ * every placed order is now also persisted to the database (see
+ * persistOrder() below and supabase/schema.sql) so it shows up in the
+ * admin dashboard's business analytics and survives across devices/browsers.
+ * A fully atomic, race-proof stock decrement would move this into a
+ * database transaction/RPC instead — see supabase/schema-future-catalog-migration.sql
+ * for a drafted design if the catalogue itself ever moves into the database.
  */
 import { getProductById } from "@/lib/catalog";
 import { siteConfig } from "@/lib/config";
@@ -67,19 +73,34 @@ export function placeOrder(input: CheckoutInput): Order {
   useOrders.getState().addOrder(order);
   useCart.getState().clear();
   notifyOrderPlaced(order);
+  persistOrder(order);
   return order;
 }
 
 /**
- * Emails the order to you (fire-and-forget) since there's no database yet —
- * this is currently the only durable record of the order besides the
- * customer's own browser. Never blocks or fails checkout if it errors.
+ * Emails the order to you (fire-and-forget) — kept as a backup copy even
+ * now that orders are persisted to the database below. Never blocks or
+ * fails checkout if it errors.
  */
 function notifyOrderPlaced(order: Order): void {
   try {
     fetch("/api/order-notify", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(order) }).catch(() => {});
   } catch {
     // never let a notification failure affect checkout
+  }
+}
+
+/**
+ * Saves the order to the real database (Supabase) so it shows up in the
+ * admin dashboard's business/sales analytics. Fire-and-forget: if the
+ * database isn't connected yet, this silently no-ops and the order still
+ * exists locally (localStorage) and in the notification email.
+ */
+function persistOrder(order: Order): void {
+  try {
+    fetch("/api/orders", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(order) }).catch(() => {});
+  } catch {
+    // never let a persistence failure affect checkout
   }
 }
 

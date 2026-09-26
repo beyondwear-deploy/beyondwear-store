@@ -5,6 +5,8 @@ import { PageHero } from "@/components/layout/PageHero";
 import { ProductArt } from "@/components/art/ProductArt";
 import { Button } from "@/components/ui/Button";
 import { Reveal } from "@/components/ui/Reveal";
+import { EditableText } from "@/components/edit/EditableText";
+import { EditableImageSlot } from "@/components/edit/EditableImageSlot";
 import { siteConfig } from "@/lib/config";
 
 export const metadata: Metadata = {
@@ -26,7 +28,12 @@ export default function AboutPage() {
       <PageHero
         eyebrow="About us" crumbs={[{ label: "About" }]}
         title={<>Shoes with a <em className="text-accent">second chapter.</em></>}
-        blurb={`${siteConfig.brand.name} is a home for carefully selected preloved shoes — inspected, cleaned and photographed in detail, and presented with the honesty and polish you'd expect from new. Clothing and bags are coming soon.`}
+        blurb={
+          <EditableText
+            id="about.hero.blurb"
+            defaultValue={`${siteConfig.brand.name} is a home for carefully selected preloved shoes — inspected, cleaned and photographed in detail, and presented with the honesty and polish you'd expect from new. Clothing and bags are coming soon.`}
+          />
+        }
       >
         <Button href="/shop" size="lg" arrow>Shop the collection</Button>
         <Button href="/our-work" size="lg" variant="outline">How we work</Button>
@@ -38,10 +45,9 @@ export default function AboutPage() {
           <h2 className="text-balance text-4xl leading-[1.05] sm:text-6xl">Good shoes shouldn&apos;t be thrown away.</h2>
         </Reveal>
         <Reveal delay={0.1} className="space-y-5 text-lg leading-relaxed text-muted">
-          <p>We started with a simple frustration: preloved shopping is full of great pairs, but also full of blurry photos, vague descriptions and guesswork.</p>
-          <p>So we built the store we wanted to shop at. Every pair is inspected in person, cleaned and prepared, then photographed from every angle — including the flaws — and described in plain language with real measurements.</p>
-          <p>The result: you can buy preloved with the same confidence as buying new, and every pair gets to keep going.</p>
-          <p className="border-l-2 border-accent pl-4 text-sm text-subtle">Editor&apos;s note: this story is placeholder copy. Replace it with your own founding story in <code>src/app/about/page.tsx</code>.</p>
+          <p><EditableText id="about.story.p1" defaultValue="We started with a simple frustration: preloved shopping is full of great pairs, but also full of blurry photos, vague descriptions and guesswork." /></p>
+          <p><EditableText id="about.story.p2" defaultValue="So we built the store we wanted to shop at. Every pair is inspected in person, cleaned and prepared, then photographed from every angle — including the flaws — and described in plain language with real measurements." /></p>
+          <p><EditableText id="about.story.p3" defaultValue="The result: you can buy preloved with the same confidence as buying new, and every pair gets to keep going." /></p>
         </Reveal>
       </section>
 
@@ -49,8 +55,8 @@ export default function AboutPage() {
         <Reveal className="rounded-[2rem] border border-line bg-elev p-8 sm:p-14">
           <p className="eyebrow mb-4">The name</p>
           <h2 id="name-h" className="text-balance text-4xl leading-[1.05] sm:text-6xl">What &ldquo;BeyondWear&rdquo; means.</h2>
-          <p className="mt-6 max-w-2xl text-xl leading-relaxed text-muted sm:text-2xl">{siteConfig.brand.meaning}</p>
-          <p className="mt-4 max-w-2xl text-base text-muted">{siteConfig.brand.story}</p>
+          <p className="mt-6 max-w-2xl text-xl leading-relaxed text-muted sm:text-2xl"><EditableText id="brand.meaning" defaultValue={siteConfig.brand.meaning} /></p>
+          <p className="mt-4 max-w-2xl text-base text-muted"><EditableText id="brand.story" defaultValue={siteConfig.brand.story} /></p>
         </Reveal>
       </section>
 
@@ -72,9 +78,16 @@ export default function AboutPage() {
       <section className="container-x py-20 sm:py-28">
         <div className="grid items-center gap-12 lg:grid-cols-2">
           <Reveal className="mx-auto aspect-[4/5] w-full max-w-md overflow-hidden rounded-[2rem]">
-            <div className="h-full w-full" style={{ background: "var(--art-bg-b)" }}>
-              <ProductArt art={{ garment: "sneaker", color: "#e4d9c1", color2: "#3d3c39", variant: 1 }} view="side" alt="Illustration of a sneaker" decorative className="h-full w-full" meta={{ brand: "", size: "", material: "", wearNote: "" }} />
-            </div>
+            <EditableImageSlot
+              id="about.photo"
+              alt="Photo of the BeyondWear studio"
+              className="h-full w-full object-cover"
+              fallback={
+                <div className="h-full w-full" style={{ background: "var(--art-bg-b)" }}>
+                  <ProductArt art={{ garment: "sneaker", color: "#e4d9c1", color2: "#3d3c39", variant: 1 }} view="side" alt="Illustration of a sneaker" decorative className="h-full w-full" meta={{ brand: "", size: "", material: "", wearNote: "" }} />
+                </div>
+              }
+            />
           </Reveal>
           <Reveal delay={0.1}>
             <p className="eyebrow mb-4">Honest by design</p>

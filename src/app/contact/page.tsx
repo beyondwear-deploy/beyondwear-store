@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { ContactClient } from "@/components/contact/ContactClient";
+import { EditableText } from "@/components/edit/EditableText";
 import { PageHero } from "@/components/layout/PageHero";
 import { Skeleton } from "@/components/ui/LoadingState";
 
@@ -13,7 +14,10 @@ export const metadata: Metadata = {
 export default function ContactPage() {
   return (
     <>
-      <PageHero eyebrow="Contact" crumbs={[{ label: "Contact" }]} title={<>Let&apos;s <em className="text-accent">talk.</em></>} blurb="Questions about a pair, an order, or working together — we're happy to help." />
+      <PageHero
+        eyebrow="Contact" crumbs={[{ label: "Contact" }]} title={<>Let&apos;s <em className="text-accent">talk.</em></>}
+        blurb={<EditableText id="contact.blurb" defaultValue="Questions about a pair, an order, or working together — we're happy to help." />}
+      />
       <Suspense fallback={<div className="container-x py-16"><Skeleton className="h-96 rounded-3xl" /></div>}>
         <ContactClient />
       </Suspense>

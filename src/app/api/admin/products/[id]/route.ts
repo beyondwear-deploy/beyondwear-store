@@ -13,7 +13,7 @@ const STATUSES = new Set(["active", "draft", "archived"]);
 
 function validate(patch: ProductPatch): string | null {
   if (patch.name !== undefined && (!patch.name.trim() || patch.name.length > 200)) return "Name looks wrong.";
-  if (patch.brand !== undefined && (!patch.brand.trim() || patch.brand.length > 100)) return "Brand looks wrong.";
+  if (patch.brand !== undefined && patch.brand.length > 100) return "Brand looks wrong.";
   if (patch.price !== undefined && (!Number.isFinite(patch.price) || patch.price < 0 || patch.price > 100000000)) return "Price looks wrong.";
   if (patch.originalPrice !== undefined && patch.originalPrice !== null && (!Number.isFinite(patch.originalPrice) || patch.originalPrice < 0)) return "Original price looks wrong.";
   if (patch.stock !== undefined && (!Number.isInteger(patch.stock) || patch.stock < 0 || patch.stock > 100000)) return "Stock looks wrong.";

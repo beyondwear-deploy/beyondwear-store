@@ -37,12 +37,12 @@ export function QuickView() {
           </div>
           <div className="flex flex-col gap-4 p-5 md:p-7">
             <div className="flex items-start justify-between gap-3">
-              <div><p className="eyebrow">{p.brand}</p><h2 className="mt-1 text-3xl">{p.name}</h2></div>
+              <div>{p.brand && <p className="eyebrow">{p.brand}</p>}<h2 className="mt-1 text-3xl">{p.name}</h2></div>
               <button type="button" onClick={close} className="tap -mr-2 grid place-items-center rounded-full hover:bg-soft" aria-label="Close quick view"><span aria-hidden className="text-2xl leading-none">×</span></button>
             </div>
-            <div className="flex flex-wrap items-center gap-2"><ConditionBadge condition={p.condition} />{isJustIn(p) && <Badge tone="accent">Just in</Badge>}<span className="text-xs text-muted">Size {p.size} · {p.color}</span></div>
+            <div className="flex flex-wrap items-center gap-2"><ConditionBadge condition={p.condition} />{isJustIn(p) && <Badge tone="accent">Just in</Badge>}<span className="text-xs text-muted">{[p.size && `Size ${p.size}`, p.color].filter(Boolean).join(" · ")}</span></div>
             <p className="flex items-baseline gap-3"><span className="text-2xl font-bold">{formatPrice(p.price)}</span>{p.originalPrice && <span className="text-sm text-subtle line-through">{formatPrice(p.originalPrice)}</span>}{disc && <span className="text-sm font-bold text-accent">−{disc}%</span>}</p>
-            <p className="text-sm leading-relaxed text-muted">{p.description}</p>
+            {p.description && <p className="text-sm leading-relaxed text-muted">{p.description}</p>}
             <ul className="list-disc space-y-1 pl-5 text-sm text-muted">{p.conditionNotes.slice(0, 3).map((n) => <li key={n}>{n}</li>)}</ul>
             <div className="mt-auto flex flex-col gap-3 pt-2">
               {avail > 0 ? (

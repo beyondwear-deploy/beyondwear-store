@@ -2,6 +2,7 @@
 import { Loader2, Pencil, Plus, RotateCcw, Save, Trash2, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useRef, useState, type ReactNode } from "react";
+import { NumberInput } from "@/components/admin/NumberInput";
 import { ProductImage } from "@/components/product/ProductImage";
 import { CONDITIONS } from "@/lib/format";
 import { toPatch, type ProductPatchSnapshot } from "@/lib/productPatch";
@@ -121,7 +122,7 @@ export function ProductEditForm({ product, configured, hasOverride, isCustom, de
         </Field>
         <div className="grid grid-cols-2 gap-4">
           <Field label="Price (PKR)">
-            <input type="number" min={0} value={form.price} onChange={(e) => set("price", Number(e.target.value))} className={inputCls} />
+            <NumberInput value={form.price} onValueChange={(n) => set("price", n)} className={inputCls} ariaLabel="Price in PKR" />
           </Field>
           <Field label="Was price (optional)">
             <input
@@ -173,7 +174,7 @@ export function ProductEditForm({ product, configured, hasOverride, isCustom, de
       <Section title="Inventory">
         <div className="grid grid-cols-2 gap-4">
           <Field label="Stock">
-            <input type="number" min={0} value={form.stock} onChange={(e) => set("stock", Number(e.target.value))} className={inputCls} />
+            <NumberInput value={form.stock} onValueChange={(n) => set("stock", n)} className={inputCls} ariaLabel="Stock" />
           </Field>
           <Field label="Status">
             <select value={form.status} onChange={(e) => set("status", e.target.value as Product["status"])} className={inputCls}>

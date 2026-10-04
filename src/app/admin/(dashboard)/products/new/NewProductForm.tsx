@@ -2,11 +2,14 @@
 import { Loader2, Plus, Save, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useRef, useState, type ReactNode } from "react";
+import { NumberInput } from "@/components/admin/NumberInput";
+import { PhotoColorPicker } from "@/components/admin/PhotoColorPicker";
 import { CATEGORIES, GENDERS } from "@/lib/catalog";
 import { CONDITIONS } from "@/lib/format";
 import type { Category, Condition, Gender } from "@/lib/types";
 
-interface UploadedImage { url: string; alt: string }
+/** `preview` is a local copy of the file just picked, so colours can be read from it without any cross-site restrictions. */
+interface UploadedImage { url: string; alt: string; preview?: string }
 
 const STATUSES: { id: "active" | "draft" | "archived"; label: string }[] = [
   { id: "active", label: "Active — shown on the live site" },
@@ -53,7 +56,7 @@ export function NewProductForm({ defaultCostPrice }: { defaultCostPrice: number 
         const res = await fetch("/api/admin/products/new/upload", { method: "POST", body: fd });
         const data = await res.json();
         if (!data.ok) throw new Error(data.error || "Upload failed.");
-        setImages((prev) => [...prev, { url: data.url, alt: `${brand} ${name}`.trim() || "Product photo" }]);
+        setImages((prev) => [...prev, { url: data.url, preview: URL.createObjectURL(file), alt: `${brand} ${name}`.trim() || "Product photo" }]);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Upload failed.");
@@ -71,7 +74,7 @@ export function NewProductForm({ defaultCostPrice }: { defaultCostPrice: number 
         name, brand, category, gender, type, size, color, colorHex,
         condition, price, originalPrice: originalPrice === "" ? null : Number(originalPrice),
         description, conditionNotes: conditionNotesText.split("\n").map((s) => s.trim()).filter(Boolean),
-        wearNote, material, stock, status, images,
+        wearNote, material, stock, status, images: images.map(({ url, alt }) => ({ url, alt })),
         costPrice: costPrice === "" ? null : Number(costPrice),
       };
       const res = await fetch("/api/admin/products", {
@@ -118,12 +121,12 @@ export function NewProductForm({ defaultCostPrice }: { defaultCostPrice: number 
           )}
         </div>
         <input ref={inputRef} type="file" accept="image/png,image/jpeg,image/webp,image/gif" multiple className="hidden" onChange={onFiles} />
-        <p className="text-xs text-subtle">Up to 6 photos. The first is used as the main listing photo.</p>
+        <p className="text-xs text-subtle">Up to 6 photos (optional for drafts; needed to go Active). The first is the main listing photo.</p>
       </Section>
 
       <Section title="Basics">
-        <Field label="Name"><input value={name} onChange={(e) => setName(e.target.value)} className={inputCls} placeholder="e.g. Air Max Trainers" /></Field>
-        <Field label="Brand"><input value={brand} onChange={(e) => setBrand(e.target.value)} className={inputCls} placeholder="e.g. Nike" /></Field>
+        <Field label="Name (required)"><input value={name} onChange={(e) => setName(e.target.value)} className={inputCls} placeholder="e.g. Air Max Trainers" /></Field>
+        <Field label="Brand (optional)"><input value={brand} onChange={(e) => setBrand(e.target.value)} className={inputCls} placeholder="e.g. Nike" /></Field>
         <div className="grid grid-cols-2 gap-4">
           <Field label="Category">
             <select value={category} onChange={(e) => setCategory(e.target.value as Category)} className={inputCls}>
@@ -137,43 +140,44 @@ export function NewProductForm({ defaultCostPrice }: { defaultCostPrice: number 
           </Field>
         </div>
         <div className="grid grid-cols-2 gap-4">
-          <Field label="Type"><input value={type} onChange={(e) => setType(e.target.value)} className={inputCls} placeholder="e.g. Sneakers" /></Field>
-          <Field label="Size"><input value={size} onChange={(e) => setSize(e.target.value)} className={inputCls} placeholder="e.g. UK 9" /></Field>
+          <Field label="Type (optional)"><input value={type} onChange={(e) => setType(e.target.value)} className={inputCls} placeholder="e.g. Sneakers" /></Field>
+          <Field label="Size (optional)"><input value={size} onChange={(e) => setSize(e.target.value)} className={inputCls} placeholder="e.g. UK 9" /></Field>
         </div>
         <div className="grid grid-cols-[1fr_auto] gap-4">
-          <Field label="Colour"><input value={color} onChange={(e) => setColor(e.target.value)} className={inputCls} placeholder="e.g. Black" /></Field>
-          <Field label="Swatch"><input type="color" value={colorHex} onChange={(e) => setColorHex(e.target.value)} className="h-[38px] w-16 cursor-pointer rounded-lg border border-line bg-elev p-1" /></Field>
+          <Field label="Colour (optional)"><input value={color} onChange={(e) => setColor(e.target.value)} className={inputCls} placeholder="e.g. Black" /></Field>
+          <Field label="Swatch (optional)"><input type="color" value={colorHex} onChange={(e) => setColorHex(e.target.value)} className="h-[38px] w-16 cursor-pointer rounded-lg border border-line bg-elev p-1" /></Field>
         </div>
+        <PhotoColorPicker photos={images.map((im, i) => ({ url: im.preview ?? im.url, label: `Photo ${i + 1}` }))} onPick={setColorHex} />
         <div className="grid grid-cols-2 gap-4">
-          <Field label="Price (PKR)"><input type="number" min={0} value={price} onChange={(e) => setPrice(Number(e.target.value))} className={inputCls} /></Field>
+          <Field label="Price (PKR)"><NumberInput value={price} onValueChange={setPrice} className={inputCls} ariaLabel="Price in PKR" /></Field>
           <Field label="Was price (optional)">
             <input type="number" min={0} value={originalPrice} onChange={(e) => setOriginalPrice(e.target.value)} className={inputCls} placeholder="No strike-through price" />
           </Field>
         </div>
-        <Field label="Description"><textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={4} className={inputCls} /></Field>
+        <Field label="Description (optional)"><textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={4} className={inputCls} /></Field>
       </Section>
 
       <Section title="Condition">
-        <Field label="Condition">
+        <Field label="Condition (optional)">
           <select value={condition} onChange={(e) => setCondition(e.target.value as Condition)} className={inputCls}>
             {CONDITIONS.map((c) => <option key={c.id} value={c.id}>{c.label}</option>)}
           </select>
         </Field>
-        <Field label="Condition notes (one per line)"><textarea value={conditionNotesText} onChange={(e) => setConditionNotesText(e.target.value)} rows={3} className={inputCls} /></Field>
-        <Field label="Wear note (short summary shown on the product card)"><input value={wearNote} onChange={(e) => setWearNote(e.target.value)} className={inputCls} /></Field>
-        <Field label="Material"><input value={material} onChange={(e) => setMaterial(e.target.value)} className={inputCls} /></Field>
+        <Field label="Condition notes (optional, one per line)"><textarea value={conditionNotesText} onChange={(e) => setConditionNotesText(e.target.value)} rows={3} className={inputCls} /></Field>
+        <Field label="Wear note (optional)"><input value={wearNote} onChange={(e) => setWearNote(e.target.value)} className={inputCls} /></Field>
+        <Field label="Material (optional)"><input value={material} onChange={(e) => setMaterial(e.target.value)} className={inputCls} /></Field>
       </Section>
 
       <Section title="Inventory">
         <div className="grid grid-cols-2 gap-4">
-          <Field label="Stock"><input type="number" min={0} value={stock} onChange={(e) => setStock(Number(e.target.value))} className={inputCls} /></Field>
+          <Field label="Stock"><NumberInput value={stock} onValueChange={setStock} className={inputCls} ariaLabel="Stock" /></Field>
           <Field label="Status">
             <select value={status} onChange={(e) => setStatus(e.target.value as "active" | "draft")} className={inputCls}>
               {STATUSES.map((s) => <option key={s.id} value={s.id}>{s.label}</option>)}
             </select>
           </Field>
         </div>
-        <Field label={`Cost price (PKR) — what you paid for this pair`}>
+        <Field label="Cost price (PKR, optional) — what you paid for this pair">
           <input type="number" min={0} value={costPrice} onChange={(e) => setCostPrice(e.target.value)} className={inputCls} placeholder={`Default: ${defaultCostPrice}`} />
         </Field>
         <p className="text-xs text-subtle">Leave blank to use the store default ({defaultCostPrice} PKR, set in Financials → Settings). Used to calculate profit and inventory value.</p>

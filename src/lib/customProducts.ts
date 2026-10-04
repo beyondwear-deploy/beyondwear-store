@@ -43,12 +43,15 @@ const VIEW_CYCLE = ["front", "back", "side", "detail", "label", "wear"] as const
 /** Builds a full Product record from an admin's "Add new product" submission. */
 export function buildCustomProduct(input: NewProductInput): Product {
   const id = genId();
-  const slugBase = slugify(`${input.brand} ${input.name} ${input.color} size ${input.size}`) || id;
+  const slugBase = slugify([input.brand, input.name, input.color, input.size && `size ${input.size}`].filter(Boolean).join(" ")) || id;
+  const altText = [input.brand, input.name].filter(Boolean).join(" ") + (input.color ? ` in ${input.color}` : "");
   const images: ProductImage[] = input.images.map((img, i) => ({
     view: VIEW_CYCLE[i % VIEW_CYCLE.length],
-    alt: img.alt?.trim() || `${input.brand} ${input.name} in ${input.color}`,
+    alt: img.alt?.trim() || altText,
     src: img.url,
   }));
+  // A photo-less draft still needs one entry so the gallery has something to draw (generated art is shown).
+  if (images.length === 0) images.push({ view: "front", alt: altText });
   return {
     id,
     sku: `BW-CUSTOM-${id.slice(1, 7).toUpperCase()}`,
@@ -77,7 +80,7 @@ export function buildCustomProduct(input: NewProductInput): Product {
     popularity: 50,
     keywords: [input.type, input.color, input.material].filter(Boolean).map((s) => s.toLowerCase()),
     images,
-    // Never rendered as long as every image above has a src (it always does for custom products).
+    // Only shown when a listing has no photo yet.
     art: { garment: "sneaker", color: input.colorHex || "#1c1b19", color2: "#eeeae0" },
   };
 }

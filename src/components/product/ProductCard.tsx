@@ -65,10 +65,10 @@ export function ProductCard({ product: p, priority = false, className }: { produ
 
       <div className="space-y-1.5 p-4">
         <Link href={`/product/${p.slug}`} tabIndex={-1} aria-hidden className="block space-y-1">
-          <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-accent">{p.brand}</p>
+          {p.brand && <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-accent">{p.brand}</p>}
           <h3 className="truncate text-lg font-semibold uppercase leading-tight tracking-tight" style={{ fontFamily: "var(--font-display)" }}>{p.name}</h3>
         </Link>
-        <span className="inline-flex items-center rounded-md bg-soft px-2 py-0.5 text-[11px] font-semibold text-muted ring-1 ring-line">{p.size}</span>
+        {p.size && <span className="inline-flex items-center rounded-md bg-soft px-2 py-0.5 text-[11px] font-semibold text-muted ring-1 ring-line">{p.size}</span>}
         <div className="flex flex-wrap items-baseline gap-x-2 pt-1">
           <span className="text-lg font-bold">{formatPrice(p.price)}</span>
           {p.originalPrice && <span className="text-xs text-subtle line-through">{formatPrice(p.originalPrice)}</span>}

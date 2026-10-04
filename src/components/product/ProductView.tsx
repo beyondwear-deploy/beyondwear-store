@@ -51,12 +51,12 @@ export function ProductView({ product: p }: { product: Product }) {
 
         <div>
           <div className="flex flex-wrap items-center gap-2">
-            <Link href={`/shop?brand=${encodeURIComponent(p.brand)}`} className="eyebrow link-underline hover:text-fg">{p.brand}</Link>
+            {p.brand && <Link href={`/shop?brand=${encodeURIComponent(p.brand)}`} className="eyebrow link-underline hover:text-fg">{p.brand}</Link>}
             {!sold && isJustIn(p) && <Badge tone="accent">Just in</Badge>}
             {sold && <Badge tone="dark">Sold out</Badge>}
           </div>
           <h1 className="mt-3 text-4xl leading-[1.05] sm:text-5xl">{p.name}</h1>
-          <p className="mt-2 text-xs text-muted">SKU {p.sku} · {p.type}</p>
+          <p className="mt-2 text-xs text-muted">{[`SKU ${p.sku}`, p.type].filter(Boolean).join(" · ")}</p>
 
           <p className="mt-6 flex flex-wrap items-baseline gap-x-3 gap-y-1">
             <span className="text-3xl font-bold tabular-nums">{formatPrice(p.price)}</span>
@@ -68,8 +68,8 @@ export function ProductView({ product: p }: { product: Product }) {
           <div className="mt-7 rounded-3xl border border-line bg-elev p-5"><ConditionMeter condition={p.condition} /></div>
 
           <dl className="mt-6 grid grid-cols-2 gap-4 text-sm">
-            <div><dt className="eyebrow !text-[10px]">Size</dt><dd className="mt-1.5 flex items-center gap-3"><span className="rounded-lg border border-fg px-3.5 py-1.5 font-semibold">{p.size}</span><button type="button" onClick={() => setSizeGuide(true)} className="link-underline inline-flex items-center gap-1 text-xs font-semibold text-muted hover:text-fg"><Ruler className="size-3.5" aria-hidden />Size guide</button></dd></div>
-            <div><dt className="eyebrow !text-[10px]">Colour</dt><dd className="mt-1.5 flex items-center gap-2 py-1.5 font-medium"><span aria-hidden className="size-5 rounded-full ring-1 ring-line-strong" style={{ background: p.colorHex }} />{p.color}</dd></div>
+            {p.size && <div><dt className="eyebrow !text-[10px]">Size</dt><dd className="mt-1.5 flex items-center gap-3"><span className="rounded-lg border border-fg px-3.5 py-1.5 font-semibold">{p.size}</span><button type="button" onClick={() => setSizeGuide(true)} className="link-underline inline-flex items-center gap-1 text-xs font-semibold text-muted hover:text-fg"><Ruler className="size-3.5" aria-hidden />Size guide</button></dd></div>}
+            {p.color && <div><dt className="eyebrow !text-[10px]">Colour</dt><dd className="mt-1.5 flex items-center gap-2 py-1.5 font-medium"><span aria-hidden className="size-5 rounded-full ring-1 ring-line-strong" style={{ background: p.colorHex }} />{p.color}</dd></div>}
           </dl>
 
           <p className="mt-6 text-sm font-semibold" role="status">
@@ -116,8 +116,8 @@ export function ProductView({ product: p }: { product: Product }) {
                   <p className="text-xs">Measured by us, in inches. Compare with a pair you already own.</p>
                   <button type="button" onClick={() => setSizeGuide(true)} className="link-underline inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-fg"><Ruler className="size-4" aria-hidden />Open size guide</button>
                 </div>) },
-              { q: "Description", a: <p>{p.description}</p> },
-              { q: "Material & care", a: <p>{p.material}. Cleaned and deodorised before listing — wipe with a soft damp cloth and air-dry away from direct heat to keep them in great shape.</p> },
+              ...(p.description ? [{ q: "Description", a: <p>{p.description}</p> }] : []),
+              { q: "Material & care", a: <p>{p.material ? `${p.material}. ` : ""}Cleaned and deodorised before listing — wipe with a soft damp cloth and air-dry away from direct heat to keep them in great shape.</p> },
               { q: "Authenticity", a: (
                 <div className="flex gap-3"><ShieldCheck className="mt-0.5 size-5 shrink-0 text-success" aria-hidden /><p>{p.authenticity.note}{siteConfig.demoMode && <span className="mt-2 block text-xs text-subtle">Demo listing — authenticity wording is a template to confirm against your real process.</span>}</p></div>) },
               { q: "Delivery & returns", a: <p>Standard delivery 3–5 working days (free over Rs 5,000), Express 1–2 days to major cities, Cash on Delivery available. Not as described? Tell us within 48 hours. See our <Link href="/policies/shipping" className="underline">Shipping</Link> and <Link href="/policies/returns" className="underline">Return & Exchange</Link> policies.</p> },

@@ -149,9 +149,9 @@ export function sortSizes(sizes: string[]): string[] {
 }
 
 export function getFacets(list: Product[] = getAllProducts()) {
-  const uniq = <T,>(arr: T[]) => Array.from(new Set(arr));
+  const uniq = (arr: string[]) => Array.from(new Set(arr.filter(Boolean)));
   const colors = new Map<string, string>();
-  list.forEach((p) => colors.set(p.color, p.colorHex));
+  list.forEach((p) => { if (p.color) colors.set(p.color, p.colorHex); });
   return {
     brands: uniq(list.map((p) => p.brand)).sort(),
     sizes: sortSizes(uniq(list.map((p) => p.size))),

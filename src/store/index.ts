@@ -282,5 +282,15 @@ export async function hydrateStores() {
     fetchClientProductOverrides(),
     fetchClientCustomProducts(),
   ]);
+  pruneStaleSavedItems();
   useReadyStore.getState().setReady();
+}
+
+/** Drops saved cart/wishlist/recent entries whose product no longer exists or is no longer on sale (e.g. old demo items), so the cart badge can never show items the drawer can't display. */
+function pruneStaleSavedItems() {
+  const live = (id: string) => !!getProductById(id);
+  const cart = useCart.getState();
+  if (cart.lines.some((l) => !live(l.productId))) useCart.setState({ lines: cart.lines.filter((l) => live(l.productId)) });
+  const wish = useWishlist.getState();
+  if (wish.ids.some((id) => !live(id))) useWishlist.setState({ ids: wish.ids.filter(live) });
 }

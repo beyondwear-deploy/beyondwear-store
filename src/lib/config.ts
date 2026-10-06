@@ -117,7 +117,7 @@ export const siteConfig = {
   seo: {
     titleTemplate: "%s | BeyondWear",
     defaultTitle: "BeyondWear — Preloved Shoes in Pakistan",
-    ogImage: "/og.png",
+    ogImage: "/og-v2.png",
   },
 } as const;
 

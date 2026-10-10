@@ -27,14 +27,6 @@ export interface PaymentProvider {
   initiate(ctx: PaymentContext): Promise<PaymentResult>;
 }
 
-const cod: PaymentProvider = {
-  id: "cod",
-  label: "Cash on Delivery",
-  description: "Pay in cash when your parcel arrives. Please keep the exact amount ready.",
-  available: true,
-  async initiate() { return { ok: true, status: "pending" }; },
-};
-
 const bank: PaymentProvider = {
   id: "bank-transfer",
   label: "Mobile Wallet Transfer",
@@ -64,5 +56,5 @@ const online: PaymentProvider = {
   },
 };
 
-export const PAYMENT_PROVIDERS: PaymentProvider[] = [cod, bank, online].filter((p) => p.available);
+export const PAYMENT_PROVIDERS: PaymentProvider[] = [bank, online].filter((p) => p.available);
 export const getProvider = (id: PaymentMethodId) => PAYMENT_PROVIDERS.find((p) => p.id === id);

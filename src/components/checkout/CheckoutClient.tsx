@@ -168,7 +168,7 @@ export function CheckoutClient() {
                   {failure.items && <ul className="mt-3 list-disc pl-5 text-sm">{failure.items.map((i) => <li key={i}>{i}</li>)}</ul>}
                   <div className="mt-4 flex flex-wrap gap-2">
                     {failure.type === "stock" ? <Button href="/cart" size="sm" variant="primary">Review my bag</Button> : <Button size="sm" onClick={() => { setFailure(null); place(); }}>Try again</Button>}
-                    {failure.type === "payment" && <Button size="sm" variant="outline" onClick={() => { setFailure(null); c.patch({ payment: "cod" }); }}>Use Cash on Delivery</Button>}
+                    {failure.type === "payment" && <Button size="sm" variant="outline" onClick={() => { setFailure(null); c.patch({ payment: "bank-transfer" }); }}>Pay by mobile wallet instead</Button>}
                     <Button size="sm" variant="ghost" onClick={() => setFailure(null)}>Dismiss</Button>
                   </div>
                 </div>

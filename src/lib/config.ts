@@ -27,7 +27,7 @@ export const siteConfig = {
     /** One-line brand story. */
     story: "Every great pair of shoes deserves to go beyond its first life, so we inspect, grade and honestly describe each one before it reaches your closet.",
     description:
-      "Carefully selected preloved shoes in Pakistan — inspected, honestly graded, photographed in detail and delivered nationwide with Cash on Delivery.",
+      "Carefully selected preloved shoes in Pakistan — inspected, honestly graded, photographed in detail and delivered nationwide with secure online payment.",
     domain: process.env.NEXT_PUBLIC_SITE_URL || "https://beyondwear.store",
   },
 
@@ -58,7 +58,7 @@ export const siteConfig = {
   announcement: [
     "Free delivery on orders over Rs 5,000",
     "Every pair inspected & photographed in detail",
-    "Cash on Delivery available nationwide",
+    "Secure online payment, delivered nationwide",
     "One-of-one pairs — once it's gone, it's gone",
   ],
 

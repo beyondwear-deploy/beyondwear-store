@@ -236,7 +236,7 @@ const emptyCheckout = {
   customer: { fullName: "", phone: "", email: "" },
   shipping: { address: "", city: "", province: "", postalCode: "" },
   delivery: "standard" as DeliveryId,
-  payment: "cod" as PaymentMethodId,
+  payment: "bank-transfer" as PaymentMethodId,
 };
 /** Draft lives in sessionStorage only (personal data is not kept after the tab closes). */
 export const useCheckout = create<CheckoutState>()(

@@ -16,7 +16,7 @@ const TRUST = [
   { icon: ShieldCheck, title: "Inspected pair by pair", text: "Condition disclosed honestly" },
   { icon: Sparkles, title: "Cleaned & deodorised", text: "Ready to wear on arrival" },
   { icon: Truck, title: "Nationwide delivery", text: "Secure, careful packaging" },
-  { icon: Wallet, title: "Cash on Delivery", text: "Pay when it arrives" },
+  { icon: Wallet, title: "Online Payment", text: "Secure wallet and card options" },
 ];
 
 function FooterNewsletter() {

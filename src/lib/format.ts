@@ -76,4 +76,4 @@ export function cn(...classes: (string | false | null | undefined)[]): string {
 // paymentLabel()/paymentStatusLabel() imported from OrderDetails.tsx
 // ("use client"). Keeping them here keeps them safe to call from anywhere.
 export const paymentLabel = (m: Order["paymentMethod"]) => (m === "cod" ? "Cash on Delivery" : m === "bank-transfer" ? "Mobile Wallet Transfer" : "Pay via WhatsApp");
-export const paymentStatusLabel = (s: Order["paymentStatus"]) => (s === "paid" ? "Paid" : s === "awaiting-verification" ? "Awaiting verification" : "Pay on delivery / pending");
+export const paymentStatusLabel = (s: Order["paymentStatus"]) => (s === "paid" ? "Paid" : s === "awaiting-verification" ? "Awaiting verification" : "Payment pending");

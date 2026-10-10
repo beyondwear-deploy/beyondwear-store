@@ -9,7 +9,7 @@ import { siteConfig } from "@/lib/config";
 
 export const metadata: Metadata = {
   title: "FAQ",
-  description: "Answers about preloved condition, authenticity, measurements, payment, Cash on Delivery, delivery times, returns and exchanges.",
+  description: "Answers about preloved condition, authenticity, measurements, online payment, delivery times, returns and exchanges.",
   alternates: { canonical: "/faq" },
 };
 

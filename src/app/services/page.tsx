@@ -17,7 +17,7 @@ const SERVICES = [
   { icon: Footprints, t: "Curated preloved shoes", d: "A tightly edited catalogue of sneakers, boots and everyday pairs — hand-picked, never bulk-listed. Clothing and bags are coming soon." },
   { icon: ClipboardCheck, t: "Inspection & authenticity review", d: "Every pair is checked for condition and, where relevant, reviewed against label, stitching and sole details." },
   { icon: Camera, t: "Detailed photography", d: "Side, back, labels, soles and close-ups of any wear so you can inspect before you buy." },
-  { icon: PackageCheck, t: "Nationwide delivery", d: "Careful packaging and courier delivery, Cash on Delivery available, live order tracking." },
+  { icon: PackageCheck, t: "Nationwide delivery", d: "Careful packaging and courier delivery, online payment at checkout, live order tracking." },
   { icon: MessageCircle, t: "Personal styling help", d: "Unsure about fit or condition? Message us on WhatsApp and we'll share extra photos, insole measurements or suggestions." },
   { icon: Store, t: "Studio pickup", d: "Prefer to see it in person? Book an appointment and collect from the studio." },
 ];

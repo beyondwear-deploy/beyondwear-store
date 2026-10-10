@@ -93,7 +93,7 @@ export function ProductView({ product: p }: { product: Product }) {
           </div>
 
           <ul className="mt-7 grid gap-3 border-y border-line py-5 text-sm sm:grid-cols-3">
-            {[[ShieldCheck, "Inspected & graded"], [Truck, "Cash on Delivery"], [PackageCheck, "Carefully packed"]].map(([I, t]) => { const Icon = I as typeof ShieldCheck; return <li key={t as string} className="flex items-center gap-2.5 text-muted"><Icon className="size-5 shrink-0 text-accent" strokeWidth={1.5} aria-hidden />{t as string}</li>; })}
+            {[[ShieldCheck, "Inspected & graded"], [Truck, "Online payment"], [PackageCheck, "Carefully packed"]].map(([I, t]) => { const Icon = I as typeof ShieldCheck; return <li key={t as string} className="flex items-center gap-2.5 text-muted"><Icon className="size-5 shrink-0 text-accent" strokeWidth={1.5} aria-hidden />{t as string}</li>; })}
           </ul>
 
           <a href={wa} target="_blank" rel="noopener noreferrer" className="group mt-5 flex items-center justify-between gap-4 rounded-2xl bg-soft px-5 py-4 transition hover:bg-line">
@@ -120,7 +120,7 @@ export function ProductView({ product: p }: { product: Product }) {
               { q: "Material & care", a: <p>{p.material ? `${p.material}. ` : ""}Cleaned and deodorised before listing — wipe with a soft damp cloth and air-dry away from direct heat to keep them in great shape.</p> },
               { q: "Authenticity", a: (
                 <div className="flex gap-3"><ShieldCheck className="mt-0.5 size-5 shrink-0 text-success" aria-hidden /><p>{p.authenticity.note}{siteConfig.demoMode && <span className="mt-2 block text-xs text-subtle">Demo listing — authenticity wording is a template to confirm against your real process.</span>}</p></div>) },
-              { q: "Delivery & returns", a: <p>Standard delivery 3–5 working days (free over Rs 5,000), Express 1–2 days to major cities, Cash on Delivery available. Not as described? Tell us within 48 hours. See our <Link href="/policies/shipping" className="underline">Shipping</Link> and <Link href="/policies/returns" className="underline">Return & Exchange</Link> policies.</p> },
+              { q: "Delivery & returns", a: <p>Standard delivery 3–5 working days (free over Rs 5,000), Express 1–2 days to major cities. Payment is online at checkout. Not as described? Tell us within 48 hours. See our <Link href="/policies/shipping" className="underline">Shipping</Link> and <Link href="/policies/returns" className="underline">Return & Exchange</Link> policies.</p> },
             ]} />
           </div>
         </div>

@@ -137,8 +137,8 @@ export const DEMO_ORDERS: Order[] = [
     customer: { fullName: "Demo Customer", phone: "0300 0000000", email: "demo@example.com" },
     shipping: { fullName: "Demo Customer", phone: "0300 0000000", address: "House 1, Street 2, Block 3", city: "Karachi", province: "Sindh", postalCode: "75500" },
     deliveryMethod: "standard",
-    paymentMethod: "cod",
-    paymentStatus: "pending",
+    paymentMethod: "bank-transfer",
+    paymentStatus: "awaiting-verification",
     items: [
       { productId: "p001", name: "Air Max Trainers", brand: "Nike", size: "UK 9", color: "Black", condition: "excellent", price: 14500, qty: 1, slug: "nike-air-max-trainers-black-size-9" },
     ],

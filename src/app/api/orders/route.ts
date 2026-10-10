@@ -46,7 +46,7 @@ export async function POST(req: Request) {
       customer: order.customer,
       shipping: order.shipping ?? {},
       delivery_method: order.deliveryMethod ?? "standard",
-      payment_method: order.paymentMethod ?? "cod",
+      payment_method: order.paymentMethod ?? "bank-transfer",
       payment_status: order.paymentStatus ?? "pending",
       items: order.items,
       subtotal: order.subtotal ?? 0,

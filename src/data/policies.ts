@@ -32,7 +32,6 @@ export const POLICIES: Policy[] = [
     sections: [
       { heading: "Approved refunds", body: ["Once a return is received and checked (or a not-as-described claim is approved), refunds are issued to the original payment method or as store credit, at your choice."] },
       { heading: "Timing", body: ["Refunds are processed within 5–7 working days of approval. Bank transfers and gateway refunds may take additional time depending on your bank."] },
-      { heading: "Cash on Delivery orders", body: ["Refunds for COD orders are made by bank transfer or store credit."] },
       { heading: "Delivery charges", body: ["Original delivery charges are refunded when the return is due to our error."] },
     ],
   },
